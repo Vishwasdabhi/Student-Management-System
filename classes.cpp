@@ -6,6 +6,7 @@ class Student;
 class Faculty;
 class FA;
 class Course;
+class Date;
 
 class User
 {
@@ -22,36 +23,43 @@ class Student : public User
 {
 private:
     string name, branch, gender, dob, email, rollNo;
-    Faculty FA;
-    int year;
+    string FA_id;
+    int year, sem_num;
     float CGPA;
-    vector<string> notifications; // think what to do
+    bool New_Notification;
+    vector<string> notifications;
     vector<string> leaveHistory;
     vector<string> coursesRegistered;
 
 public:
     Student(string uname = "", string pass = "", string name = "", string rollNo = "",
-            int year = 0, string branch = "", Faculty fa = Faculty(),
-            float cgpa = 0.0, string gender = "", string dob = "", string email = "")
-        : User(uname, pass), name(name), rollNo(rollNo), year(year), branch(branch), FA(fa),
-          CGPA(cgpa), gender(gender), dob(dob), email(email) {}
+            int year = 0, string branch = "", string fa = "",
+            float cgpa = 0.0, string gender = "", string dob = "", string email = "", int sem = 0)
+        : User(uname, pass), name(name), rollNo(rollNo), year(year), branch(branch), FA_id(fa),
+          CGPA(cgpa), gender(gender), dob(dob), email(email), New_Notification(false), sem_num(sem) {}
 
     bool login(string uname, string pass) override;
     void changePassword(string newPass) override; // old pass check is important before changing
 
-    void viewDetails();                                                  // what to show will be decided
-    void applyForLeave(string reason, string startDate, string endDate); // date formate will be decided.
+    void viewDetails(); // what to show will be decided
+    // to be changed to get details
+    int getSem();
+    void applyForLeave(string reason, Date startDate, Date endDate);
     void viewNotifications();
     void giveFeedback(string courseID, string feedback); // course should be registered by that student
-    void registerCourse(string courseID);
+    void registerCourse(Semester *curr_sem);             // refer semester class based upon curr sem and show available subjects, we will check the curr sem of student and give the number of sem obj to this function while calling
     void viewLeaveRecords();
 };
 
+int Student ::getSem()
+{
+    return sem_num;
+}
 class Faculty : public User
 {
 protected:
     string name, gender, email, school, id, officeNo;
-    vector<string> subjects;
+    vector<Course *> subjects;
 
 public:
     Faculty(string uname = "", string pass = "", string name = "", string id = "",
@@ -59,19 +67,21 @@ public:
         : User(uname, pass), name(name), id(id), gender(gender),
           email(email), school(school), officeNo(officeNo) {}
 
-    bool login(string uname, string pass) override;
-    void changePassword(string newPass) override;
+    bool login(string uname, string pass);
+    void changePassword(string newPass);
 
     void viewStudents(string courseID); // courseId should be from his subjects
     void enterMarks(string studentID, string course, int mark);
     void viewMarks(string studentID);
+    void updateAttendance(Course *course);
+    void viewAttendance(Course *course);
 };
 
 class FA : public Faculty
 {
 private:
-    vector<string> assignedStudents;   // roll no. of students // decide whether to keep roll no. or student instance
-    map<string, string> leaveRequests; // key -> roll no. of students, value -> leave applicaiton
+    vector<Student *> assignedStudents;
+    map<Student *, string> leaveRequests; // key -> pointer to student object, value -> leave applicaiton
 
 public:
     FA(string uname = "", string pass = "", string name = "", string id = "",
@@ -84,26 +94,55 @@ public:
     void notifyLeaveApplications();
 };
 
+class Semester
+{
+    // think about doing branch vise
+    int sem_num;
+    vector<Course *> compulsory_courses;
+    vector<Course *> breadth;
+    vector<Course *> lateral;
+
+public:
+    Semester(int sem = 0) : sem_num(sem) {};
+    void addCompulsoryCourse();
+    void addBreadthCourse();
+    void addLateralCourse();
+    void removeCompulsoryCourse();
+    void removeBreadthCourse();
+    void removeLateralCourse();
+    void viewCompulsoryCourse();
+    void viewBreadthCourse();
+    void viewLateralCourse();
+};
 class Course
 {
 private:
     string name, id, branch;
     vector<string> studentIDs; // do be decided whether to keep instance or id's
     vector<string> facultyIDs;
-    map<string, int> attendance; // key = id, value = attendance
+    map<string, int> attendance;   // key = id, value = attendance
     map<string, string> feedbacks; // key = id, value = feedback
 
 public:
     Course(string name = "", string id = "", string branch = "")
         : name(name), id(id), branch(branch) {}
 
-    void addCourse();
-    void removeCourse();
+    void addfaculty();
+    void removefaculty();
     void enrollStudent(int studentID);
     void receiveFeedback(int studentID, string feedback);
 };
 
+class Date
+{
+    int day;
+    int month;
+    int year;
 
+public:
+    Date(int day = 0, int month = 0, int year = 0) : day(day), month(month), year(year) {}
+    int Calculate_days(Date Start_date, Date End_date);
+};
 int main()
 {
 
