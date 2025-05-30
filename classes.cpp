@@ -29,8 +29,9 @@ private:
     bool New_Notification;
     vector<string> notifications;
     vector<string> leaveHistory;
-    vector<string> coursesRegistered;
-
+    vector<Course *> registeredCourses;
+    map<string, int> marks;
+    map<string, int> attendance;
 public:
     Student(string uname = "", string pass = "", string name = "", string rollNo = "",
             int year = 0, string branch = "", string fa = "",
@@ -49,6 +50,10 @@ public:
     void giveFeedback(string courseID, string feedback); // course should be registered by that student
     void registerCourse(Semester *curr_sem);             // refer semester class based upon curr sem and show available subjects, we will check the curr sem of student and give the number of sem obj to this function while calling
     void viewLeaveRecords();
+    string getRollNo() const { return rollNo; }
+    void addSubject(Course *course) { registeredCourses.push_back(course); } // add course to registered courses
+    void addAttendance(string courseID, int attendanceCount) { attendance[courseID] = attendanceCount; } // add attendance for a course
+    void addMarks(string courseID, int mark) { marks[courseID] = mark; } // add marks for a course
 };
 
 int Student ::getSem()
@@ -70,11 +75,15 @@ public:
     bool login(string uname, string pass);
     void changePassword(string newPass);
 
-    void viewStudents(string courseID); // courseId should be from his subjects
-    void enterMarks(string studentID, string course, int mark);
-    void viewMarks(string studentID);
-    void updateAttendance(Course *course);
-    void viewAttendance(Course *course);
+    void subjectsAssigned(Course *course);
+    // Faculty -> Course -> Student -> Update,View.
+
+    // void viewStudents(string courseID); // courseId should be from his subjects
+    // void enterMarks(Course *course, int mark);
+    // void viewMarks(string studentID);
+    // while accessing check if student is registered in that course and he is the faculty of that course
+    // void updateAttendance(Course *course);
+    // void viewAttendance(Course *course);
 };
 
 class FA : public Faculty
@@ -117,20 +126,22 @@ public:
 class Course
 {
 private:
-    string name, id, branch;
-    vector<string> studentIDs; // do be decided whether to keep instance or id's
+    string id, branch;
+    vector<Student *> studentIDs;
     vector<string> facultyIDs;
+    int credits;
+    bool isCompulsory; // true if compulsory, false if breadth or lateral
     map<string, int> attendance;   // key = id, value = attendance
     map<string, string> feedbacks; // key = id, value = feedback
 
 public:
-    Course(string name = "", string id = "", string branch = "")
-        : name(name), id(id), branch(branch) {}
+    Course(string id = "", string branch = "", int credits = 0, bool isCompulsory = false)
+        :id(id), branch(branch), credits(credits), isCompulsory(isCompulsory) {}
 
     void addfaculty();
     void removefaculty();
-    void enrollStudent(int studentID);
-    void receiveFeedback(int studentID, string feedback);
+    void enrollStudent(Student *student); //push_back
+    void receiveFeedback(Student *studentID, string feedback); //push_back feedback
 };
 
 class Date
