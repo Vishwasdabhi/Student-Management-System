@@ -252,11 +252,17 @@ public:
 
     bool login(string uname, string pass);
     bool changePassword(string newPass);
-
+    bool is_FA_function();
     void AssignSubject(Course *course); // done
     // Faculty -> Course -> Student -> Update,View.
     vector<Course *> getSubjects(); // done
-
+    string getFacultyID();
+    string getFacultyName();
+    string getPassword();
+    string getGender();
+    string getEmail();
+    string getBranch();
+    string getOfficeNo();
     // void viewStudents(string courseID); // courseId should be from his subjects
     // void enterMarks(Course *course, int mark);
     // void viewMarks(string studentID);
@@ -275,6 +281,11 @@ bool Faculty::login(string uname, string pass)
     return false;
 }
 
+bool Faculty::is_FA_function()
+{
+    return is_FA;
+}
+
 void Faculty ::AssignSubject(Course *course)
 {
     subjects.push_back(course);
@@ -285,6 +296,42 @@ vector<Course *> Faculty::getSubjects()
 {
     return subjects;
 }
+
+string Faculty::getFacultyID()
+{
+    return id;
+}
+
+string Faculty::getFacultyName()
+{
+    return name;
+}
+
+string Faculty::getPassword()
+{
+    return password;
+}
+
+string Faculty::getGender()
+{
+    return gender;
+}
+
+string Faculty::getEmail()
+{
+    return email;
+}
+
+string Faculty::getBranch()
+{
+    return branch;
+}
+
+string Faculty::getOfficeNo()
+{
+    return officeNo;
+}
+
 class FA : public Faculty
 {
 private:
@@ -299,6 +346,7 @@ public:
         : Faculty(uname, pass, name, id, gender, email, branch, officeNo, is_FA), New_Notification(false) {}
     string getID() { return id; } // to be used for leave application
     vector<Student *> getAssignedStudents();                   // done
+    void setAssignedStudents(Student *student);
     void viewAssignedStudents();                               // done
     void reviewLeaveApplication();                             // done
     void submitApplication(Student *, LeaveApplication leave); // done
@@ -307,6 +355,11 @@ public:
 vector<Student *> FA::getAssignedStudents()
 {
     return assignedStudents;
+}
+
+void FA::setAssignedStudents(Student *student)
+{
+    assignedStudents.push_back(student);
 }
 
 void FA::viewAssignedStudents()
@@ -380,16 +433,33 @@ public:
     vector<Course *> viewBreadthCourse();
     vector<Course *> viewLateralCourse();
 };
+
+vector<Course *> Semester::viewCompulsoryCourse()
+{
+    return compulsory_courses;
+}
+
+vector<Course *> Semester::viewBreadthCourse()
+{
+    return breadth;
+}
+
+vector<Course *> Semester::viewLateralCourse()
+{
+    return lateral;
+}
+
 class Course
 {
 private:
     string id, branch;
     vector<Student *> studentIDs;
-    vector<string> facultyIDs;
+    vector<Faculty *> facultyIDs;
     int credits;
     bool isCompulsory;             // true if compulsory, false if breadth or lateral
-    map<string, int> attendance;   // key = id, value = attendance
-    map<string, string> feedbacks; // key = id, value = feedback
+    map<Student *, int> marks;
+    map<Student *, int> attendance; // key = student object
+    vector<string> feedbacks;
 
 public:
     Course(string id = "", string branch = "", int credits = 0, bool isCompulsory = false)
@@ -398,10 +468,59 @@ public:
     void addfaculty(Faculty *faculty);
     void removefaculty();
     void enrollStudent(Student *student);                      // push_back
-    void receiveFeedback(Student *studentID, string feedback); // push_back feedback
-    string getID() const { return id; }
-    int getCredits() const { return credits; }
+    void receiveFeedback(string feedback); // push_back feedback
+    string getID();
+    int getCredits();
+    void add_marks(Student *student, int mark) { marks[student] = mark; }
+    void add_attendance(Student *student, int attendanceCount) { attendance[student] = attendanceCount; }
 };
+
+void Course::addfaculty(Faculty *faculty)
+{
+    facultyIDs.push_back(faculty);
+}
+void Course::enrollStudent(Student *student)
+{
+    studentIDs.push_back(student);
+}
+void Course::receiveFeedback(string feedback)
+{
+    feedbacks.push_back(feedback);
+}
+void Course::removefaculty()
+{
+    // show all faculties and then remove the faculty
+    for (auto &&faculty : facultyIDs)
+    {
+        cout << "Faculty ID: " << faculty->getFacultyID() << ", Name: " << faculty->getFacultyName() << endl;
+    }
+    cout << endl;
+    cout << "Enter the Faculty ID to remove: ";
+    string facultyID;
+    cin >> facultyID;
+    for (auto it = facultyIDs.begin(); it != facultyIDs.end();)
+    {
+        if ((*it)->getFacultyID() == facultyID)
+        {
+            it = facultyIDs.erase(it);
+            cout << "Faculty with ID " << facultyID << " removed successfully." << endl;
+            break;
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
+string Course::getID()
+{
+    return id;
+}
+int Course::getCredits()
+{
+    return credits;
+}
 
 class Date
 {
@@ -414,6 +533,71 @@ public:
     int Calculate_days(Date Start_date, Date End_date);
     string showDate();
 };
+
+int Date ::Calculate_days(Date Start_date, Date End_date)
+{
+    int days = 0;
+    vector<int> days_in_month = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    int day1 = Start_date.day, day2 = End_date.day;
+    int month1 = Start_date.month, month2 = End_date.month;
+    int year1 = Start_date.year, year2 = End_date.year;
+    if (year1 > year2 || (year1 == year2 && month1 > month2) || (year1 == year2 && month1 == month2 && day1 > day2))
+    {
+        cout << "Invalid date range." << endl;
+        return -1;
+    }
+    if (year1 == year2)
+    {
+        if (month1 == month2)
+        {
+            days = day2 - day1;
+        }
+        else
+        {
+            days += days_in_month[month1 - 1] - day1;
+            for (int i = month1; i < month2 - 1; i++)
+            {
+                days += days_in_month[i];
+            }
+            days += day2;
+        }
+    }
+    else
+    {
+        days += days_in_month[month1 - 1] - day1;
+        for (int i = month1; i < 12; i++)
+        {
+            days += days_in_month[i];
+        }
+        for (int i = 0; i < month2 - 1; i++)
+        {
+            days += days_in_month[i];
+        }
+        days += day2;
+        for (int i = year1 + 1; i < year2; i++)
+        {
+            if ((i % 4 == 0 && i % 100 != 0) || (i % 400 == 0))
+                days += 366;
+            else
+                days += 365;
+        }
+        return days;
+    }
+}
+
+string Date::showDate()
+{
+    string date = "";
+    if(day < 10)
+        date += "0";
+    date += to_string(day) + "/";
+    if(month < 10)
+        date += "0";
+    date += to_string(month) + "/";
+    date += to_string(year);
+    return date;
+}
+
 class LeaveApplication
 {
 private:
@@ -425,10 +609,23 @@ public:
     LeaveApplication(string reason = "", Date startDate = Date(), Date endDate = Date())
         : reason(reason), startDate(startDate), endDate(endDate) {}
 
-    string getReason() const { return reason; }
-    Date getStartDate() const { return startDate; }
-    Date getEndDate() const { return endDate; }
+    string getReason();
+    Date getStartDate();
+    Date getEndDate();
 };
+
+string LeaveApplication::getReason()
+{
+    return reason;
+}
+Date LeaveApplication::getStartDate()
+{
+    return startDate;
+}
+Date LeaveApplication::getEndDate()
+{
+    return endDate;
+}
 int main()
 {
 

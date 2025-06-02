@@ -129,9 +129,12 @@ void retrieve_info()
                     {
                         students[j].addSubject(&courses_sem1[i]); // add the course to the student's registered courses
 
-                        courses_sem1[i].enrollStudent(&students[j]); // studentId's vector in course will be updated
-
+                        courses_sem1[i].enrollStudent(&students[j]);
+                    
                         students[j].addMarks(subject_names_sem1[i], marks);
+
+                        courses_sem1[i].add_marks(&students[j], marks); // add marks to the course's marks map
+
                         break;
                     }
                 }
@@ -164,6 +167,9 @@ void retrieve_info()
                     if (students[j].getRollNo() == rollNo)
                     {
                         students[j].addAttendance(subject_names_sem1[i], attendance);
+
+                        courses_sem1[i].add_attendance(&students[j], attendance);
+
                         break;
                     }
                 }
@@ -219,11 +225,13 @@ void retrieve_info()
                 {
                     if (students[j].getRollNo() == rollNo)
                     {
-                        students[j].addSubject(&courses_sem2[i]); // add the course to the student's registered courses
+                        students[j].addSubject(&courses_sem2[i]);
 
-                        courses_sem2[i].enrollStudent(&students[j]); // studentId's vector in course will be updated
+                        courses_sem2[i].enrollStudent(&students[j]);
 
                         students[j].addMarks(subject_names_sem2[i], marks);
+
+                        courses_sem2[i].add_marks(&students[j], marks);
                         break;
                     }
                 }
@@ -256,6 +264,8 @@ void retrieve_info()
                     if (students[j].getRollNo() == rollNo)
                     {
                         students[j].addAttendance(subject_names_sem2[i], attendance);
+
+                        courses_sem2[i].add_attendance(&students[j], attendance);
                         break;
                     }
                 }
@@ -322,6 +332,7 @@ void retrieve_info()
                 if (sub == subject_names_sem1[j])
                 {
                     faculties[i].AssignSubject(&courses_sem1[j]);
+                    courses_sem1[j].addfaculty(&faculties[i]);
                     flag = 1;
                     break;
                 }
@@ -333,6 +344,7 @@ void retrieve_info()
                     if (sub == subject_names_sem2[j])
                     {
                         faculties[i].AssignSubject(&courses_sem2[j]);
+                        courses_sem2[j].addfaculty(&faculties[i]); 
                         break;
                     }
                 }
@@ -354,7 +366,7 @@ void retrieve_info()
     {
         if(faculties[j].is_FA_function())
         {
-            fa[fa_index] = FA(faculties[j].getUsername(), faculties[j].getPassword(), faculties[j].getName(), faculties[j].getID(),
+            fa[fa_index] = FA(faculties[j].getFacultyID(), faculties[j].getPassword(), faculties[j].getFacultyName(), faculties[j].getFacultyID(),
                               faculties[j].getGender(), faculties[j].getEmail(), faculties[j].getBranch(), faculties[j].getOfficeNo(), true);
             fa_index++;
         }
@@ -366,7 +378,7 @@ void retrieve_info()
         {
             if(students[i].getFA_ID() == fa[j].getID())
             {
-                fa[j].getAssignedStudents().push_back(&students[i]); // add the student to the FA's assigned students
+                fa[j].setAssignedStudents(&students[i]);
                 break;
             }
         }
