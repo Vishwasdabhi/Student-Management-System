@@ -22,6 +22,9 @@ using namespace std;
 Student *students;
 Course *courses_sem1;
 Course *courses_sem2;
+Faculty *faculties;
+FA *fa;
+
 void retrieve_info()
 {
     ifstream file("student_information.csv");
@@ -261,6 +264,113 @@ void retrieve_info()
     }
     file4.close();
 
+    ifstream file5("faculty_information.csv");
+    if (!file5.is_open())
+    {
+        cout << "Error opening faculty information file." << endl;
+        exit(1);
+    }
+    int faculty_count = 0;
+    while (getline(file5, line))
+    {
+        faculty_count++;
+    }
+    faculty_count--;
+    file5.clear();
+    file5.seekg(0, ios::beg);
+    getline(file5, header);
+    faculties = new Faculty[faculty_count];
+    for (int i = 0; i < faculty_count; i++)
+    {
+        getline(file5, s);
+        stringstream ss(s);
+        string faculty_id, password, faculty_name, branch, email,gender,officeNo;
+        bool is_FA = false;
+        getline(ss, faculty_id, ',');
+        getline(ss, password, ',');
+        getline(ss, faculty_name, ',');
+        getline(ss,gender, ',');
+        getline(ss, email, ',');
+        getline(ss, branch, ',');
+        getline(ss, officeNo, ',');
+        getline(ss, s, ',');
+        if (s == "1")
+        {
+            is_FA = true;
+        }
+        else if (s == "0")
+        {
+            is_FA = false;
+        }
+        
+        vector<string> subjects;
+        string subject;
+        while (getline(ss, subject, ','))
+        {
+            if (!subject.empty())
+            {
+                subjects.push_back(subject);
+            }
+        }
+        
+        faculties[i] = Faculty(faculty_id, password, faculty_name,faculty_id,gender, email,branch, officeNo,is_FA);
+        for (const auto &sub : subjects)
+        {
+            int flag = 0;
+            for (int j = 0; j < subject_names_sem1.size(); j++)
+            {
+                if (sub == subject_names_sem1[j])
+                {
+                    faculties[i].AssignSubject(&courses_sem1[j]);
+                    flag = 1;
+                    break;
+                }
+            }
+            if (flag == 0)
+            {
+                for (int j = 0; j < subject_names_sem2.size(); j++)
+                {
+                    if (sub == subject_names_sem2[j])
+                    {
+                        faculties[i].AssignSubject(&courses_sem2[j]);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    file5.close();
+    int faculty_count_fa = 0;
+    for(int j = 0; j < faculty_count; j++)
+    {
+        if(faculties[j].is_FA_function())
+        {
+            faculty_count_fa++;
+        }
+    }
+    fa = new FA[faculty_count_fa];
+    int fa_index = 0;
+    for(int j = 0; j < faculty_count; j++)
+    {
+        if(faculties[j].is_FA_function())
+        {
+            fa[fa_index] = FA(faculties[j].getUsername(), faculties[j].getPassword(), faculties[j].getName(), faculties[j].getID(),
+                              faculties[j].getGender(), faculties[j].getEmail(), faculties[j].getBranch(), faculties[j].getOfficeNo(), true);
+            fa_index++;
+        }
+    }
+
+    for(int i = 0; i<line_count; i++)
+    {
+        for(int j = 0; j<faculty_count_fa; j++)
+        {
+            if(students[i].getFA_ID() == fa[j].getID())
+            {
+                fa[j].getAssignedStudents().push_back(&students[i]); // add the student to the FA's assigned students
+                break;
+            }
+        }
+    }
     // Problem: Either student should have a vector of marks or we should have a vector of courses in student class.
 }
 
@@ -377,7 +487,7 @@ void createheader()
     // created the header files for student information, attendance and marks for semester 1 and 2.
 
     inFile1 = fopen("faculty_information.csv", "w");
-    fprintf(inFile1, "Faculty ID,Password,Faculty Name,Branch,Email\n");
+    fprintf(inFile1, "Faculty ID,Password,Faculty Name,Gender,Email,Branch,Office_No,is_FA,Subject_1,Subject_2,Subject_3,Subject_4,Subject_5\n");
     fclose(inFile1);
 
     cout << "Database created successfully!" << endl;
