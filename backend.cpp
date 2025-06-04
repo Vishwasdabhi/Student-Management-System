@@ -45,22 +45,22 @@ void retrieve_info()
     {
         file.close();
     }
-    file.clear(); // clear the EOF flag
+    file.clear();            // clear the EOF flag
     file.seekg(0, ios::beg); // move the cursor back to the beginning of the file
 
     string header;
     getline(file, header);
-    
+
     students = new Student[line_count];
     char ch;
     string s;
     int sem_num, year;
     float cgpa;
-    for(int j = 0; j < line_count; j++)
+    for (int j = 0; j < line_count; j++)
     {
         getline(file, s);
         stringstream ss(s);
-        string name,password, branch, rollNo, sem_num_str,FA_ID,Gender, dob, email, year_str, cgpa_str;
+        string name, password, branch, rollNo, sem_num_str, FA_ID, Gender, dob, email, year_str, cgpa_str;
         getline(ss, name, ',');
         getline(ss, password, ',');
         getline(ss, branch, ',');
@@ -75,7 +75,7 @@ void retrieve_info()
         sem_num = stoi(sem_num_str);
         year = stoi(year_str);
         cgpa = stof(cgpa_str);
-        students[j] = Student(rollNo, password, name, rollNo, year, branch, FA_ID, cgpa,Gender, dob, email, sem_num);
+        students[j] = Student(rollNo, password, name, rollNo, year, branch, FA_ID, cgpa, Gender, dob, email, sem_num);
     }
     file.close();
 
@@ -111,7 +111,7 @@ void retrieve_info()
         courses_sem1[i] = Course(subject_names_sem1[i], branch, credits_sem1[i], is_compulsory_sem1[i]);
     }
 
-    while(getline(file, s))
+    while (getline(file, s))
     {
         stringstream ss(s);
         string rollNo;
@@ -130,7 +130,7 @@ void retrieve_info()
                         students[j].addSubject(&courses_sem1[i]); // add the course to the student's registered courses
 
                         courses_sem1[i].enrollStudent(&students[j]);
-                    
+
                         students[j].addMarks(subject_names_sem1[i], marks);
 
                         courses_sem1[i].add_marks(&students[j], marks); // add marks to the course's marks map
@@ -150,7 +150,7 @@ void retrieve_info()
         exit(1);
     }
     getline(file2, header);
-    while(getline(file2, s))
+    while (getline(file2, s))
     {
         stringstream ss(s);
         string rollNo;
@@ -177,7 +177,6 @@ void retrieve_info()
         }
     }
     file2.close();
-
 
     ifstream file3("marks_sem2.csv");
     if (!file3.is_open())
@@ -209,7 +208,7 @@ void retrieve_info()
         string branch = subject_names_sem2[i].substr(0, 2);
         courses_sem2[i] = Course(subject_names_sem2[i], branch, credits_sem2[i], is_compulsory_sem2[i]);
     }
-    while(getline(file3, s))
+    while (getline(file3, s))
     {
         stringstream ss(s);
         string rollNo;
@@ -247,7 +246,7 @@ void retrieve_info()
         exit(1);
     }
     getline(file4, header);
-    while(getline(file4, s))
+    while (getline(file4, s))
     {
         stringstream ss(s);
         string rollNo;
@@ -294,12 +293,12 @@ void retrieve_info()
     {
         getline(file5, s);
         stringstream ss(s);
-        string faculty_id, password, faculty_name, branch, email,gender,officeNo;
+        string faculty_id, password, faculty_name, branch, email, gender, officeNo;
         bool is_FA = false;
         getline(ss, faculty_id, ',');
         getline(ss, password, ',');
         getline(ss, faculty_name, ',');
-        getline(ss,gender, ',');
+        getline(ss, gender, ',');
         getline(ss, email, ',');
         getline(ss, branch, ',');
         getline(ss, officeNo, ',');
@@ -312,7 +311,7 @@ void retrieve_info()
         {
             is_FA = false;
         }
-        
+
         vector<string> subjects;
         string subject;
         while (getline(ss, subject, ','))
@@ -322,8 +321,8 @@ void retrieve_info()
                 subjects.push_back(subject);
             }
         }
-        
-        faculties[i] = Faculty(faculty_id, password, faculty_name,faculty_id,gender, email,branch, officeNo,is_FA);
+
+        faculties[i] = Faculty(faculty_id, password, faculty_name, faculty_id, gender, email, branch, officeNo, is_FA);
         for (const auto &sub : subjects)
         {
             int flag = 0;
@@ -344,7 +343,7 @@ void retrieve_info()
                     if (sub == subject_names_sem2[j])
                     {
                         faculties[i].AssignSubject(&courses_sem2[j]);
-                        courses_sem2[j].addfaculty(&faculties[i]); 
+                        courses_sem2[j].addfaculty(&faculties[i]);
                         break;
                     }
                 }
@@ -353,18 +352,18 @@ void retrieve_info()
     }
     file5.close();
     int faculty_count_fa = 0;
-    for(int j = 0; j < faculty_count; j++)
+    for (int j = 0; j < faculty_count; j++)
     {
-        if(faculties[j].is_FA_function())
+        if (faculties[j].is_FA_function())
         {
             faculty_count_fa++;
         }
     }
     fa = new FA[faculty_count_fa];
     int fa_index = 0;
-    for(int j = 0; j < faculty_count; j++)
+    for (int j = 0; j < faculty_count; j++)
     {
-        if(faculties[j].is_FA_function())
+        if (faculties[j].is_FA_function())
         {
             fa[fa_index] = FA(faculties[j].getFacultyID(), faculties[j].getPassword(), faculties[j].getFacultyName(), faculties[j].getFacultyID(),
                               faculties[j].getGender(), faculties[j].getEmail(), faculties[j].getBranch(), faculties[j].getOfficeNo(), true);
@@ -372,11 +371,11 @@ void retrieve_info()
         }
     }
 
-    for(int i = 0; i<line_count; i++)
+    for (int i = 0; i < line_count; i++)
     {
-        for(int j = 0; j<faculty_count_fa; j++)
+        for (int j = 0; j < faculty_count_fa; j++)
         {
-            if(students[i].getFA_ID() == fa[j].getID())
+            if (students[i].getFA_ID() == fa[j].getID())
             {
                 fa[j].setAssignedStudents(&students[i]);
                 break;
@@ -398,53 +397,53 @@ void createheader()
 
     if (file == NULL || inFile1 == NULL || inFile2 == NULL || inFile3 == NULL || inFile4 == NULL)
     {
-        cout << "Error opening file for writing." <<endl;
+        cout << "Error opening file for writing." << endl;
         exit(1);
     }
 
     system("cls");
-    
-    cout<<"The Database has not yet been created. PLease enter the following details to create the database.(Press enter to continue)"<<endl;
-    
+
+    cout << "The Database has not yet been created. PLease enter the following details to create the database.(Press enter to continue)" << endl;
+
     getchar();
 
     fprintf(file, "Name,Password,Branch,Roll Number,Sem Number,FA ID,Gender,DOB,Email,Year,CGPA\n");
     fclose(file);
 
-    vector<pair<string,pair<int,bool>>> subject_name_sem1;
-    vector<pair<string,pair<int,bool>>> subject_name_sem2;
+    vector<pair<string, pair<int, bool>>> subject_name_sem1;
+    vector<pair<string, pair<int, bool>>> subject_name_sem2;
 
     system("cls");
-    cout<<"Enter the number of subjects for Semester 1:"<<endl;
+    cout << "Enter the number of subjects for Semester 1:" << endl;
     int no_subjects_sem1;
-    cin>>no_subjects_sem1;
+    cin >> no_subjects_sem1;
     getchar(); // to consume the newline character after entering number of subjects
-    cout<<"Enter Subject ID, Credits and whether it is a compulsory subject (1 for Yes, 0 for No):"<<endl;
+    cout << "Enter Subject ID, Credits and whether it is a compulsory subject (1 for Yes, 0 for No):" << endl;
 
     for (int i = 0; i < no_subjects_sem1; i++)
     {
         string subject_name;
         int credits;
         bool is_compulsory;
-        cout<<"Subject ID"<<i+1<<": ";
+        cout << "Subject ID" << i + 1 << ": ";
         getline(cin, subject_name);
-        cout<<"Credits: ";
-        cin>>credits;
-        cout<<"Is it a compulsory subject? (1 for Yes, 0 for No): ";
-        cin>>is_compulsory;
+        cout << "Credits: ";
+        cin >> credits;
+        cout << "Is it a compulsory subject? (1 for Yes, 0 for No): ";
+        cin >> is_compulsory;
         getchar(); // to consume the newline character after entering is_compulsory
         subject_name_sem1.push_back(make_pair(subject_name, make_pair(credits, is_compulsory)));
     }
 
     fprintf(inFile1, "Roll Number,");
-    for(int i = 0; i < no_subjects_sem1; i++)
+    for (int i = 0; i < no_subjects_sem1; i++)
     {
         fprintf(inFile1, "%s,", subject_name_sem1[i].first.c_str());
     }
     fprintf(inFile1, "\n");
 
     fprintf(inFile3, "Roll Number,");
-    for(int i = 0; i < no_subjects_sem1; i++)
+    for (int i = 0; i < no_subjects_sem1; i++)
     {
         fprintf(inFile3, "%s(%d-%d)", subject_name_sem1[i].first.c_str(), subject_name_sem1[i].second.first, subject_name_sem1[i].second.second);
     }
@@ -455,39 +454,39 @@ void createheader()
 
     system("cls");
 
-    cout<<"Enter the number of subjects for Semester 2:"<<endl;
+    cout << "Enter the number of subjects for Semester 2:" << endl;
 
     int no_subjects_sem2;
-    cin>>no_subjects_sem2;
+    cin >> no_subjects_sem2;
 
     getchar(); // to consume the newline character after entering number of subjects
 
-    cout<<"Enter Subject Name, Credits and whether it is a compulsory subject (1 for Yes, 0 for No):"<<endl;
+    cout << "Enter Subject Name, Credits and whether it is a compulsory subject (1 for Yes, 0 for No):" << endl;
 
     for (int i = 0; i < no_subjects_sem2; i++)
     {
         string subject_name;
         int credits;
         bool is_compulsory;
-        cout<<"Subject "<<i+1<<": ";
+        cout << "Subject " << i + 1 << ": ";
         getline(cin, subject_name);
-        cout<<"Credits: ";
-        cin>>credits;
-        cout<<"Is it a compulsory subject? (1 for Yes, 0 for No): ";
-        cin>>is_compulsory;
+        cout << "Credits: ";
+        cin >> credits;
+        cout << "Is it a compulsory subject? (1 for Yes, 0 for No): ";
+        cin >> is_compulsory;
         getchar(); // to consume the newline character after entering is_compulsory
         subject_name_sem2.push_back(make_pair(subject_name, make_pair(credits, is_compulsory)));
     }
 
     fprintf(inFile2, "Roll Number,");
-    for(int i = 0; i < no_subjects_sem2; i++)
+    for (int i = 0; i < no_subjects_sem2; i++)
     {
         fprintf(inFile2, "%s,", subject_name_sem2[i].first.c_str());
     }
     fprintf(inFile2, "\n");
 
     fprintf(inFile4, "Roll Number,");
-    for(int i = 0; i < no_subjects_sem2; i++)
+    for (int i = 0; i < no_subjects_sem2; i++)
     {
         fprintf(inFile4, "%s(%d-%d)", subject_name_sem2[i].first.c_str(), subject_name_sem2[i].second.first, subject_name_sem2[i].second.second);
     }
@@ -512,7 +511,7 @@ void createheader()
 void headercheck()
 {
     ifstream file1("student_information.csv");
-    if(!file1.is_open())
+    if (!file1.is_open())
     {
         createheader();
     }
@@ -526,10 +525,196 @@ void headercheck()
     }
     // retrieve_info();
     // retrieve_attendance();
+}
 
+void write_all_files()
+{
+    ofstream file("student_information.csv");
+    if (!file.is_open())
+    {
+        cout << "Error opening student information file for writing." << endl;
+        return;
+    }
+    file << "Name,Password,Branch,Roll Number,Sem Number,FA ID,Gender,DOB,Email,Year,CGPA\n";
+    for (int i = 0; i < sizeof(students) / sizeof(students[0]); i++)
+    {
+        file << students[i].getName() << ","
+             << students[i].getPassword() << ","
+             << students[i].getBranch() << ","
+             << students[i].getRollNo() << ","
+             << students[i].getSemNum() << ","
+             << students[i].getFA_ID() << ","
+             << students[i].getGender() << ","
+             << students[i].getDOB() << ","
+             << students[i].getEmail() << ","
+             << students[i].getYear() << ","
+             << students[i].getCGPA() << "\n";
+    }
+    file.close();
+
+    ofstream inFile1("marks_sem1.csv");
+    if (!inFile1.is_open())
+    {
+        cout << "Error opening marks file for Semester 1." << endl;
+        return;
+    }
+    inFile1 << "Roll Number,";
+    for (int i = 0; i < sizeof(courses_sem1) / sizeof(courses_sem1[0]); i++)
+    {
+        string subject_name = courses_sem1[i].getID();
+        int credits = courses_sem1[i].getCredits();
+        bool is_compulsory = courses_sem1[i].isCompulsoryCourse();
+        inFile1 << subject_name << "(" << credits << "-" << is_compulsory << "),";
+    }
+    inFile1 << "\n";
+    for (int i = 0; i < sizeof(students) / sizeof(students[0]); i++)
+    {
+        if (students[i].getSemNum() != 1)
+            continue;
+        inFile1 << students[i].getRollNo() << ",";
+        for (int j = 0; j < sizeof(courses_sem1) / sizeof(courses_sem1[0]); j++)
+        {
+            if (students[i].getMarks().find(courses_sem1[j].getID()) != students[i].getMarks().end())
+            {
+                inFile1 << students[i].getMarks().at(courses_sem1[j].getID()) << ",";
+            }
+            else
+            {
+                inFile1 << ",";
+            }
+        }
+        inFile1 << "\n";
+    }
+    inFile1.close();
+
+    ofstream inFile2("attendance_sem1.csv");
+    if (!inFile2.is_open())
+    {
+        cout << "Error opening attendance file for Semester 1." << endl;
+        return;
+    }
+    inFile2 << "Roll Number,";
+    for (int i = 0; i < sizeof(courses_sem1) / sizeof(courses_sem1[0]); i++)
+    {
+        inFile2 << courses_sem1[i].getID() << ",";
+    }
+    inFile2 << "\n";
+    for (int i = 0; i < sizeof(students) / sizeof(students[0]); i++)
+    {
+        if (students[i].getSemNum() != 1)
+            continue;
+        inFile2 << students[i].getRollNo() << ",";
+        for (int j = 0; j < sizeof(courses_sem1) / sizeof(courses_sem1[0]); j++)
+        {
+            if (students[i].getAttendance().find(courses_sem1[j].getID()) != students[i].getAttendance().end())
+            {
+                inFile2 << students[i].getAttendance().at(courses_sem1[j].getID()) << ",";
+            }
+            else
+            {
+                inFile2 << ",";
+            }
+        }
+        inFile2 << "\n";
+    }
+    inFile2.close();
+
+    ofstream inFile3("marks_sem2.csv");
+    if (!inFile3.is_open())
+    {
+        cout << "Error opening marks file for Semester 2." << endl;
+        return;
+    }
+    inFile3 << "Roll Number,";
+    for (int i = 0; i < sizeof(courses_sem2) / sizeof(courses_sem2[0]); i++)
+    {
+        string subject_name = courses_sem2[i].getID();
+        int credits = courses_sem2[i].getCredits();
+        bool is_compulsory = courses_sem2[i].isCompulsoryCourse();
+        inFile3 << subject_name << "(" << credits << "-" << is_compulsory << "),";
+    }
+    inFile3 << "\n";
+    for (int i = 0; i < sizeof(students) / sizeof(students[0]); i++)
+    {
+        if (students[i].getSemNum() != 2)
+            continue;
+        inFile3 << students[i].getRollNo() << ",";
+        for (int j = 0; j < sizeof(courses_sem2) / sizeof(courses_sem2[0]); j++)
+        {
+            if (students[i].getMarks().find(courses_sem2[j].getID()) != students[i].getMarks().end())
+            {
+                inFile3 << students[i].getMarks().at(courses_sem2[j].getID()) << ",";
+            }
+            else
+            {
+                inFile3 << ",";
+            }
+        }
+        inFile3 << "\n";
+    }
+    inFile3.close();
+
+    ofstream inFile4("attendance_sem2.csv");
+    if (!inFile4.is_open())
+    {
+        cout << "Error opening attendance file for Semester 2." << endl;
+        return;
+    }
+    inFile4 << "Roll Number,";
+    for (int i = 0; i < sizeof(courses_sem2) / sizeof(courses_sem2[0]); i++)
+    {
+        inFile4 << courses_sem2[i].getID() << ",";
+    }
+    inFile4 << "\n";
+    for (int i = 0; i < sizeof(students) / sizeof(students[0]); i++)
+    {
+        if (students[i].getSemNum() != 2)
+            continue;
+        inFile4 << students[i].getRollNo() << ",";
+        for (int j = 0; j < sizeof(courses_sem2) / sizeof(courses_sem2[0]); j++)
+        {
+            if (students[i].getAttendance().find(courses_sem2[j].getID()) != students[i].getAttendance().end())
+            {
+                inFile4 << students[i].getAttendance().at(courses_sem2[j].getID()) << ",";
+            }
+            else
+            {
+                inFile4 << ",";
+            }
+        }
+        inFile4 << "\n";
+    }
+    inFile4.close();
+
+    ofstream inFile5("faculty_information.csv");
+    if (!inFile5.is_open())
+    {
+        cout << "Error opening faculty information file for writing." << endl;
+        return;
+    }
+    inFile5 << "Faculty ID,Password,Faculty Name,Gender,Email,Branch,Office_No,is_FA,Subject_1,Subject_2,Subject_3,Subject_4,Subject_5\n";
+    for (int i = 0; i < sizeof(faculties) / sizeof(faculties[0]); i++)
+    {
+        inFile5 << faculties[i].getFacultyID() << ","
+                << faculties[i].getPassword() << ","
+                << faculties[i].getFacultyName() << ","
+                << faculties[i].getGender() << ","
+                << faculties[i].getEmail() << ","
+                << faculties[i].getBranch() << ","
+                << faculties[i].getOfficeNo() << ","
+                << (faculties[i].is_FA_function() ? "1" : "0") << ",";
+        for (int j = 0; j < sizeof(faculties[i].getSubjects()) / sizeof(faculties[i].getSubjects()[0]); j++)
+        {
+            inFile5 << faculties[i].getSubjects()[j]->getID() << ",";
+        }
+        for (int j = sizeof(faculties[i].getSubjects()) / sizeof(faculties[i].getSubjects()[0]); j < 5; j++)
+        {
+            inFile5 << ",";
+        }
+        inFile5 << "\n";
+    }
 }
 
 int main()
 {
-    
 }

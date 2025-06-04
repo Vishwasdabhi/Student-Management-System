@@ -72,9 +72,9 @@ public:
 
     bool login(string uname, string pass) override;
     bool changePassword(string newPass) override; // old pass check is important before changing
-    void setFA(FA *fa) { My_FA = fa; } // to be used for leave application
-    string getFA_ID() { return FA_ID; } // to be used for leave application
-    void viewDetails(); // what to show will be decided
+    void setFA(FA *fa) { My_FA = fa; }            // to be used for leave application
+    string getFA_ID() { return FA_ID; }           // to be used for leave application
+    void viewDetails();                           // what to show will be decided
     // to be changed to get details
     int getSem();                                                    // done
     void applyForLeave(string reason, Date startDate, Date endDate); // done
@@ -87,7 +87,73 @@ public:
     void addSubject(Course *course);                                 // done     // add course to registered courses
     void addAttendance(string courseID, int attendanceCount);        // done      // add attendance for a course
     void addMarks(string courseID, int mark);                        // done    // add marks for a course
+    string getName();                                                // to be used for leave application
+    string getPassword();                                            // to be used for leave application
+    string getBranch();                                              // to be used for leave application
+    int getSemNum();                                                 // to be used for leave application
+    string getGender();                                              // to be used for leave application
+    string getDOB();                                                 // to be used for leave application
+    string getEmail();                                               // to be used for leave application
+    int getYear();                                                   // to be used for leave application
+    float getCGPA();                                                 // to be used for leave application
+    map<string, int> getMarks();                                     // to be used for leave application
+    map<string, int> getAttendance();                                // to be used for leave application
 };
+
+map<string, int> Student::getMarks()
+{
+    return marks;
+}
+
+map<string, int> Student::getAttendance()
+{
+    return attendance;
+}
+
+string Student::getName()
+{
+    return name;
+}
+
+string Student::getPassword()
+{
+    return password;
+}
+
+string Student::getBranch()
+{
+    return branch;
+}
+
+int Student::getSemNum()
+{
+    return sem_num;
+}
+
+string Student::getGender()
+{
+    return gender;
+}
+
+string Student::getDOB()
+{
+    return dob;
+}
+
+string Student::getEmail()
+{
+    return email;
+}
+
+int Student::getYear()
+{
+    return year;
+}
+
+float Student::getCGPA()
+{
+    return CGPA;
+}
 
 int Student ::getSem()
 {
@@ -244,9 +310,10 @@ protected:
     string name, gender, email, branch, id, officeNo;
     vector<Course *> subjects;
     bool is_FA;
+
 public:
     Faculty(string uname = "", string pass = "", string name = "", string id = "",
-            string gender = "", string email = "", string branch = "", string officeNo = "",bool is_FA = false)
+            string gender = "", string email = "", string branch = "", string officeNo = "", bool is_FA = false)
         : User(uname, pass), name(name), id(id), gender(gender),
           email(email), branch(branch), officeNo(officeNo), is_FA(is_FA) {}
 
@@ -344,8 +411,8 @@ public:
     FA(string uname = "", string pass = "", string name = "", string id = "",
        string gender = "", string email = "", string branch = "", string officeNo = "", bool is_FA = true)
         : Faculty(uname, pass, name, id, gender, email, branch, officeNo, is_FA), New_Notification(false) {}
-    string getID() { return id; } // to be used for leave application
-    vector<Student *> getAssignedStudents();                   // done
+    string getID() { return id; }            // to be used for leave application
+    vector<Student *> getAssignedStudents(); // done
     void setAssignedStudents(Student *student);
     void viewAssignedStudents();                               // done
     void reviewLeaveApplication();                             // done
@@ -456,7 +523,7 @@ private:
     vector<Student *> studentIDs;
     vector<Faculty *> facultyIDs;
     int credits;
-    bool isCompulsory;             // true if compulsory, false if breadth or lateral
+    bool isCompulsory; // true if compulsory, false if breadth or lateral
     map<Student *, int> marks;
     map<Student *, int> attendance; // key = student object
     vector<string> feedbacks;
@@ -467,13 +534,19 @@ public:
 
     void addfaculty(Faculty *faculty);
     void removefaculty();
-    void enrollStudent(Student *student);                      // push_back
+    void enrollStudent(Student *student);  // push_back
     void receiveFeedback(string feedback); // push_back feedback
     string getID();
     int getCredits();
     void add_marks(Student *student, int mark) { marks[student] = mark; }
     void add_attendance(Student *student, int attendanceCount) { attendance[student] = attendanceCount; }
+    bool isCompulsoryCourse(); // to check if the course is compulsory
 };
+
+bool Course::isCompulsoryCourse()
+{
+    return isCompulsory;
+}
 
 void Course::addfaculty(Faculty *faculty)
 {
@@ -588,10 +661,10 @@ int Date ::Calculate_days(Date Start_date, Date End_date)
 string Date::showDate()
 {
     string date = "";
-    if(day < 10)
+    if (day < 10)
         date += "0";
     date += to_string(day) + "/";
-    if(month < 10)
+    if (month < 10)
         date += "0";
     date += to_string(month) + "/";
     date += to_string(year);
