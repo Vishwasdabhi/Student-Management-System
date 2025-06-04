@@ -9,6 +9,7 @@ class Semester;
 class Course;
 class Date;
 class LeaveApplication;
+
 class User
 {
 protected:
@@ -98,6 +99,17 @@ public:
     float getCGPA();                                                 // to be used for leave application
     map<string, int> getMarks();                                     // to be used for leave application
     map<string, int> getAttendance();                                // to be used for leave application
+
+    void editProfile(); // to be implemented
+    vector<Course *> getRegisteredCourses() { return registeredCourses; }
+    Semester *getSemester()
+    {
+        return new Semester(sem_num);
+    }
+    vector<LeaveApplication> getLeaveHistory()
+    {
+        return leaveHistory;
+    }
 };
 
 map<string, int> Student::getMarks()
@@ -330,6 +342,9 @@ public:
     string getEmail();
     string getBranch();
     string getOfficeNo();
+    void viewDetails(); // what to show will be decided
+    void editProfile(); // to be implemented
+
     // void viewStudents(string courseID); // courseId should be from his subjects
     // void enterMarks(Course *course, int mark);
     // void viewMarks(string studentID);
@@ -417,6 +432,7 @@ public:
     void viewAssignedStudents();                               // done
     void reviewLeaveApplication();                             // done
     void submitApplication(Student *, LeaveApplication leave); // done
+    bool isNewNotification() { return New_Notification; }     // to check if there are new leave requests
 };
 
 vector<Student *> FA::getAssignedStudents()
