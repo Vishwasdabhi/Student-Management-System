@@ -4,9 +4,6 @@ include classes.cpp
 make arrays/vectors of all classes
 write save and load data functions in good manner
 */
-#include <bits/stdc++.h>
-#include <windows.h>
-#include <fstream>
 #include "classes.cpp"
 
 using namespace std;
@@ -543,7 +540,7 @@ void write_all_files()
         return;
     }
     file << "Name,Password,Branch,Roll Number,Sem Number,FA ID,Gender,DOB,Email,Year,CGPA\n";
-    for (int i = 0; i < sizeof(students) / sizeof(students[0]); i++)
+    for (int i = 0; i < students.size(); i++)
     {
         file << students[i].getName() << ","
              << students[i].getPassword() << ","
@@ -566,7 +563,7 @@ void write_all_files()
         return;
     }
     inFile1 << "Roll Number,";
-    for (int i = 0; i < sizeof(courses_sem1) / sizeof(courses_sem1[0]); i++)
+    for (int i = 0; i <courses_sem1.size(); i++)
     {
         string subject_name = courses_sem1[i].getID();
         int credits = courses_sem1[i].getCredits();
@@ -574,16 +571,17 @@ void write_all_files()
         inFile1 << subject_name << "(" << credits << "-" << is_compulsory << "),";
     }
     inFile1 << "\n";
-    for (int i = 0; i < sizeof(students) / sizeof(students[0]); i++)
+    for (int i = 0; i < students.size(); i++)
     {
         if (students[i].getSemNum() != 1)
             continue;
         inFile1 << students[i].getRollNo() << ",";
-        for (int j = 0; j < sizeof(courses_sem1) / sizeof(courses_sem1[0]); j++)
+        map<string, int> marks = students[i].getMarks();
+        for (int j = 0; j < courses_sem1.size(); j++)
         {
-            if (students[i].getMarks().find(courses_sem1[j].getID()) != students[i].getMarks().end())
+            if (marks.find(courses_sem1[j].getID()) != marks.end())
             {
-                inFile1 << students[i].getMarks().at(courses_sem1[j].getID()) << ",";
+                inFile1 << marks.at(courses_sem1[j].getID()) << ",";
             }
             else
             {
@@ -601,21 +599,22 @@ void write_all_files()
         return;
     }
     inFile2 << "Roll Number,";
-    for (int i = 0; i < sizeof(courses_sem1) / sizeof(courses_sem1[0]); i++)
+    for (int i = 0; i < courses_sem1.size(); i++)
     {
         inFile2 << courses_sem1[i].getID() << ",";
     }
     inFile2 << "\n";
-    for (int i = 0; i < sizeof(students) / sizeof(students[0]); i++)
+    for (int i = 0; i < students.size(); i++)
     {
         if (students[i].getSemNum() != 1)
             continue;
         inFile2 << students[i].getRollNo() << ",";
-        for (int j = 0; j < sizeof(courses_sem1) / sizeof(courses_sem1[0]); j++)
+        map<string, int> attendance = students[i].getAttendance();
+        for (int j = 0; j < courses_sem1.size(); j++)
         {
-            if (students[i].getAttendance().find(courses_sem1[j].getID()) != students[i].getAttendance().end())
+            if (attendance.find(courses_sem1[j].getID()) != attendance.end())
             {
-                inFile2 << students[i].getAttendance().at(courses_sem1[j].getID()) << ",";
+                inFile2 << attendance.at(courses_sem1[j].getID()) << ",";
             }
             else
             {
@@ -633,7 +632,7 @@ void write_all_files()
         return;
     }
     inFile3 << "Roll Number,";
-    for (int i = 0; i < sizeof(courses_sem2) / sizeof(courses_sem2[0]); i++)
+    for (int i = 0; i < courses_sem2.size(); i++)
     {
         string subject_name = courses_sem2[i].getID();
         int credits = courses_sem2[i].getCredits();
@@ -641,16 +640,17 @@ void write_all_files()
         inFile3 << subject_name << "(" << credits << "-" << is_compulsory << "),";
     }
     inFile3 << "\n";
-    for (int i = 0; i < sizeof(students) / sizeof(students[0]); i++)
+    for (int i = 0; i < students.size(); i++)
     {
         if (students[i].getSemNum() != 2)
             continue;
         inFile3 << students[i].getRollNo() << ",";
-        for (int j = 0; j < sizeof(courses_sem2) / sizeof(courses_sem2[0]); j++)
+        map<string, int> marks = students[i].getMarks();
+        for (int j = 0; j < courses_sem2.size(); j++)
         {
-            if (students[i].getMarks().find(courses_sem2[j].getID()) != students[i].getMarks().end())
+            if (marks.find(courses_sem2[j].getID()) != marks.end())
             {
-                inFile3 << students[i].getMarks().at(courses_sem2[j].getID()) << ",";
+                inFile3 << marks.at(courses_sem2[j].getID()) << ",";
             }
             else
             {
@@ -668,21 +668,22 @@ void write_all_files()
         return;
     }
     inFile4 << "Roll Number,";
-    for (int i = 0; i < sizeof(courses_sem2) / sizeof(courses_sem2[0]); i++)
+    for (int i = 0; i < courses_sem2.size(); i++)
     {
         inFile4 << courses_sem2[i].getID() << ",";
     }
     inFile4 << "\n";
-    for (int i = 0; i < sizeof(students) / sizeof(students[0]); i++)
+    for (int i = 0; i < students.size(); i++)
     {
         if (students[i].getSemNum() != 2)
             continue;
         inFile4 << students[i].getRollNo() << ",";
-        for (int j = 0; j < sizeof(courses_sem2) / sizeof(courses_sem2[0]); j++)
+        map<string, int> attendance = students[i].getAttendance();
+        for (int j = 0; j < courses_sem2.size(); j++)
         {
-            if (students[i].getAttendance().find(courses_sem2[j].getID()) != students[i].getAttendance().end())
+            if (attendance.find(courses_sem2[j].getID()) != attendance.end())
             {
-                inFile4 << students[i].getAttendance().at(courses_sem2[j].getID()) << ",";
+                inFile4 << attendance.at(courses_sem2[j].getID()) << ",";
             }
             else
             {
@@ -700,26 +701,200 @@ void write_all_files()
         return;
     }
     inFile5 << "Faculty ID,Password,Faculty Name,Gender,Email,Branch,Office_No,is_FA,Subject_1,Subject_2,Subject_3,Subject_4,Subject_5\n";
-    for (int i = 0; i < sizeof(faculties) / sizeof(faculties[0]); i++)
+    for (int i = 0; i < faculties.size(); i++)
     {
         inFile5 << faculties[i].getFacultyID() << ","
-                << faculties[i].getPassword() << ","
-                << faculties[i].getFacultyName() << ","
-                << faculties[i].getGender() << ","
-                << faculties[i].getEmail() << ","
-                << faculties[i].getBranch() << ","
-                << faculties[i].getOfficeNo() << ","
-                << (faculties[i].is_FA_function() ? "1" : "0") << ",";
-        for (int j = 0; j < sizeof(faculties[i].getSubjects()) / sizeof(faculties[i].getSubjects()[0]); j++)
+        << faculties[i].getPassword() << ","
+        << faculties[i].getFacultyName() << ","
+        << faculties[i].getGender() << ","
+        << faculties[i].getEmail() << ","
+        << faculties[i].getBranch() << ","
+        << faculties[i].getOfficeNo() << ","
+        << (faculties[i].is_FA_function() ? "1" : "0") << ",";
+        vector<Course *> subjects = faculties[i].getSubjects();
+        for (int j = 0; j < subjects.size(); j++)
         {
-            inFile5 << faculties[i].getSubjects()[j]->getID() << ",";
+            inFile5 << subjects[j]->getID() << ",";
         }
-        for (int j = sizeof(faculties[i].getSubjects()) / sizeof(faculties[i].getSubjects()[0]); j < 5; j++)
+        for (int j = subjects.size(); j < 5; j++)
         {
             inFile5 << ",";
         }
         inFile5 << "\n";
     }
+}
+
+void addstudents()
+{
+    cout << "Enter the number of students to add: ";
+    int n;
+    cin >> n;
+    cin.ignore(); // to ignore the newline character after entering n
+    for (int i = 0; i < n; i++)
+    {
+        string name, rollNo, branch, FA_ID, gender, dob, email;
+        int year, sem_num;
+        cout << "Enter details for Student " << i + 1 << ":" << endl;
+        cout << "Name: ";
+        cin.ignore(); // to ignore the newline character
+        getline(cin, name);
+        cout << "Roll Number: ";
+        getline(cin, rollNo);
+        cout << "Branch: ";
+        getline(cin, branch);
+        cout << "FA ID: ";
+        getline(cin, FA_ID);
+        cout << "Year: ";
+        cin >> year;
+        cout << "Semester Number: ";
+        cin >> sem_num;
+        cin.ignore(); // to ignore the newline character after entering sem_num
+        cout << "Date of Birth (DD MM YYYY): ";
+        int day, month, year_dob;
+        cin >> day >> month >> year_dob;
+        dob = to_string(day) + " " + to_string(month) + " " + to_string(year_dob);
+        cout << "Email: ";
+        getline(cin, email);
+        cout << "Gender: ";
+        getline(cin, gender);
+        students.push_back(Student(rollNo, rollNo + "@iitbbs", name, rollNo, year, branch, FA_ID, 0.0, gender, dob, email, sem_num));
+
+        for (int j = 0; j < fa.size(); j++)
+        {
+            if (fa[j].getID() == FA_ID)
+            {
+                fa[j].setAssignedStudents(&students.back());
+                students.back().setFA(&fa[j]);
+                break;
+            }
+        }
+
+        cout << "Student " << name << " added successfully!" << endl;
+    }
+}
+
+void deletestudents()
+{
+    cout << "Enter the Roll Number of the student to delete: ";
+    string rollNo;
+    cin >> rollNo;
+    for (auto it = students.begin(); it != students.end(); ++it)
+    {
+        if (it->getRollNo() == rollNo)
+        {
+            cout << "Deleting student: " << it->getName() << endl;
+            students.erase(it);
+            cout << "Student deleted successfully!" << endl;
+            return;
+        }
+    }
+    cout << "Student with Roll Number " << rollNo << " not found." << endl;
+}
+
+void addfaculty()
+{
+    cout << "Enter the number of faculty members to add: ";
+    int n;
+    cin >> n;
+    cin.ignore(); // to ignore the newline character after entering n
+    for (int i = 0; i < n; i++)
+    {
+        string name, id, branch, gender, email, officeNo, is_FA_str;
+        bool is_FA;
+        cout << "Enter details for Faculty " << i + 1 << ":" << endl;
+        cout << "Name: ";
+        getline(cin, name);
+        cout << "ID: ";
+        getline(cin, id);
+        cout << "Branch: ";
+        getline(cin, branch);
+        cout << "Gender: ";
+        getline(cin, gender);
+        cout << "Email: ";
+        getline(cin, email);
+        cout << "Office Number: ";
+        getline(cin, officeNo);
+        cout << "Is this faculty a FA? (1 for Yes, 0 for No): ";
+        getline(cin, is_FA_str);
+        is_FA = (is_FA_str == "1");
+        faculties.push_back(Faculty(id, id + "@iitbbs", name, id, gender, email, branch, officeNo, is_FA));
+        cout << "Faculty " << name << " added successfully!" << endl;
+        if (is_FA)
+        {
+            fa.push_back(FA(id, id + "@iitbbs", name, id, gender, email, branch, officeNo, is_FA));
+            cout << "FA " << name << " added successfully!" << endl;
+        }
+    }
+}
+
+void deletefaculty()
+{
+    cout << "Enter the ID of the faculty to delete: ";
+    string id;
+    cin >> id;
+    for (auto it = faculties.begin(); it != faculties.end(); ++it)
+    {
+        if (it->getFacultyID() == id)
+        {
+            cout << "Deleting faculty: " << it->getFacultyName() << endl;
+            faculties.erase(it);
+            cout << "Faculty deleted successfully!" << endl;
+            return;
+        }
+    }
+    cout << "Faculty with ID " << id << " not found." << endl;
+}
+
+void addcourse()
+{
+    cout << "Enter the number of courses to add: ";
+    int n;
+    cin >> n;
+    cin.ignore(); // to ignore the newline character after entering n
+    for (int i = 0; i < n; i++)
+    {
+        string id, branch, is_compulsory_str;
+        int credits;
+        bool is_compulsory;
+        cout << "Enter details for Course " << i + 1 << ":" << endl;
+        cout << "Course ID: ";
+        getline(cin, id);
+        cout << "Branch: ";
+        getline(cin, branch);
+        cout << "Credits: ";
+        cin >> credits;
+        cin.ignore(); // to ignore the newline character after entering credits
+        cout << "Is this course compulsory? (1 for Yes, 0 for No): ";
+        getline(cin, is_compulsory_str);
+        is_compulsory = (is_compulsory_str == "1");
+
+        if (id.find("sem1") != string::npos)
+            courses_sem1.push_back(Course(id, branch, credits, is_compulsory));
+        else if (id.find("sem2") != string::npos)
+            courses_sem2.push_back(Course(id, branch, credits, is_compulsory));
+
+        cout << "Course " << id << " added successfully!" << endl;
+    }
+}
+
+void deletecourse()
+{
+    cout << "Enter the Course ID to delete: ";
+    string id;
+    cin >> id;
+    vector<Course> *courses = (id.find("sem1") != string::npos) ? &courses_sem1 : &courses_sem2;
+
+    for (auto it = courses->begin(); it != courses->end(); ++it)
+    {
+        if (it->getID() == id)
+        {
+            cout << "Deleting course: " << it->getID() << endl;
+            courses->erase(it);
+            cout << "Course deleted successfully!" << endl;
+            return;
+        }
+    }
+    cout << "Course with ID " << id << " not found." << endl;
 }
 
 int main()

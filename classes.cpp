@@ -595,6 +595,9 @@ public:
     void add_marks(Student *student, int mark) { marks[student] = mark; }
     void add_attendance(Student *student, int attendanceCount) { attendance[student] = attendanceCount; }
     bool isCompulsoryCourse(); // to check if the course is compulsory
+    map<Student *, int> getMarks() { return marks; }
+    map<Student *, int> getAttendance() { return attendance; }
+    vector<Student *> getStudents() { return studentIDs; }
 };
 
 bool Course::isCompulsoryCourse()
