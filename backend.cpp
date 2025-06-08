@@ -19,11 +19,11 @@ using namespace std;
 // 5) Leave application file .json/.txt Start Date, End Date, Reason, Status, FA id, Roll Numeber.
 // 6) Login file -> student.txt -> faculty.txt(username, password, isFA)
 
-Student *students;
-Course *courses_sem1;
-Course *courses_sem2;
-Faculty *faculties;
-FA *fa;
+vector<Student> students;
+vector<Course> courses_sem1;
+vector<Course> courses_sem2;
+vector<Faculty> faculties;
+vector<FA> fa;
 
 void retrieve_info()
 {
@@ -51,7 +51,8 @@ void retrieve_info()
     string header;
     getline(file, header);
 
-    students = new Student[line_count];
+    // students = new Student[line_count];
+    students.resize(line_count);
     char ch;
     string s;
     int sem_num, year;
@@ -104,7 +105,8 @@ void retrieve_info()
             is_compulsory_sem1.push_back(is_compulsory);
         }
     }
-    courses_sem1 = new Course[subject_names_sem1.size()];
+    courses_sem1.resize(subject_names_sem1.size());
+    //courses_sem1 = new Course[subject_names_sem1.size()];
     for (int i = 0; i < subject_names_sem1.size(); i++)
     {
         string branch = subject_names_sem1[i].substr(0, 2);
@@ -202,7 +204,8 @@ void retrieve_info()
             is_compulsory_sem2.push_back(is_compulsory);
         }
     }
-    courses_sem2 = new Course[subject_names_sem2.size()];
+    courses_sem2.resize(subject_names_sem2.size());
+    //courses_sem2 = new Course[subject_names_sem2.size()];
     for (int i = 0; i < subject_names_sem2.size(); i++)
     {
         string branch = subject_names_sem2[i].substr(0, 2);
@@ -288,7 +291,9 @@ void retrieve_info()
     file5.clear();
     file5.seekg(0, ios::beg);
     getline(file5, header);
-    faculties = new Faculty[faculty_count];
+
+    faculties.resize(faculty_count);
+    //faculties = new Faculty[faculty_count];
     for (int i = 0; i < faculty_count; i++)
     {
         getline(file5, s);
@@ -359,7 +364,9 @@ void retrieve_info()
             faculty_count_fa++;
         }
     }
-    fa = new FA[faculty_count_fa];
+
+    fa.resize(faculty_count_fa);
+    //fa = new FA[faculty_count_fa];
     int fa_index = 0;
     for (int j = 0; j < faculty_count; j++)
     {

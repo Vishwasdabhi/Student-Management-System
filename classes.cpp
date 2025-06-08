@@ -102,6 +102,7 @@ public:
 
     void editProfile(); // to be implemented
     vector<Course *> getRegisteredCourses() { return registeredCourses; }
+
     Semester *getSemester()
     {
         return new Semester(sem_num);
@@ -111,6 +112,30 @@ public:
         return leaveHistory;
     }
 };
+
+void Student::viewDetails()
+{
+    cout << "Name: " << name << endl;
+    cout << "Roll Number: " << rollNo << endl;
+    cout<< "Gender: " <<gender << endl;
+    cout << "Branch: " << branch << endl;
+    cout << "Semester Number: " << sem_num << endl;
+    cout << "Year: " << year << endl;
+}
+
+void Student::editProfile()
+{
+    cout << "Editing profile for " << name << endl;
+    cout << "Current details:" << endl;
+    viewDetails();
+    cout << "Enter new name (or press Enter to keep current): ";
+    string newName;
+    getline(cin, newName);
+    if (!newName.empty())
+        name = newName;
+    
+    cout << "Profile updated successfully!" << endl;
+}
 
 map<string, int> Student::getMarks()
 {
@@ -202,6 +227,13 @@ void Student ::viewNotifications()
     }
     New_Notification = false;
 }
+
+// void Student:: register(Course *course)
+// {
+//     registeredCourses.push_back(course);
+//     course->addStudent(this);
+// }
+
 void Student ::registerCourse(Semester *curr_sem)
 {
     cout << "Registering for courses in semester " << sem_num << endl;
@@ -352,6 +384,12 @@ public:
     // void updateAttendance(Course *course);
     // void viewAttendance(Course *course);
 };
+
+void Faculty::viewDetails()
+{
+    cout << "Name: " << name << endl;
+    cout << "ID: " << id << endl;
+}
 
 bool Faculty::login(string uname, string pass)
 {

@@ -9,27 +9,175 @@ think if we can add some colsole based design
 
 void addstudents()
 {
-    // to be implemented
+    cout<<"Enter the number of students to add: ";
+    int n;
+    cin >> n;
+    cin.ignore(); // to ignore the newline character after entering n
+    for (int i = 0; i < n; i++)
+    {
+        string name, rollNo, branch, FA_ID, gender, dob, email;
+        int year, sem_num;
+        cout<< "Enter details for Student " << i + 1 << ":" << endl;
+        cout << "Name: ";
+        cin.ignore(); // to ignore the newline character
+        getline(cin, name);
+        cout << "Roll Number: ";
+        getline(cin, rollNo);
+        cout << "Branch: ";
+        getline(cin, branch);
+        cout << "FA ID: ";
+        getline(cin, FA_ID);
+        cout<< "Year: ";
+        cin >> year;
+        cout << "Semester Number: ";
+        cin >> sem_num;
+        cin.ignore(); // to ignore the newline character after entering sem_num
+        cout<<"Date of Birth (DD MM YYYY): ";
+        int day, month, year_dob;
+        cin >> day >> month >> year_dob;
+        dob = to_string(day) + " " + to_string(month) + " " + to_string(year_dob);
+        cout << "Email: ";
+        getline(cin, email);
+        cout << "Gender: ";
+        getline(cin, gender);
+        students.push_back(Student(rollNo, rollNo + "@iitbbs",name, rollNo, year, branch, FA_ID, 0.0, gender, dob, email, sem_num));
+
+        for (int j = 0; j < sizeof(fa) / sizeof(fa[0]); j++)
+        {
+            if (fa[j].getID() == FA_ID)
+            {
+                fa[j].setAssignedStudents(&students.back());
+                students.back().setFA(&fa[j]);
+                break;
+            }
+        }
+
+        cout << "Student " << name << " added successfully!" << endl;
+    }
 }
+
 void deletestudents()
 {
-    // to be implemented
+    cout << "Enter the Roll Number of the student to delete: ";
+    string rollNo;
+    cin >> rollNo;
+    for (auto it = students.begin(); it != students.end(); ++it)
+    {
+        if (it->getRollNo() == rollNo)
+        {
+            cout << "Deleting student: " << it->getName() << endl;
+            students.erase(it);
+            cout << "Student deleted successfully!" << endl;
+            return;
+        }
+    }
+    cout << "Student with Roll Number " << rollNo << " not found." << endl;
 }
+
 void addfaculty()
 {
-    // to be implemented
+    cout << "Enter the number of faculty members to add: ";
+    int n;
+    cin >> n;
+    cin.ignore(); // to ignore the newline character after entering n
+    for (int i = 0; i < n; i++)
+    {
+        string name, id, branch, gender, email, officeNo, is_FA_str;
+        bool is_FA;
+        cout << "Enter details for Faculty " << i + 1 << ":" << endl;
+        cout << "Name: ";
+        getline(cin, name);
+        cout << "ID: ";
+        getline(cin, id);
+        cout << "Branch: ";
+        getline(cin, branch);
+        cout << "Gender: ";
+        getline(cin, gender);
+        cout << "Email: ";
+        getline(cin, email);
+        cout << "Office Number: ";
+        getline(cin, officeNo);
+        cout << "Is this faculty a FA? (1 for Yes, 0 for No): ";
+        getline(cin, is_FA_str);
+        is_FA = (is_FA_str == "1");
+        faculties.push_back(Faculty(id, id + "@iitbbs", name, id, gender, email, branch, officeNo, is_FA));
+        cout << "Faculty " << name << " added successfully!" << endl;
+        if (is_FA)
+        {
+            fa.push_back(FA(id, id + "@iitbbs", name, id, gender, email, branch, officeNo, is_FA));
+            cout << "FA " << name << " added successfully!" << endl;
+        }
+    }
 }
+
 void deletefaculty()
 {
-    // to be implemented
+    cout << "Enter the ID of the faculty to delete: ";
+    string id;
+    cin >> id;
+    for (auto it = faculties.begin(); it != faculties.end(); ++it)
+    {
+        if (it->getFacultyID() == id)
+        {
+            cout << "Deleting faculty: " << it->getFacultyName() << endl;
+            faculties.erase(it);
+            cout << "Faculty deleted successfully!" << endl;
+            return;
+        }
+    }
+    cout << "Faculty with ID " << id << " not found." << endl;
 }
+
 void addcourse()
 {
-    // to be implemented
+    cout << "Enter the number of courses to add: ";
+    int n;
+    cin >> n;
+    cin.ignore(); // to ignore the newline character after entering n
+    for (int i = 0; i < n; i++)
+    {
+        string id, branch, is_compulsory_str;
+        int credits;
+        bool is_compulsory;
+        cout << "Enter details for Course " << i + 1 << ":" << endl;
+        cout << "Course ID: ";
+        getline(cin, id);
+        cout << "Branch: ";
+        getline(cin, branch);
+        cout << "Credits: ";
+        cin >> credits;
+        cin.ignore(); // to ignore the newline character after entering credits
+        cout << "Is this course compulsory? (1 for Yes, 0 for No): ";
+        getline(cin, is_compulsory_str);
+        is_compulsory = (is_compulsory_str == "1");
+        
+        if (id.find("sem1") != string::npos)
+            courses_sem1.push_back(Course(id, branch, credits, is_compulsory));
+        else if (id.find("sem2") != string::npos)
+            courses_sem2.push_back(Course(id, branch, credits, is_compulsory));
+        
+        cout << "Course " << id << " added successfully!" << endl;
+    }
 }
+
 void deletecourse()
 {
-    // to be implemented
+    cout << "Enter the Course ID to delete: ";
+    string id;
+    cin >> id;
+    vector<Course> *courses = (id.find("sem1") != string::npos) ? &courses_sem1 : &courses_sem2;
+    
+    for (auto it = courses->begin(); it != courses->end(); ++it)
+    {
+        if (it->getID() == id)
+        {
+            cout << "Deleting course: " << it->getID() << endl;
+            courses->erase(it);
+            cout << "Course deleted successfully!" << endl;
+            return;
+        }
+    }
+    cout << "Course with ID " << id << " not found." << endl;
 }
 
 void adminMenu();
@@ -222,6 +370,8 @@ void adminMenu()
     }
     }
 }
+
+// Vishwas correct the numering below
 void studentMenu(Student *student)
 {
     cout << "\n--- Student Panel ---" << endl;
@@ -250,21 +400,22 @@ void studentMenu(Student *student)
     }
     case 2:
     {
-        student->editProfile(); // to be implemented
+        student->editProfile();
     }
     case 3:
     {
-        cout << "Viewing Courses..." << endl;
         vector<Course *> registeredCourses = student->getRegisteredCourses();
         if (registeredCourses.empty())
         {
             cout << "No courses registered." << endl;
-        }
+        }           
         else
         {
+            cout<< "Registered Courses: " << endl;
+            cout << "Course ID\tCredits\tCompulsory" << endl;
             for (auto &&course : registeredCourses)
             {
-                cout << "Course ID: " << course->getID() << ", Credits: " << course->getCredits() << endl;
+                cout << course->getID() << "\t" << course->getCredits() << "\t" << (course->isCompulsoryCourse() ? "Yes" : "No") << endl;
             }
         }
         break;
@@ -346,7 +497,82 @@ void studentMenu(Student *student)
     }
     case 8:
     {
-        // do be implemented
+        cout << "Registering for Courses..." << endl;
+        cout << "Available Courses: " << endl;
+        int sem_num = student->getSemNum();
+        vector<Course> availableCourses;
+        if (sem_num == 1)
+        {
+            availableCourses = courses_sem1;
+        }
+        else if (sem_num == 2)
+        {
+            availableCourses = courses_sem2;
+        }
+        else
+        {
+            cout << "No courses available for this semester." << endl;
+            return;
+        }
+        if (availableCourses.empty())
+        {
+            cout << "No courses available." << endl;
+            return;
+        }
+
+        cout << "Extra Courses for Semester " << sem_num << ":" << endl;
+        cout << "Course ID\tCredits\tRegistered" << endl;
+        vector<Course> notCompulsoryCourses;
+        int count = 0;
+        for (auto &&course : availableCourses)
+        {
+            if(!course.isCompulsoryCourse())
+            {
+                cout << course.getID() << "\t" << course.getCredits() << "\t";
+                for (auto &&registeredCourse : student->getRegisteredCourses())
+                {
+                    if (registeredCourse->getID() == course.getID())
+                    {
+                        count++;
+                        cout << "Yes" << endl;
+                        break;
+                    }
+                    else
+                    {
+                        notCompulsoryCourses.push_back(course);
+                        cout << "No" << endl;
+                    }
+                }
+            }
+        }
+        if (count >= 2)
+        {
+            cout << "No extra courses can be registered." << endl;
+        }
+        else
+        {
+            cout << "You can register for "<<2-count<<" extra courses." << endl;
+            cout << "Enter Course ID to register: ";
+            string courseID;
+            cin >> courseID;
+            bool found = false;
+            for (auto &&course : notCompulsoryCourses)
+            {
+                if (course.getID() == courseID)
+                {
+                    found = true;
+                    cout << "Registered for course: " << courseID << endl;
+                    course.enrollStudent(student);
+                    cout << "Course ID: " << courseID << " registered successfully." << endl;
+                    student->addSubject(&course);
+                    break;
+                }
+            }
+            if (!found)
+            {
+                cout << "Course ID not found or already registered." << endl;
+            }
+        }
         break;
     }
     case 9:
@@ -375,6 +601,7 @@ void studentMenu(Student *student)
     }
 }
 
+// Vishwas implemented the faculty menu and FA menu
 void facultyMenu(Faculty *faculty)
 {
     cout << "\n--- Faculty Panel ---" << endl;
