@@ -99,7 +99,10 @@ public:
     float getCGPA();                                                 // to be used for leave application
     map<string, int> getMarks();                                     // to be used for leave application
     map<string, int> getAttendance();                                // to be used for leave application
-
+    void addLeaveApplication(LeaveApplication leave)
+    {
+        leaveHistory.push_back(leave);
+    } 
     void editProfile(); // to be implemented
     vector<Course *> getRegisteredCourses() { return registeredCourses; }
 
@@ -227,12 +230,6 @@ void Student ::viewNotifications()
     }
     New_Notification = false;
 }
-
-// void Student:: register(Course *course)
-// {
-//     registeredCourses.push_back(course);
-//     course->addStudent(this);
-// }
 
 void Student ::registerCourse(Semester *curr_sem)
 {
@@ -471,6 +468,17 @@ public:
     void reviewLeaveApplication();                             // done
     void submitApplication(Student *, LeaveApplication leave); // done
     bool isNewNotification() { return New_Notification; }     // to check if there are new leave requests
+    void setNewNotification(bool status) { New_Notification = status; }
+    void newLeaveRequests(Student *student, LeaveApplication leave)
+    {
+        newleaveRequests[student] = leave;
+        New_Notification = true;
+    }
+    void LeaveRequests(Student *student, LeaveApplication leave)
+    {
+        leaveRequests[student] = leave;
+        New_Notification = true;
+    }
 };
 
 vector<Student *> FA::getAssignedStudents()
@@ -531,7 +539,6 @@ void FA::reviewLeaveApplication()
 void FA ::submitApplication(Student *student, LeaveApplication leave)
 {
     newleaveRequests[student] = leave;
-    cout << "Leave application submitted successfully." << endl;
     New_Notification = true;
 }
 class Semester
@@ -720,10 +727,10 @@ string Date::showDate()
     string date = "";
     if (day < 10)
         date += "0";
-    date += to_string(day) + "/";
+    date += to_string(day) + "-";
     if (month < 10)
         date += "0";
-    date += to_string(month) + "/";
+    date += to_string(month) + "-";
     date += to_string(year);
     return date;
 }
@@ -734,14 +741,21 @@ private:
     string reason;
     Date startDate;
     Date endDate;
-
+    string status;
+    // status can be "Pending", "Approved", "Rejected"
+    string fa_id;
+    string rollNo;
 public:
-    LeaveApplication(string reason = "", Date startDate = Date(), Date endDate = Date())
-        : reason(reason), startDate(startDate), endDate(endDate) {}
+    LeaveApplication(string reason = "", Date startDate = Date(), Date endDate = Date(), string status = "Pending", string fa_id = "", string rollNo = "")
+        : reason(reason), startDate(startDate), endDate(endDate), status(status), fa_id(fa_id), rollNo(rollNo) {}
 
     string getReason();
     Date getStartDate();
     Date getEndDate();
+    void setStatus(string newStatus) { status = newStatus; }
+    string getStatus() { return status; }
+    string getFA_ID() { return fa_id; } // to be used for leave application
+    string getRollNo() { return rollNo; } // to be used for leave application
 };
 
 string LeaveApplication::getReason()
@@ -756,6 +770,7 @@ Date LeaveApplication::getEndDate()
 {
     return endDate;
 }
+
 int main()
 {
 

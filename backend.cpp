@@ -21,6 +21,7 @@ vector<Course> courses_sem1;
 vector<Course> courses_sem2;
 vector<Faculty> faculties;
 vector<FA> fa;
+vector<LeaveApplication> leaveApplications;
 
 void retrieve_info()
 {
@@ -387,6 +388,60 @@ void retrieve_info()
         }
     }
     // Problem: Either student should have a vector of marks or we should have a vector of courses in student class.
+
+    ifstream file6("leave_applications.txt");
+    if (!file6.is_open())
+    {
+        cout << "Error opening leave applications file." << endl;
+        exit(1);
+    }
+    while (getline(file6, s))
+    {
+        stringstream ss(s);
+        string rollNo, fa_id, reason, status;
+        string startDate_str, endDate_str;
+        Date startDate, endDate;
+        getline(ss, rollNo, ',');
+        getline(ss, fa_id, ',');
+        getline(ss, reason, ',');
+        getline(ss, startDate_str, ',');
+        getline(ss, endDate_str, ',');
+        getline(ss, status);
+        int start_day, start_month, start_year;
+        int end_day, end_month, end_year;
+        sscanf(startDate_str.c_str(), "%d-%d-%d", &start_day, &start_month, &start_year);
+        sscanf(endDate_str.c_str(), "%d-%d-%d", &end_day, &end_month, &end_year);
+        startDate = Date(start_day, start_month, start_year);
+        endDate = Date(end_day, end_month, end_year);
+        LeaveApplication leave(reason, startDate, endDate, status, fa_id, rollNo);
+        leaveApplications.push_back(leave);
+        
+        for (int i = 0; i < line_count; i++)
+        {
+            if (students[i].getRollNo() == rollNo)
+            {
+                students[i].addLeaveApplication(leave);
+                break;
+            }
+        }
+
+        for(int i = 0; i < faculty_count_fa; i++)
+        {
+            if (fa[i].getID() == fa_id)
+            {
+                if(status == "Pending")
+                {
+                    fa[i].setNewNotification(true);
+                    fa[i].newLeaveRequests(&students[i], leave);
+                }
+                else
+                {
+                    fa[i].LeaveRequests(&students[i], leave);
+                }
+                break;
+            }
+        }
+    }
 }
 
 void createheader()
@@ -505,6 +560,9 @@ void createheader()
     fprintf(inFile1, "Faculty ID,Password,Faculty Name,Gender,Email,Branch,Office_No,is_FA,Subject_1,Subject_2,Subject_3,Subject_4,Subject_5\n");
     fclose(inFile1);
 
+    inFile1 = fopen("leave_applications.txt", "w");
+    fprintf(inFile1, "Roll Number,FA ID,Reason,Start Date,End Date,Status\n");
+    fclose(inFile1);
     cout << "Database created successfully!" << endl;
     cout << "Press Enter to continue..." << endl;
     getchar();
@@ -721,6 +779,23 @@ void write_all_files()
             inFile5 << ",";
         }
         inFile5 << "\n";
+    }
+    inFile5.close();
+    ofstream inFile6("leave_applications.txt");
+    if (!inFile6.is_open())
+    {
+        cout << "Error opening leave applications file for writing." << endl;
+        return;
+    }
+    inFile6 << "Roll Number,FA ID,Reason,Start Date,End Date,Status\n";
+    for (auto &leave : leaveApplications)
+    {
+        inFile6 << leave.getRollNo() << ","
+                << leave.getFA_ID() << ","
+                << leave.getReason() << ","
+                << leave.getStartDate().showDate() << ","
+                << leave.getEndDate().showDate() << ","
+                << leave.getStatus() << "\n";
     }
 }
 
