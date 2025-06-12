@@ -406,7 +406,7 @@ void studentMenu(Student *student)
                 {
                     found = true;
                     cout << "Registered for course: " << courseID << endl;
-                    course.enrollStudent(student);
+                    course.enrollStudent(student->getRollNo());
                     cout << "Course ID: " << courseID << " registered successfully." << endl;
                     student->addSubject(&course);
                     break;
@@ -506,7 +506,7 @@ void facultyMenu(Faculty *faculty)
                 {
                     flag = true;
                     cout << "Attendance for Course ID: " << it->getID() << endl;
-                    map<Student *, int> attendance = it->getAttendance();
+                    map<string, int> attendance = it->getAttendance();
                     if (attendance.empty())
                     {
                         cout << "No attendance records found." << endl;
@@ -515,7 +515,7 @@ void facultyMenu(Faculty *faculty)
                     {
                         for (auto &&subject : attendance)
                         {
-                            cout << "Student Roll No: " << subject.first->getRollNo() << ", Attendance: " << subject.second << "." << endl;
+                            cout << "Student Roll No: " << subject.first << ", Attendance: " << subject.second << endl;
                         }
                     }
                 }
@@ -548,7 +548,7 @@ void facultyMenu(Faculty *faculty)
                 {
                     flag = true;
                     cout << "Marks for Course ID: " << it->getID() << endl;
-                    map<Student *, int> marks = it->getMarks();
+                    map<string, int> marks = it->getMarks();
                     if (marks.empty())
                     {
                         cout << "No marks records found." << endl;
@@ -557,7 +557,7 @@ void facultyMenu(Faculty *faculty)
                     {
                         for (auto &&subject : marks)
                         {
-                            cout << "Student Roll No: " << subject.first->getRollNo() << ", Marks: " << subject.second << "." << endl;
+                            cout << "Student Roll No: " << subject.first << ", Marks: " << subject.second << endl;
                         }
                     }
                 }
@@ -590,7 +590,7 @@ void facultyMenu(Faculty *faculty)
                 {
                     flag = true;
                     cout << "Adding Marks for Course ID: " << it->getID() << endl;
-                    vector<Student *> students = it->getStudents();
+                    vector<string> students = it->getStudents();
                     if (students.empty())
                     {
                         cout << "No students enrolled in this course." << endl;
@@ -610,10 +610,10 @@ void facultyMenu(Faculty *faculty)
                     case 1:
                     {
                         cout << "Enter marks for each student:" << endl;
-                        for (auto &&student : students)
+                        for (auto &student : students)
                         {
                             int mark;
-                            cout << "Student Roll No: " << student->getRollNo() << ", Enter Marks: ";
+                            cout << "Student Roll No: " << student << ", Enter Marks: ";
                             cin >> mark;
                             while (mark < 0 || mark > 100)
                             {
@@ -621,7 +621,8 @@ void facultyMenu(Faculty *faculty)
                                 cin >> mark;
                             }
                             it->add_marks(student, mark);
-                            cout << "Marks added for " << student->getRollNo() << ": " << mark << endl;
+                            students_map[student]->addMarks(it->getID(), mark);
+                            cout << "Marks added for " << student << ": " << mark << endl;
                         }
                         break;
                     }
@@ -630,7 +631,7 @@ void facultyMenu(Faculty *faculty)
                         cout << "All students : " << endl;
                         for (auto &&student : students)
                         {
-                            cout << student->getRollNo() << endl;
+                            cout << student << endl;
                         }
                         cout << "Enter Roll No of student to add marks: ";
                         string rollNo;
@@ -640,11 +641,11 @@ void facultyMenu(Faculty *faculty)
                             cin >> rollNo;
                             for (auto &&student : students)
                             {
-                                if (student->getRollNo() == rollNo)
+                                if (student == rollNo)
                                 {
                                     flag2 = true;
                                     int mark;
-                                    cout << "Student Roll No: " << student->getRollNo() << ", Enter Marks: ";
+                                    cout << "Student Roll No: " << student << ", Enter Marks: ";
                                     cin >> mark;
                                     while (mark < 0 || mark > 100)
                                     {
@@ -652,7 +653,8 @@ void facultyMenu(Faculty *faculty)
                                         cin >> mark;
                                     }
                                     it->add_marks(student, mark);
-                                    cout << "Marks added for " << student->getRollNo() << ": " << mark << endl;
+                                    students_map[student]->addMarks(it->getID(), mark);
+                                    cout << "Marks added for " << student << ": " << mark << endl;
                                 }
                             }
                             if(!flag2)
@@ -741,7 +743,7 @@ void FAMenu(FA *fa)
                 {
                     flag = true;
                     cout << "Attendance for Course ID: " << it->getID() << endl;
-                    map<Student *, int> attendance = it->getAttendance();
+                    map<string, int> attendance = it->getAttendance();
                     if (attendance.empty())
                     {
                         cout << "No attendance records found." << endl;
@@ -750,7 +752,7 @@ void FAMenu(FA *fa)
                     {
                         for (auto &&subject : attendance)
                         {
-                            cout << "Student Roll No: " << subject.first->getRollNo() << ", Attendance: " << subject.second << "." << endl;
+                            cout << "Student Roll No: " << subject.first << ", Attendance: " << subject.second << "." << endl;
                         }
                     }
                 }
@@ -783,7 +785,7 @@ void FAMenu(FA *fa)
                 {
                     flag = true;
                     cout << "Marks for Course ID: " << it->getID() << endl;
-                    map<Student *, int> marks = it->getMarks();
+                    map<string, int> marks = it->getMarks();
                     if (marks.empty())
                     {
                         cout << "No marks records found." << endl;
@@ -792,7 +794,7 @@ void FAMenu(FA *fa)
                     {
                         for (auto &&subject : marks)
                         {
-                            cout << "Student Roll No: " << subject.first->getRollNo() << ", Marks: " << subject.second << "." << endl;
+                            cout << "Student Roll No: " << subject.first << ", Marks: " << subject.second << "." << endl;
                         }
                     }
                 }
@@ -825,7 +827,7 @@ void FAMenu(FA *fa)
                 {
                     flag = true;
                     cout << "Adding Marks for Course ID: " << it->getID() << endl;
-                    vector<Student *> students = it->getStudents();
+                    vector<string> students = it->getStudents();
                     if (students.empty())
                     {
                         cout << "No students enrolled in this course." << endl;
@@ -848,7 +850,7 @@ void FAMenu(FA *fa)
                         for (auto &&student : students)
                         {
                             int mark;
-                            cout << "Student Roll No: " << student->getRollNo() << ", Enter Marks: ";
+                            cout << "Student Roll No: " << student << ", Enter Marks: ";
                             cin >> mark;
                             while (mark < 0 || mark > 100)
                             {
@@ -856,7 +858,8 @@ void FAMenu(FA *fa)
                                 cin >> mark;
                             }
                             it->add_marks(student, mark);
-                            cout << "Marks added for " << student->getRollNo() << ": " << mark << endl;
+                            students_map[student]->addMarks(it->getID(), mark);
+                            cout << "Marks added for " << student << ": " << mark << endl;
                         }
                         break;
                     }
@@ -865,7 +868,7 @@ void FAMenu(FA *fa)
                         cout << "All students : " << endl;
                         for (auto &&student : students)
                         {
-                            cout << student->getRollNo() << endl;
+                            cout << student << endl;
                         }
                         cout << "Enter Roll No of student to add marks: ";
                         string rollNo;
@@ -875,11 +878,11 @@ void FAMenu(FA *fa)
                             cin >> rollNo;
                             for (auto &&student : students)
                             {
-                                if (student->getRollNo() == rollNo)
+                                if (student == rollNo)
                                 {
                                     flag2 = true;
                                     int mark;
-                                    cout << "Student Roll No: " << student->getRollNo() << ", Enter Marks: ";
+                                    cout << "Student Roll No: " << student << ", Enter Marks: ";
                                     cin >> mark;
                                     while (mark < 0 || mark > 100)
                                     {
@@ -887,7 +890,8 @@ void FAMenu(FA *fa)
                                         cin >> mark;
                                     }
                                     it->add_marks(student, mark);
-                                    cout << "Marks added for " << student->getRollNo() << ": " << mark << endl;
+                                    students_map[student]->addMarks(it->getID(), mark);
+                                    cout << "Marks added for " << student << ": " << mark << endl;
                                 }
                             }
                             if(!flag2)
@@ -935,6 +939,6 @@ void FAMenu(FA *fa)
 
 int main()
 {
-
+    loginPage();
     return 0;
 }

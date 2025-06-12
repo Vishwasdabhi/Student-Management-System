@@ -106,7 +106,7 @@ public:
 
     bool login(string uname, string pass);
     bool changePassword(string newPass);
-    bool is_FA();
+    bool is_FA_function();
     void AssignSubject(Course *course); // done
     // Faculty -> Course -> Student -> Update,View.
     vector<Course *> getSubjects(); // done
@@ -132,8 +132,7 @@ class Student : public User
 {
 private:
     string name, branch, gender, dob, email, rollNo;
-    // FA *My_FA;
-    string FA_ID; // to be used for leave application
+    string FA_ID;
     int year, sem_num;
     float CGPA;
     bool New_Notification;
@@ -153,33 +152,32 @@ public:
           CGPA(cgpa), gender(gender), dob(dob), email(email), New_Notification(false), sem_num(sem) {}
 
     bool login(string uname, string pass) override;
-    bool changePassword(string newPass) override; // old pass check is important before changing
+    bool changePassword(string newPass) override;
     void setFA(string fa);
     string getFA_ID();
-    void viewDetails(); // what to show will be decided
-    // to be changed to get details
-    int getSem();                                                    // done
-    void applyForLeave(string reason, Date startDate, Date endDate); // done
-    void addnotification(string notification);                       // done
-    void viewNotifications();                                        // done
-    void giveFeedback(string courseID, string feedback);             // to be implimented
-    void registerCourse(int sem_num);                                // done  // refer semester class based upon curr sem and show available subjects, we will check the curr sem of student and give the number of sem obj to this function while calling
-    void viewLeaveRecords();                                         // done
-    string getRollNo();                                              // done
-    void addSubject(Course *course);                                 // done     // add course to registered courses
-    void addAttendance(string courseID, int attendanceCount);        // done      // add attendance for a course
-    void addMarks(string courseID, int mark);                        // done    // add marks for a course
-    string getName();                                                // to be used for leave application
-    string getPassword();                                            // to be used for leave application
-    string getBranch();                                              // to be used for leave application
-    int getSemNum();                                                 // to be used for leave application
-    string getGender();                                              // to be used for leave application
-    string getDOB();                                                 // to be used for leave application
-    string getEmail();                                               // to be used for leave application
-    int getYear();                                                   // to be used for leave application
-    float getCGPA();                                                 // to be used for leave application
-    map<string, int> getMarks();                                     // to be used for leave application
-    map<string, int> getAttendance();                                // to be used for leave application
+    void viewDetails();
+    int getSem();
+    void applyForLeave(string reason, Date startDate, Date endDate); 
+    void addnotification(string notification);                       
+    void viewNotifications();                                        
+    void giveFeedback(string courseID, string feedback);    
+    void registerCourse(int sem_num);                              
+    void viewLeaveRecords();                                        
+    string getRollNo();                                            
+    void addSubject(Course *course);                              
+    void addAttendance(string courseID, int attendanceCount);     
+    void addMarks(string courseID, int mark);                      
+    string getName();                               
+    string getPassword();
+    string getBranch();   
+    int getSemNum();       
+    string getGender();     
+    string getDOB();       
+    string getEmail();      
+    int getYear();          
+    float getCGPA();
+    map<string, int> getMarks();
+    map<string, int> getAttendance();
     void addLeaveApplication(LeaveApplication leave);
     void editProfile();
     vector<Course *> getRegisteredCourses();

@@ -78,13 +78,13 @@ void retrieve_info()
     }
     file.close();
 
-    ifstream file("marks_sem1.csv");
-    if (!file.is_open())
+    ifstream file1("marks_sem1.csv");
+    if (!file1.is_open())
     {
         cout << "Error opening attendance file for Semester 1." << endl;
         exit(1);
     }
-    getline(file, header);
+    getline(file1, header);
     vector<string> subject_names_sem1;
     vector<int> credits_sem1;
     vector<bool> is_compulsory_sem1;
@@ -111,7 +111,7 @@ void retrieve_info()
         courses_sem1[i] = Course(subject_names_sem1[i], branch, credits_sem1[i], is_compulsory_sem1[i]);
     }
 
-    while (getline(file, s))
+    while (getline(file1, s))
     {
         stringstream ss(s);
         string rollNo;
@@ -129,19 +129,17 @@ void retrieve_info()
                     {
                         students[j].addSubject(&courses_sem1[i]); // add the course to the student's registered courses
 
-                        courses_sem1[i].enrollStudent(&students[j]);
-
+                        courses_sem1[i].enrollStudent(students[j].getRollNo());
                         students[j].addMarks(subject_names_sem1[i], marks);
 
-                        courses_sem1[i].add_marks(&students[j], marks); // add marks to the course's marks map
-
+                        courses_sem1[i].add_marks(students[j].getRollNo(), marks);
                         break;
                     }
                 }
             }
         }
     }
-    file.close();
+    file1.close();
 
     ifstream file2("attendance_sem1.csv");
     if (!file2.is_open())
@@ -168,7 +166,7 @@ void retrieve_info()
                     {
                         students[j].addAttendance(subject_names_sem1[i], attendance);
 
-                        courses_sem1[i].add_attendance(&students[j], attendance);
+                        courses_sem1[i].add_attendance(students[j].getRollNo(), attendance);
 
                         break;
                     }
@@ -227,11 +225,11 @@ void retrieve_info()
                     {
                         students[j].addSubject(&courses_sem2[i]);
 
-                        courses_sem2[i].enrollStudent(&students[j]);
+                        courses_sem2[i].enrollStudent(students[j].getRollNo());
 
                         students[j].addMarks(subject_names_sem2[i], marks);
 
-                        courses_sem2[i].add_marks(&students[j], marks);
+                        courses_sem2[i].add_marks(students[j].getRollNo(), marks);
                         break;
                     }
                 }
@@ -265,7 +263,7 @@ void retrieve_info()
                     {
                         students[j].addAttendance(subject_names_sem2[i], attendance);
 
-                        courses_sem2[i].add_attendance(&students[j], attendance);
+                        courses_sem2[i].add_attendance(students[j].getRollNo(), attendance);
                         break;
                     }
                 }
@@ -334,7 +332,7 @@ void retrieve_info()
                 if (sub == subject_names_sem1[j])
                 {
                     faculties[i].AssignSubject(&courses_sem1[j]);
-                    courses_sem1[j].addfaculty(&faculties[i]);
+                    courses_sem1[j].addfaculty(faculties[i].getFacultyID());
                     flag = 1;
                     break;
                 }
@@ -346,7 +344,7 @@ void retrieve_info()
                     if (sub == subject_names_sem2[j])
                     {
                         faculties[i].AssignSubject(&courses_sem2[j]);
-                        courses_sem2[j].addfaculty(&faculties[i]);
+                        courses_sem2[j].addfaculty(faculties[i].getFacultyID());
                         break;
                     }
                 }
@@ -839,7 +837,7 @@ void addstudents()
             if (fa[j].getID() == FA_ID)
             {
                 fa[j].setAssignedStudents(&students.back());
-                students.back().setFA(&fa[j]);
+                students.back().setFA(fa[j].getID());
                 break;
             }
         }
@@ -1087,8 +1085,8 @@ int Date ::Calculate_days(Date Start_date, Date End_date)
             else
                 days += 365;
         }
-        return days;
     }
+    return days;
 }
 
 string Date::showDate()
@@ -1236,7 +1234,7 @@ bool Faculty::login(string uname, string pass)
     }
     return false;
 }
-bool Faculty::is_FA()
+bool Faculty::is_FA_function()
 {
     return is_FA;
 }
@@ -1578,3 +1576,18 @@ void FA ::LeaveRequests(Student *student, LeaveApplication leave)
     leaveRequests[student] = leave;
     New_Notification = true;
 }
+
+
+
+
+
+bool Student::changePassword(string newPass) {
+    password = newPass;
+    return true;
+}
+
+bool Faculty::changePassword(string newPass) {
+    password = newPass;
+    return true;
+}
+
