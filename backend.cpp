@@ -104,7 +104,7 @@ void retrieve_info()
         }
     }
     courses_sem1.resize(subject_names_sem1.size());
-    //courses_sem1 = new Course[subject_names_sem1.size()];
+    // courses_sem1 = new Course[subject_names_sem1.size()];
     for (int i = 0; i < subject_names_sem1.size(); i++)
     {
         string branch = subject_names_sem1[i].substr(0, 2);
@@ -203,7 +203,7 @@ void retrieve_info()
         }
     }
     courses_sem2.resize(subject_names_sem2.size());
-    //courses_sem2 = new Course[subject_names_sem2.size()];
+    // courses_sem2 = new Course[subject_names_sem2.size()];
     for (int i = 0; i < subject_names_sem2.size(); i++)
     {
         string branch = subject_names_sem2[i].substr(0, 2);
@@ -291,7 +291,7 @@ void retrieve_info()
     getline(file5, header);
 
     faculties.resize(faculty_count);
-    //faculties = new Faculty[faculty_count];
+    // faculties = new Faculty[faculty_count];
     for (int i = 0; i < faculty_count; i++)
     {
         getline(file5, s);
@@ -364,7 +364,7 @@ void retrieve_info()
     }
 
     fa.resize(faculty_count_fa);
-    //fa = new FA[faculty_count_fa];
+    // fa = new FA[faculty_count_fa];
     int fa_index = 0;
     for (int j = 0; j < faculty_count; j++)
     {
@@ -415,7 +415,7 @@ void retrieve_info()
         endDate = Date(end_day, end_month, end_year);
         LeaveApplication leave(reason, startDate, endDate, status, fa_id, rollNo);
         leaveApplications.push_back(leave);
-        
+
         for (int i = 0; i < line_count; i++)
         {
             if (students[i].getRollNo() == rollNo)
@@ -425,11 +425,11 @@ void retrieve_info()
             }
         }
 
-        for(int i = 0; i < faculty_count_fa; i++)
+        for (int i = 0; i < faculty_count_fa; i++)
         {
             if (fa[i].getID() == fa_id)
             {
-                if(status == "Pending")
+                if (status == "Pending")
                 {
                     fa[i].setNewNotification(true);
                     fa[i].newLeaveRequests(&students[i], leave);
@@ -621,7 +621,7 @@ void write_all_files()
         return;
     }
     inFile1 << "Roll Number,";
-    for (int i = 0; i <courses_sem1.size(); i++)
+    for (int i = 0; i < courses_sem1.size(); i++)
     {
         string subject_name = courses_sem1[i].getID();
         int credits = courses_sem1[i].getCredits();
@@ -762,13 +762,13 @@ void write_all_files()
     for (int i = 0; i < faculties.size(); i++)
     {
         inFile5 << faculties[i].getFacultyID() << ","
-        << faculties[i].getPassword() << ","
-        << faculties[i].getFacultyName() << ","
-        << faculties[i].getGender() << ","
-        << faculties[i].getEmail() << ","
-        << faculties[i].getBranch() << ","
-        << faculties[i].getOfficeNo() << ","
-        << (faculties[i].is_FA_function() ? "1" : "0") << ",";
+                << faculties[i].getPassword() << ","
+                << faculties[i].getFacultyName() << ","
+                << faculties[i].getGender() << ","
+                << faculties[i].getEmail() << ","
+                << faculties[i].getBranch() << ","
+                << faculties[i].getOfficeNo() << ","
+                << (faculties[i].is_FA_function() ? "1" : "0") << ",";
         vector<Course *> subjects = faculties[i].getSubjects();
         for (int j = 0; j < subjects.size(); j++)
         {
@@ -972,6 +972,609 @@ void deletecourse()
     cout << "Course with ID " << id << " not found." << endl;
 }
 
-int main()
+unordered_map<string, Student *> students_map;
+unordered_map<string, Faculty *> faculties_map;
+unordered_map<string, Course *> courses_sem1_map;
+unordered_map<string, Course *> courses_sem2_map;
+unordered_map<string, FA *> fa_map;
+unordered_map<string, LeaveApplication *> leave_applications_map;
+
+void fillMaps()
 {
+    for (auto &student : students)
+    {
+        students_map[student.getRollNo()] = &student;
+    }
+    for (auto &faculty : faculties)
+    {
+        faculties_map[faculty.getFacultyID()] = &faculty;
+    }
+    for (auto &course : courses_sem1)
+    {
+        courses_sem1_map[course.getID()] = &course;
+    }
+    for (auto &course : courses_sem2)
+    {
+        courses_sem2_map[course.getID()] = &course;
+    }
+    for (auto &fa : fa)
+    {
+        fa_map[fa.getID()] = &fa;
+    }
+    for (auto &leave : leaveApplications)
+    {
+        leave_applications_map[leave.getRollNo()] = &leave;
+    }
+}
+/*
+
+*/
+
+// User
+bool User::login(string uname, string pass)
+{
+    if (uname == username && pass == password)
+    {
+        cout << "Login successful!" << endl;
+        return true;
+    }
+    else
+    {
+        cout << "Invalid username or password." << endl;
+        return false;
+    }
+}
+
+bool User::changePassword(string newPass)
+{
+    if (newPass.empty())
+    {
+        cout << "New password cannot be empty." << endl;
+        return false;
+    }
+    password = newPass;
+    cout << "Password changed successfully!" << endl;
+    return true;
+}
+
+// Functions of Date class
+
+int Date ::Calculate_days(Date Start_date, Date End_date)
+{
+    int days = 0;
+    vector<int> days_in_month = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    int day1 = Start_date.day, day2 = End_date.day;
+    int month1 = Start_date.month, month2 = End_date.month;
+    int year1 = Start_date.year, year2 = End_date.year;
+
+    if (year1 > year2 || (year1 == year2 && month1 > month2) || (year1 == year2 && month1 == month2 && day1 > day2))
+    {
+        cout << "Invalid date range." << endl;
+        return -1;
+    }
+    if (year1 == year2)
+    {
+        if (month1 == month2)
+        {
+            days = day2 - day1;
+        }
+        else
+        {
+            days += days_in_month[month1 - 1] - day1;
+            for (int i = month1; i < month2 - 1; i++)
+            {
+                days += days_in_month[i];
+            }
+            days += day2;
+        }
+    }
+    else
+    {
+        days += days_in_month[month1 - 1] - day1;
+        for (int i = month1; i < 12; i++)
+        {
+            days += days_in_month[i];
+        }
+        for (int i = 0; i < month2 - 1; i++)
+        {
+            days += days_in_month[i];
+        }
+        days += day2;
+        for (int i = year1 + 1; i < year2; i++)
+        {
+            if ((i % 4 == 0 && i % 100 != 0) || (i % 400 == 0))
+                days += 366;
+            else
+                days += 365;
+        }
+        return days;
+    }
+}
+
+string Date::showDate()
+{
+    string date = "";
+    if (day < 10)
+        date += "0";
+    date += to_string(day) + "-";
+    if (month < 10)
+        date += "0";
+    date += to_string(month) + "-";
+    date += to_string(year);
+    return date;
+}
+/*
+
+
+*/
+
+// LeaveApplication
+string LeaveApplication::getReason()
+{
+    return reason;
+}
+Date LeaveApplication::getStartDate()
+{
+    return startDate;
+}
+Date LeaveApplication::getEndDate()
+{
+    return endDate;
+}
+void LeaveApplication ::setStatus(string newStatus)
+{
+    status = newStatus;
+}
+string LeaveApplication ::getStatus()
+{
+    return status;
+}
+string LeaveApplication ::getFA_ID()
+{
+    return fa_id;
+}
+string LeaveApplication ::getRollNo()
+{
+    return rollNo;
+}
+/*
+
+
+*/
+
+// course
+void Course::addfaculty(string facultyId)
+{
+    facultyIDs.push_back(facultyId);
+}
+
+void Course::removefaculty()
+{
+    // show all faculties and then remove the faculty
+    for (auto &&faculty : facultyIDs)
+    {
+        cout << "Faculty ID: " << faculty << ", Name: " << faculties_map[faculty]->getFacultyName() << endl;
+    }
+    cout << endl;
+    cout << "Enter the Faculty ID to remove: ";
+    string facultyID;
+    cin >> facultyID;
+    auto it = find(facultyIDs.begin(), facultyIDs.end(), facultyID);
+    if (it != facultyIDs.end())
+    {
+        facultyIDs.erase(it);
+        cout << "Faculty with ID " << facultyID << " removed successfully!" << endl;
+    }
+    else
+    {
+        cout << "Faculty with ID " << facultyID << " not found." << endl;
+    }
+}
+void Course::enrollStudent(string studentId)
+{
+    studentIDs.push_back(studentId);
+}
+void Course::receiveFeedback(string feedback)
+{
+    feedbacks.push_back(feedback);
+}
+
+string Course::getID()
+{
+    return id;
+}
+int Course::getCredits()
+{
+    return credits;
+}
+
+void Course ::add_marks(string studentId, int mark)
+{
+    marks[studentId] = mark;
+}
+void Course ::add_attendance(string studentId, int attendanceCount)
+{
+    attendance[studentId] = attendanceCount;
+}
+
+bool Course::isCompulsoryCourse()
+{
+    return isCompulsory;
+}
+map<string, int> Course ::getMarks()
+{
+    return marks;
+}
+map<string, int> Course ::getAttendance()
+{
+    return attendance;
+}
+vector<string> Course ::getStudents()
+{
+    return studentIDs;
+}
+vector<string> Course ::getFaculties()
+{
+    return facultyIDs;
+}
+
+/*
+
+
+
+
+*/
+
+// faculty
+
+bool Faculty::login(string uname, string pass)
+{
+    if (User::login(uname, pass))
+    {
+        cout << "Welcome, " << name << "!" << endl;
+        return true;
+    }
+    return false;
+}
+bool Faculty::is_FA()
+{
+    return is_FA;
+}
+
+void Faculty::AssignSubject(Course *course)
+{
+    subjects.push_back(course);
+    course->addfaculty(this->getFacultyID());
+}
+
+vector<Course *> Faculty::getSubjects()
+{
+    return subjects;
+}
+
+string Faculty::getFacultyID()
+{
+    return id;
+}
+
+string Faculty::getFacultyName()
+{
+    return name;
+}
+
+string Faculty::getPassword()
+{
+    return password;
+}
+
+string Faculty::getGender()
+{
+    return gender;
+}
+
+string Faculty::getEmail()
+{
+    return email;
+}
+
+string Faculty::getBranch()
+{
+    return branch;
+}
+
+string Faculty::getOfficeNo()
+{
+    return officeNo;
+}
+
+void Faculty::viewDetails()
+{
+    // to be implimented
+}
+
+/*
+
+
+
+*/
+
+// Student
+
+bool Student::login(string uname, string pass)
+{
+    if (User::login(uname, pass))
+    {
+        cout << "Welcome, " << name << "!" << endl;
+        return true;
+    }
+    return false;
+}
+
+void Student ::setFA(string fa)
+{
+    FA_ID = fa;
+}
+string Student ::getFA_ID()
+{
+    return FA_ID;
+}
+
+void Student::viewDetails()
+{
+    cout << "Name: " << name << endl;
+    cout << "Roll Number: " << rollNo << endl;
+    cout << "Gender: " << gender << endl;
+    cout << "Branch: " << branch << endl;
+    cout << "Semester Number: " << sem_num << endl;
+    cout << "Year: " << year << endl;
+}
+
+int Student ::getSem()
+{
+    return sem_num;
+}
+void Student ::applyForLeave(string reason, Date startDate, Date endDate)
+{
+    LeaveApplication leave(reason, startDate, endDate);
+    leaveHistory.push_back(leave);
+    fa_map[FA_ID]->submitApplication(this, leave);
+    cout << "Leave application submitted successfully." << endl;
+}
+
+void Student ::addnotification(string notification)
+{
+    notifications.push_back(notification);
+    New_Notification = true;
+}
+
+void Student ::viewNotifications()
+{
+    cout << "Notifications for " << name << " (" << rollNo << "):" << endl;
+    if (notifications.empty())
+    {
+        cout << "No notifications found." << endl;
+    }
+    else
+    {
+        for (auto &&notification : notifications)
+        {
+            cout << notification << endl;
+        }
+    }
+    New_Notification = false;
+}
+
+void Student ::giveFeedback(string courseID, string Feedback)
+{
+    // to be implimented
+}
+
+void Student ::registerCourse(int sem_num)
+{
+}
+
+void Student ::viewLeaveRecords()
+{
+    cout << "Leave Records for " << name << " (" << rollNo << "):" << endl;
+    if (leaveHistory.empty())
+    {
+        cout << "No leave records found." << endl;
+    }
+    else
+    {
+        for (auto &&leave : leaveHistory)
+        {
+            cout << leave.getReason() << " From: " << leave.getStartDate().showDate() << " To: " << leave.getEndDate().showDate() << endl;
+        }
+    }
+}
+
+string Student ::getRollNo()
+{
+    return rollNo;
+}
+
+void Student ::addSubject(Course *course)
+{
+    registeredCourses.push_back(course);
+}
+
+void Student ::addAttendance(string courseID, int attendanceCount)
+{
+    attendance[courseID] = attendanceCount;
+}
+
+void Student ::addMarks(string courseID, int mark)
+{
+    marks[courseID] = mark;
+}
+
+string Student::getName()
+{
+    return name;
+}
+
+string Student::getPassword()
+{
+    return password;
+}
+
+string Student::getBranch()
+{
+    return branch;
+}
+
+int Student::getSemNum()
+{
+    return sem_num;
+}
+
+string Student::getGender()
+{
+    return gender;
+}
+
+string Student::getDOB()
+{
+    return dob;
+}
+
+string Student::getEmail()
+{
+    return email;
+}
+
+int Student::getYear()
+{
+    return year;
+}
+
+float Student::getCGPA()
+{
+    return CGPA;
+}
+map<string, int> Student::getMarks()
+{
+    return marks;
+}
+map<string, int> Student::getAttendance()
+{
+    return attendance;
+}
+void Student ::addLeaveApplication(LeaveApplication leave)
+{
+    leaveHistory.push_back(leave);
+}
+
+void Student::editProfile()
+{
+    cout << "Editing profile for " << name << endl;
+    cout << "Current details:" << endl;
+    viewDetails();
+    cout << "Enter new name (or press Enter to keep current): ";
+    string newName;
+    getline(cin, newName);
+    if (!newName.empty())
+        name = newName;
+
+    cout << "Profile updated successfully!" << endl;
+}
+vector<Course *> Student ::getRegisteredCourses()
+{
+    return registeredCourses;
+}
+vector<LeaveApplication> Student ::getLeaveHistory()
+{
+    return leaveHistory;
+}
+/*
+
+
+
+
+*/
+
+string FA ::getID()
+{
+    return id;
+}
+
+vector<Student *> FA::getAssignedStudents()
+{
+    return assignedStudents;
+}
+
+void FA::setAssignedStudents(Student *student)
+{
+    assignedStudents.push_back(student);
+}
+
+void FA::viewAssignedStudents()
+{
+    cout << "Assigned Students:" << endl;
+    if (assignedStudents.empty())
+    {
+        cout << "No students assigned." << endl;
+    }
+    else
+    {
+        for (auto &&student : assignedStudents)
+        {
+            cout << student->getRollNo() << " - " << student->getSem() << endl;
+        }
+    }
+}
+void FA::reviewLeaveApplication()
+{
+    for (auto &&request : newleaveRequests)
+    {
+        string rollNo = request.first->getRollNo();
+        string reason = request.second.getReason();
+        Date startDate = request.second.getStartDate();
+        Date endDate = request.second.getEndDate();
+
+        cout << "Leave Request from " << rollNo << " for :" << reason << " from " << startDate.showDate() << " to " << endDate.showDate() << endl;
+
+        cout << "Do you want to approve this leave request? (y/n): ";
+        char choice;
+        cin >> choice;
+        if (choice == 'y' || choice == 'Y')
+        {
+            leaveRequests[request.first] = request.second;
+            cout << "Leave request approved for " << request.first->getRollNo() << endl;
+            request.first->addnotification("Your leave request has been approved");
+        }
+        else
+        {
+            cout << "Leave request rejected for " << request.first->getRollNo() << endl;
+            request.first->addnotification("Your leave request has been rejected");
+        }
+    }
+    newleaveRequests.clear();
+    New_Notification = false;
+}
+
+void FA ::submitApplication(Student *student, LeaveApplication leave)
+{
+    newleaveRequests[student] = leave;
+    New_Notification = true;
+}
+
+bool FA ::isNewNotification()
+{
+    return New_Notification;
+}
+void FA ::setNewNotification(bool status)
+{
+    New_Notification = status;
+}
+void FA ::newLeaveRequests(Student *student, LeaveApplication leave)
+{
+    newleaveRequests[student] = leave;
+    New_Notification = true;
+}
+void FA ::LeaveRequests(Student *student, LeaveApplication leave)
+{
+    leaveRequests[student] = leave;
+    New_Notification = true;
 }

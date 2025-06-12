@@ -1,0 +1,16 @@
+date, leaveapplication needs nothing
+course-> student & faculty
+semester -> course
+Faculty -> course
+FA -> course, student, leave application 
+student -> course & FA ( we can remove FA)
+
+
+
+1. date
+2. leave application
+3. Course (if we give it the student and faculty Id)
+4. semester
+5. Faculty
+6. Student (if we remove FA by giving FA ID)
+7. FA
