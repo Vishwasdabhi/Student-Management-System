@@ -1,4 +1,6 @@
 #include "backend.cpp"
+#include <conio.h>
+#include <windows.h>
 
 /*
 think if we can add some colsole based design
@@ -11,102 +13,198 @@ void FAMenu(FA *fa);
 
 const string ADMIN_USERNAME = "admin";
 const string ADMIN_PASSWORD = "admin123";
+const int MAX_PASSWORD_LENGTH = 100;
+
+void exit_program()
+{
+    write_all_files();
+    exit(0);
+}
+
+// void loginPage()
+// {
+//     cout << "Welcome to ..." << endl; // to be decided
+//     cout << "Login as :" << endl;
+//     cout << "1. Admin" << endl;
+//     cout << "2. Student" << endl;
+//     cout << "3. Faculty" << endl;
+//     cout << "4. FA" << endl;
+//     cout << "0. Exit" << endl;
+//     cout << "Please select an option: ";
+//     int choice;
+//     cin >> choice;
+//     switch (choice)
+//     {
+//     case 1:
+//     {
+//         string username, password;
+//         cout << "Enter Admin Username: ";
+//         cin >> username;
+//         cout << "Enter Admin Password: ";
+//         cin >> password;
+//         if (username == ADMIN_USERNAME && password == ADMIN_PASSWORD)
+//         {
+//             system("cls");
+//             adminMenu();
+//         }
+//         else
+//         {
+//             cout << "Invalid credentials." << endl;
+//         }
+//         break;
+//     }
+//     case 2:
+//     {
+//         string username, password;
+//         cout << "Enter Student Username: ";
+//         cin >> username;
+//         cout << "Enter Student Password: ";
+//         cin >> password;
+//         for (int i = 0; i < students.size(); i++)
+//         {
+//             if (students[i].login(username, password))
+//             {
+//                 system("cls");
+//                 studentMenu(&students[i]);
+//                 return;
+//             }
+//         }
+//         cout << "Invalid credentials." << endl;
+//         break;
+//     }
+//     case 3:
+//     {
+//         string username, password;
+//         cout << "Enter Faculty Username: ";
+//         cin >> username;
+//         cout << "Enter Faculty Password: ";
+//         cin >> password;
+//         for (int i = 0; i < faculties.size(); i++)
+//         {
+//             if (faculties[i].login(username, password))
+//             {
+//                 system("cls");
+//                 facultyMenu(&faculties[i]);
+//                 return;
+//             }
+//         }
+//         cout << "Invalid credentials." << endl;
+//         break;
+//     }
+//     case 4:
+//     {
+//         string username, password;
+//         cout << "Enter FA Username: ";
+//         cin >> username;
+//         cout << "Enter FA Password: ";
+//         cin >> password;
+//         for (int i = 0; i < fa.size(); i++)
+//         {
+//             if (fa[i].login(username, password))
+//             {
+//                 system("cls");
+//                 FAMenu(&fa[i]);
+//                 return;
+//             }
+//         }
+//         cout << "Invalid credentials." << endl;
+//         break;
+//     }
+//     case 0:
+//     {
+//         cout << "Exiting..." << endl;
+//         return;
+//     }
+//     }
+// }
+
+void maskInput(string &password)
+{
+    password.clear();
+    char ch;
+    while (true)
+    {
+        ch = _getch();
+        if (ch == '\r' || ch == '\n')
+        {
+            cout << endl;
+            break;
+        }
+        else if (ch == '\b' && !password.empty())
+        {
+            cout << "\b \b";
+            password.pop_back();
+        }
+        else if (password.length() < MAX_PASSWORD_LENGTH && ch != '\b')
+        {
+            cout << "*";
+            password.push_back(ch);
+        }
+    }
+}
 
 void loginPage()
 {
-    cout << "Welcome to ..." << endl; // to be decided
-    cout << "Login as :" << endl;
-    cout << "1. Admin" << endl;
-    cout << "2. Student" << endl;
-    cout << "3. Faculty" << endl;
-    cout << "4. FA" << endl;
-    cout << "0. Exit" << endl;
-    cout << "Please select an option: ";
-    int choice;
-    cin >> choice;
-    switch (choice)
+    cout << "Login (Press quit in username to log out)" << endl;
+    cout << "Enter Username: ";
+    string username, password;
+    cin >> username;
+    if (username == "quit")
+        exit_program();
+    cout << "Enter Password: ";
+    maskInput(password);
+    cout << "You entered: " << password << endl; // For debugging, can be removed later
+
+    // Check Admin
+    if (username == ADMIN_USERNAME && password == ADMIN_PASSWORD)
     {
-    case 1:
-    {
-        string username, password;
-        cout << "Enter Admin Username: ";
-        cin >> username;
-        cout << "Enter Admin Password: ";
-        cin >> password;
-        if (username == ADMIN_USERNAME && password == ADMIN_PASSWORD)
-        {
-            system("cls");
-            adminMenu();
-        }
-        else
-        {
-            cout << "Invalid credentials." << endl;
-        }
-        break;
-    }
-    case 2:
-    {
-        string username, password;
-        cout << "Enter Student Username: ";
-        cin >> username;
-        cout << "Enter Student Password: ";
-        cin >> password;
-        for (int i = 0; i < students.size(); i++)
-        {
-            if (students[i].login(username, password))
-            {
-                system("cls");
-                studentMenu(&students[i]);
-                return;
-            }
-        }
-        cout << "Invalid credentials." << endl;
-        break;
-    }
-    case 3:
-    {
-        string username, password;
-        cout << "Enter Faculty Username: ";
-        cin >> username;
-        cout << "Enter Faculty Password: ";
-        cin >> password;
-        for (int i = 0; i < faculties.size(); i++)
-        {
-            if (faculties[i].login(username, password))
-            {
-                system("cls");
-                facultyMenu(&faculties[i]);
-                return;
-            }
-        }
-        cout << "Invalid credentials." << endl;
-        break;
-    }
-    case 4:
-    {
-        string username, password;
-        cout << "Enter FA Username: ";
-        cin >> username;
-        cout << "Enter FA Password: ";
-        cin >> password;
-        for (int i = 0; i < fa.size(); i++)
-        {
-            if (fa[i].login(username, password))
-            {
-                system("cls");
-                FAMenu(&fa[i]);
-                return;
-            }
-        }
-        cout << "Invalid credentials." << endl;
-        break;
-    }
-    case 0:
-    {
-        cout << "Exiting..." << endl;
+        system("cls");
+        adminMenu();
+        loginPage();
         return;
     }
+
+    // Check Students
+    for (int i = 0; i < students.size(); i++)
+    {
+        if (students[i].login(username, password))
+        {
+            system("cls");
+            studentMenu(&students[i]);
+            loginPage();
+            return;
+        }
     }
+
+    // Check Faculty (including FA)
+    for (int i = 0; i < faculties.size(); i++)
+    {
+        if (faculties[i].login(username, password))
+        {
+            system("cls");
+            if (faculties[i].is_FA_function())
+            {
+                for (int j = 0; j < fa.size(); j++)
+                {
+                    if (fa[j].getFacultyID() == faculties[i].getFacultyID())
+                    {
+                        FAMenu(&fa[j]);
+                        loginPage();
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                facultyMenu(&faculties[i]);
+                loginPage();
+            }
+            return;
+        }
+    }
+
+    cout << "Invalid credentials." << endl;
+    exit_program();
 }
 
 void adminMenu()
@@ -121,8 +219,7 @@ void adminMenu()
     cout << "7. View Courses" << endl;
     cout << "8. Add Course" << endl;
     cout << "9. Delete Course" << endl;
-
-    cout << "0. Exit" << endl;
+    cout << "0. Log Out" << endl;
     cout << "Please select an option: ";
     int choice;
     cin >> choice;
@@ -130,21 +227,37 @@ void adminMenu()
     {
     case 1:
     {
+        system("cls");
         cout << "Viewing Students..." << endl;
         for (int i = 0; i < students.size(); i++)
         {
             students[i].viewDetails();
         }
+        cout << "\n\nPress any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        adminMenu();
         break;
     }
     case 2:
     {
         addstudents();
+        cout << "\n\nPress any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        adminMenu();
         break;
     }
     case 3:
     {
         deletestudents();
+        cout << "\n\nPress any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        adminMenu();
         break;
     }
     case 4:
@@ -154,16 +267,31 @@ void adminMenu()
         {
             faculties[i].viewDetails();
         }
+        cout << "\n\nPress any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        adminMenu();
         break;
     }
     case 5:
     {
         addfaculty();
+        cout << "\n\nPress any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        adminMenu();
         break;
     }
     case 6:
     {
         deletefaculty();
+        cout << "\n\nPress any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        adminMenu();
         break;
     }
     case 7:
@@ -179,21 +307,36 @@ void adminMenu()
         {
             cout << "Course ID: " << courses_sem2[i].getID() << ", Credits: " << courses_sem2[i].getCredits() << endl;
         }
+        cout << "\n\nPress any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        adminMenu();
         break;
     }
     case 8:
     {
         addcourse();
+        cout << "\n\nPress any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        adminMenu();
         break;
     }
     case 9:
     {
         deletecourse();
+        cout << "\n\nPress any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        adminMenu();
         break;
     }
     case 0:
     {
-        cout << "Exiting..." << endl;
+        system("cls");
         return;
     }
     }
@@ -212,7 +355,7 @@ void studentMenu(Student *student)
     cout << "8. Give Feedback" << endl;
     cout << "9. Register for Courses" << endl;
     cout << "10. View Leave Records" << endl;
-    cout << "0. Exit" << endl;
+    cout << "0. Log Out" << endl;
 
     cout << "Please select an option: ";
     int choice;
@@ -223,11 +366,22 @@ void studentMenu(Student *student)
     {
         cout << "Viewing Profile..." << endl;
         student->viewDetails();
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        studentMenu(student);
         break;
     }
     case 2:
     {
         student->editProfile();
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        studentMenu(student);
+        break;
     }
     case 3:
     {
@@ -245,6 +399,11 @@ void studentMenu(Student *student)
                 cout << course->getID() << "\t" << course->getCredits() << "\t" << (course->isCompulsoryCourse() ? "Yes" : "No") << endl;
             }
         }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        studentMenu(student);
         break;
     }
     case 4:
@@ -262,6 +421,11 @@ void studentMenu(Student *student)
                 cout << "Course ID: " << entry.first << ", Attendance: " << entry.second << "%" << endl;
             }
         }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        studentMenu(student);
         break;
     }
     case 5:
@@ -279,6 +443,11 @@ void studentMenu(Student *student)
                 cout << "Course ID: " << subject.first << ", Marks: " << subject.second << endl;
             }
         }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        studentMenu(student);
         break;
     }
     case 6:
@@ -307,12 +476,22 @@ void studentMenu(Student *student)
             endDate = Date(day, month, year);
         }
         student->applyForLeave(reason, startDate, endDate);
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        studentMenu(student);
         break;
     }
     case 7:
     {
         cout << "Viewing Notifications..." << endl;
         student->viewNotifications();
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        studentMenu(student);
         break;
     }
     case 8:
@@ -323,6 +502,11 @@ void studentMenu(Student *student)
         if (registeredCourses.empty())
         {
             cout << "No courses registered." << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();
+            cin.get();
+            system("cls");
+            studentMenu(student);
             return;
         }
         for (auto &&course : registeredCourses)
@@ -337,6 +521,11 @@ void studentMenu(Student *student)
         cin.ignore();
         getline(cin, feedback);
         student->giveFeedback(courseID, feedback); // to be implemented
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        studentMenu(student);
         break;
     }
     case 9:
@@ -356,11 +545,21 @@ void studentMenu(Student *student)
         else
         {
             cout << "No courses available for this semester." << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();
+            cin.get();
+            system("cls");
+            studentMenu(student);
             return;
         }
         if (availableCourses.empty())
         {
             cout << "No courses available." << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();
+            cin.get();
+            system("cls");
+            studentMenu(student);
             return;
         }
 
@@ -379,6 +578,11 @@ void studentMenu(Student *student)
                     {
                         count++;
                         cout << "Yes" << endl;
+                        cout << "Press any key to continue..." << endl;
+                        cin.ignore();
+                        cin.get();
+                        system("cls");
+                        studentMenu(student);
                         break;
                     }
                     else
@@ -409,6 +613,11 @@ void studentMenu(Student *student)
                     course.enrollStudent(student->getRollNo());
                     cout << "Course ID: " << courseID << " registered successfully." << endl;
                     student->addSubject(&course);
+                    cout << "Press any key to continue..." << endl;
+                    cin.ignore();
+                    cin.get();
+                    system("cls");
+                    studentMenu(student);
                     break;
                 }
             }
@@ -417,6 +626,11 @@ void studentMenu(Student *student)
                 cout << "Course ID not found or already registered." << endl;
             }
         }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        studentMenu(student);
         break;
     }
     case 10:
@@ -435,11 +649,16 @@ void studentMenu(Student *student)
                      << ", End Date: " << leave.getEndDate().showDate() << endl;
             }
         }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        studentMenu(student);
         break;
     }
     case 0:
     {
-        cout << "Exiting..." << endl;
+        system("cls");
         return;
     }
     }
@@ -454,7 +673,7 @@ void facultyMenu(Faculty *faculty)
     cout << "3. View Attendance" << endl;
     cout << "4. View Marks" << endl;
     cout << "5. Add Marks" << endl;
-    cout << "0. Exit" << endl;
+    cout << "0. Log Out" << endl;
 
     cout << "Please select an option: ";
     int choice;
@@ -465,6 +684,11 @@ void facultyMenu(Faculty *faculty)
     {
         cout << "Viewing Profile..." << endl;
         faculty->viewDetails();
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        facultyMenu(faculty);
         break;
     }
     case 2:
@@ -482,6 +706,11 @@ void facultyMenu(Faculty *faculty)
                 cout << "Course ID: " << course->getID() << ", Credits: " << course->getCredits() << endl;
             }
         }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        facultyMenu(faculty);
         break;
     }
     case 3:
@@ -515,7 +744,7 @@ void facultyMenu(Faculty *faculty)
                     {
                         for (auto &&subject : attendance)
                         {
-                            cout << "Student Roll No: " << subject.first << ", Attendance: " << subject.second << endl;
+                            cout << "Student Roll No: " << subject.first << ", Attendance: " << subject.second << "." << endl;
                         }
                     }
                 }
@@ -525,6 +754,11 @@ void facultyMenu(Faculty *faculty)
                 cout << "Invalid Course ID. Please try again: " << endl;
             }
         }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        facultyMenu(faculty);
         break;
     }
     case 4:
@@ -557,7 +791,7 @@ void facultyMenu(Faculty *faculty)
                     {
                         for (auto &&subject : marks)
                         {
-                            cout << "Student Roll No: " << subject.first << ", Marks: " << subject.second << endl;
+                            cout << "Student Roll No: " << subject.first << ", Marks: " << subject.second << "." << endl;
                         }
                     }
                 }
@@ -567,6 +801,11 @@ void facultyMenu(Faculty *faculty)
                 cout << "Invalid Course ID. Please try again: " << endl;
             }
         }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        facultyMenu(faculty);
         break;
     }
     case 5:
@@ -610,7 +849,7 @@ void facultyMenu(Faculty *faculty)
                     case 1:
                     {
                         cout << "Enter marks for each student:" << endl;
-                        for (auto &student : students)
+                        for (auto &&student : students)
                         {
                             int mark;
                             cout << "Student Roll No: " << student << ", Enter Marks: ";
@@ -621,7 +860,6 @@ void facultyMenu(Faculty *faculty)
                                 cin >> mark;
                             }
                             it->add_marks(student, mark);
-                            students_map[student]->addMarks(it->getID(), mark);
                             cout << "Marks added for " << student << ": " << mark << endl;
                         }
                         break;
@@ -653,11 +891,10 @@ void facultyMenu(Faculty *faculty)
                                         cin >> mark;
                                     }
                                     it->add_marks(student, mark);
-                                    students_map[student]->addMarks(it->getID(), mark);
                                     cout << "Marks added for " << student << ": " << mark << endl;
                                 }
                             }
-                            if(!flag2)
+                            if (!flag2)
                             {
                                 cout << "Invalid Roll No. Please try again." << endl;
                             }
@@ -671,11 +908,16 @@ void facultyMenu(Faculty *faculty)
                 cout << "Invalid Course ID. Please try again: " << endl;
             }
         }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        facultyMenu(faculty);
         break;
     }
     case 0:
     {
-        cout << "Exiting..." << endl;
+        system("cls");
         return;
     }
     }
@@ -691,7 +933,7 @@ void FAMenu(FA *fa)
     cout << "5. Add Marks" << endl;
     cout << "6. View Assigned Students" << endl;
     cout << "7. View Notifications / Review Leave application" << endl;
-    cout << "0. Exit" << endl;
+    cout << "0. Log Out" << endl;
 
     cout << "Please select an option: ";
     int choice;
@@ -702,6 +944,11 @@ void FAMenu(FA *fa)
     {
         cout << "Viewing Profile..." << endl;
         fa->viewDetails();
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        FAMenu(fa);
         break;
     }
     case 2:
@@ -719,11 +966,16 @@ void FAMenu(FA *fa)
                 cout << "Course ID: " << course->getID() << ", Credits: " << course->getCredits() << endl;
             }
         }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        FAMenu(fa);
         break;
     }
     case 3:
     {
-       cout << "Viewing Attendance..." << endl;
+        cout << "Viewing Attendance..." << endl;
 
         cout << "Available Courses: " << endl;
         for (auto &&it : fa->getSubjects())
@@ -762,6 +1014,11 @@ void FAMenu(FA *fa)
                 cout << "Invalid Course ID. Please try again: " << endl;
             }
         }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        FAMenu(fa);
         break;
     }
     case 4:
@@ -804,6 +1061,11 @@ void FAMenu(FA *fa)
                 cout << "Invalid Course ID. Please try again: " << endl;
             }
         }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        FAMenu(fa);
         break;
     }
     case 5:
@@ -858,7 +1120,6 @@ void FAMenu(FA *fa)
                                 cin >> mark;
                             }
                             it->add_marks(student, mark);
-                            students_map[student]->addMarks(it->getID(), mark);
                             cout << "Marks added for " << student << ": " << mark << endl;
                         }
                         break;
@@ -890,11 +1151,10 @@ void FAMenu(FA *fa)
                                         cin >> mark;
                                     }
                                     it->add_marks(student, mark);
-                                    students_map[student]->addMarks(it->getID(), mark);
                                     cout << "Marks added for " << student << ": " << mark << endl;
                                 }
                             }
-                            if(!flag2)
+                            if (!flag2)
                             {
                                 cout << "Invalid Roll No. Please try again." << endl;
                             }
@@ -909,11 +1169,22 @@ void FAMenu(FA *fa)
             }
         }
         break;
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        FAMenu(fa);
+        break;
     }
     case 6:
     {
         cout << "Viewing Assigned Students..." << endl;
         fa->viewAssignedStudents();
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        FAMenu(fa);
         break;
     }
     case 7:
@@ -927,11 +1198,16 @@ void FAMenu(FA *fa)
         {
             cout << "No new notifications." << endl;
         }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        cin.get();
+        system("cls");
+        FAMenu(fa);
         break;
     }
     case 0:
     {
-        cout << "Exiting..." << endl;
+        system("cls");
         return;
     }
     }
@@ -939,6 +1215,15 @@ void FAMenu(FA *fa)
 
 int main()
 {
+    cout << "Initializing Student Management System..." << endl;
+    if (headercheck())
+    {
+        retrieve_info();
+    }
+    system("cls");
+    cout << "Welcome to the Student Management System!" << endl;
+    Sleep(2000);
+    system("cls");
     loginPage();
     return 0;
 }

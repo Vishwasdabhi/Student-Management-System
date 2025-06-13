@@ -1,2 +1,4 @@
 *.exe
+*.csv
 .vscode/
+leave_applications.txt

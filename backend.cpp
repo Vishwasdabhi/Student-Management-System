@@ -42,6 +42,7 @@ void retrieve_info()
     if (line_count == 0)
     {
         file.close();
+        return;
     }
     file.clear();            // clear the EOF flag
     file.seekg(0, ios::beg); // move the cursor back to the beginning of the file
@@ -568,12 +569,14 @@ void createheader()
 }
 
 // function to check whether the file has an appropriate heading.
-void headercheck()
+bool headercheck()
 {
     ifstream file1("student_information.csv");
     if (!file1.is_open())
     {
         createheader();
+        file1.close();
+        return false;
     }
     string header;
     getline(file1, header);
@@ -581,10 +584,9 @@ void headercheck()
     {
         createheader();
         file1.close();
-        return;
+        return false;
     }
-    // retrieve_info();
-    // retrieve_attendance();
+    return true;
 }
 
 void write_all_files()
@@ -822,7 +824,7 @@ void addstudents()
         cout << "Semester Number: ";
         cin >> sem_num;
         cin.ignore(); // to ignore the newline character after entering sem_num
-        cout << "Date of Birth (DD MM YYYY): ";
+        cout << "Date of Birth (DD MM YYYY, leave the spaces as mentioned): ";
         int day, month, year_dob;
         cin >> day >> month >> year_dob;
         dob = to_string(day) + " " + to_string(month) + " " + to_string(year_dob);
@@ -1590,4 +1592,3 @@ bool Faculty::changePassword(string newPass) {
     password = newPass;
     return true;
 }
-
