@@ -811,11 +811,12 @@ void addstudents()
         string name, rollNo, branch, FA_ID, gender, dob, email;
         int year, sem_num;
         cout << "Enter details for Student " << i + 1 << ":" << endl;
+        cin.ignore();
         cout << "Name: ";
-        cin.ignore(); // to ignore the newline character
         getline(cin, name);
         cout << "Roll Number: ";
         getline(cin, rollNo);
+        cin.ignore();
         cout << "Branch: ";
         getline(cin, branch);
         cout << "FA ID: ";
@@ -824,16 +825,15 @@ void addstudents()
         cin >> year;
         cout << "Semester Number: ";
         cin >> sem_num;
-        cin.ignore(); // to ignore the newline character after entering sem_num
+        cin.ignore();
         cout << "Date of Birth (DD MM YYYY, leave the spaces as mentioned): ";
         int day, month, year_dob;
         cin >> day >> month >> year_dob;
         dob = to_string(day) + " " + to_string(month) + " " + to_string(year_dob);
-        cout << "Email: ";
-        getline(cin, email);
+        cin.ignore();
         cout << "Gender: ";
         getline(cin, gender);
-        students.push_back(Student(rollNo, rollNo + "@iitbbs", name, rollNo, year, branch, FA_ID, 0.0, gender, dob, email, sem_num));
+        students.push_back(Student(rollNo, rollNo + "@iitbbs", name, rollNo, year, branch, FA_ID, 0.0, gender, dob, rollNo + "@iitbbs", sem_num));
 
         for (int j = 0; j < fa.size(); j++)
         {
@@ -886,18 +886,16 @@ void addfaculty()
         getline(cin, branch);
         cout << "Gender: ";
         getline(cin, gender);
-        cout << "Email: ";
-        getline(cin, email);
         cout << "Office Number: ";
         getline(cin, officeNo);
         cout << "Is this faculty a FA? (1 for Yes, 0 for No): ";
         getline(cin, is_FA_str);
         is_FA = (is_FA_str == "1");
-        faculties.push_back(Faculty(id, id + "@iitbbs", name, id, gender, email, branch, officeNo, is_FA));
+        faculties.push_back(Faculty(id, id + "@iitbbs", name, id, gender, id + "@iitbbs", branch, officeNo, is_FA));
         cout << "Faculty " << name << " added successfully!" << endl;
         if (is_FA)
         {
-            fa.push_back(FA(id, id + "@iitbbs", name, id, gender, email, branch, officeNo, is_FA));
+            fa.push_back(FA(id, id + "@iitbbs", name, id, gender, id + "@iitbbs", branch, officeNo, is_FA));
             cout << "FA " << name << " added successfully!" << endl;
         }
     }
@@ -1033,11 +1031,7 @@ bool User::login(string uname, string pass)
         cout << "Login successful!" << endl;
         return true;
     }
-    else
-    {
-        cout << "Invalid username or password." << endl;
-        return false;
-    }
+    return false;
 }
 
 bool User::changePassword(string newPass)
@@ -1304,7 +1298,11 @@ string Faculty::getOfficeNo()
 
 void Faculty::viewDetails()
 {
-    // to be implimented
+    cout << "Faculty ID: " << id << endl;
+    cout << "Name: " << name << endl;
+    cout << "Email: " << email << endl;
+    cout << "Branch: " << branch << endl;
+    cout << "Office No: " << officeNo << endl;
 }
 
 /*

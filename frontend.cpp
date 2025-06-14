@@ -27,7 +27,7 @@ void maskInput(string &password)
     char ch;
     while (true)
     {
-        ch = getchar();
+        ch = _getch();
         if (ch == '\r' || ch == '\n')
         {
             cout << endl;
@@ -54,7 +54,7 @@ void loginPage()
     cin >> username;
     if (username == "quit")
         exit_program();
-        cin.ignore();
+    cin.ignore();
     cout << "Enter Password: ";
     maskInput(password);
     cout << "You entered: " << password << endl; // For debugging, can be removed later
@@ -63,7 +63,7 @@ void loginPage()
     if (username == ADMIN_USERNAME && password == ADMIN_PASSWORD)
     {
         system("cls");
-        if(headercheck())
+        if (headercheck())
         {
             cout << "Welcome to the Admin Panel!" << endl;
         }
@@ -116,7 +116,7 @@ void loginPage()
         }
     }
 
-    cout << "Invalid credentials." << endl;
+    cout << "Invalid username or password." << endl;
     Sleep(1500);
     system("cls");
     loginPage();
@@ -146,7 +146,7 @@ void adminMenu()
         cout << "Viewing Students..." << endl;
         for (int i = 0; i < students.size(); i++)
         {
-            students[i].getRollNo();
+            cout << students[i].getRollNo() << endl;
         }
         cout << "Enter the Roll Number of the student to view details: ";
         string rollNo;
@@ -158,12 +158,12 @@ void adminMenu()
             {
                 found = true;
                 cout << "Details of Student with Roll Number " << rollNo << ":" << endl;
+                cin.ignore();
                 students[i].viewDetails();
                 break;
             }
         }
         cout << "\n\nPress any key to continue..." << endl;
-        cin.ignore();
         cin.get();
         system("cls");
         adminMenu();
@@ -1144,9 +1144,9 @@ void FAMenu(FA *fa)
 
 int main()
 {
-    if(!headercheck())
+    if (!headercheck())
     {
-        cout<<"No database found."<<endl;
+        cout << "No database found." << endl;
     }
     system("cls");
     cout << "Welcome to the Student Management System!" << endl;
