@@ -414,6 +414,8 @@ void studentMenu(Student *student)
     {
     case 1:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Profile..." << endl;
         student->viewDetails();
         cout << "Press any key to continue..." << endl;
@@ -424,6 +426,8 @@ void studentMenu(Student *student)
     }
     case 2:
     {
+        cin.ignore();
+        system("cls");
         student->editProfile();
         cout << "Press any key to continue..." << endl;
         cin.ignore();
@@ -433,6 +437,8 @@ void studentMenu(Student *student)
     }
     case 3:
     {
+        cin.ignore();
+        system("cls");
         vector<Course *> registeredCourses = student->getRegisteredCourses();
         if (registeredCourses.empty())
         {
@@ -455,6 +461,8 @@ void studentMenu(Student *student)
     }
     case 4:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Attendance..." << endl;
         map<string, int> attendance = student->getAttendance();
         if (attendance.empty())
@@ -476,6 +484,8 @@ void studentMenu(Student *student)
     }
     case 5:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Marks..." << endl;
         map<string, int> marks = student->getMarks();
         if (marks.empty())
@@ -497,11 +507,12 @@ void studentMenu(Student *student)
     }
     case 6:
     {
+        cin.ignore();
+        system("cls");
         cout << "Applying for Leave..." << endl;
         string reason;
         Date startDate, endDate;
         cout << "Enter reason for leave: ";
-        cin.ignore();
         getline(cin, reason);
         cout << "Enter start date (DD MM YYYY): ";
         int day, month, year;
@@ -521,6 +532,7 @@ void studentMenu(Student *student)
             endDate = Date(day, month, year);
         }
         student->applyForLeave(reason, startDate, endDate);
+        cin.ignore();
         cout << "Press any key to continue..." << endl;
         cin.ignore();
         system("cls");
@@ -529,6 +541,8 @@ void studentMenu(Student *student)
     }
     case 7:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Notifications..." << endl;
         student->viewNotifications();
         cout << "Press any key to continue..." << endl;
@@ -539,6 +553,8 @@ void studentMenu(Student *student)
     }
     case 8:
     {
+        cin.ignore();
+        system("cls");
         cout << "Giving Feedback..." << endl;
         cout << "Available Courses: " << endl;
         vector<Course *> registeredCourses = student->getRegisteredCourses();
@@ -571,6 +587,8 @@ void studentMenu(Student *student)
     }
     case 9:
     {
+        cin.ignore();
+        system("cls");
         cout << "Registering for Courses..." << endl;
         cout << "Available Courses: " << endl;
         int sem_num = student->getSemNum();
@@ -671,6 +689,8 @@ void studentMenu(Student *student)
     }
     case 10:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Leave Records..." << endl;
         vector<LeaveApplication> leaveHistory = student->getLeaveHistory();
         if (leaveHistory.empty())
@@ -681,8 +701,8 @@ void studentMenu(Student *student)
         {
             for (auto &&leave : leaveHistory)
             {
-                cout << "Reason: " << leave.getReason() << ", Start Date: " << leave.getStartDate().showDate()
-                     << ", End Date: " << leave.getEndDate().showDate() << endl;
+                cout << "Reason: " << leave.getReason() << endl<< "Start Date: " << leave.getStartDate().showDate()
+                     << endl<< "End Date: " << leave.getEndDate().showDate() << endl;
             }
         }
         cout << "Press any key to continue..." << endl;

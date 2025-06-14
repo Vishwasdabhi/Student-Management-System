@@ -24,6 +24,41 @@ vector<Faculty> faculties;
 vector<FA> fa;
 vector<LeaveApplication> leaveApplications;
 
+unordered_map<string, Student *> students_map;
+unordered_map<string, Faculty *> faculties_map;
+unordered_map<string, Course *> courses_sem1_map;
+unordered_map<string, Course *> courses_sem2_map;
+unordered_map<string, FA *> fa_map;
+unordered_map<string, LeaveApplication *> leave_applications_map;
+
+void fillMaps()
+{
+    for (auto &student : students)
+    {
+        students_map[student.getRollNo()] = &student;
+    }
+    for (auto &faculty : faculties)
+    {
+        faculties_map[faculty.getFacultyID()] = &faculty;
+    }
+    for (auto &course : courses_sem1)
+    {
+        courses_sem1_map[course.getID()] = &course;
+    }
+    for (auto &course : courses_sem2)
+    {
+        courses_sem2_map[course.getID()] = &course;
+    }
+    for (auto &fa : fa)
+    {
+        fa_map[fa.getID()] = &fa;
+    }
+    for (auto &leave : leaveApplications)
+    {
+        leave_applications_map[leave.getRollNo()] = &leave;
+    }
+}
+
 string toUpper(string &str)
 {
     string upperStr = str;
@@ -402,6 +437,7 @@ void retrieve_info()
         cout << "Error opening leave applications file." << endl;
         exit(1);
     }
+    getline(file6, header);
     while (getline(file6, s))
     {
         stringstream ss(s);
@@ -449,6 +485,8 @@ void retrieve_info()
             }
         }
     }
+    file6.close();
+    fillMaps();
 }
 
 void createheader()
@@ -805,6 +843,7 @@ void write_all_files()
                 << leave.getEndDate().showDate() << ","
                 << leave.getStatus() << "\n";
     }
+    inFile6.close();
 }
 
 void addstudents()
@@ -899,6 +938,7 @@ void addstudents()
                 break;
             }
         }
+        students_map[students.back().getRollNo()] = &students.back();
 
         cout << "Student " << name << " added successfully!" << endl;
         Sleep(1000);
@@ -918,7 +958,17 @@ void deletestudents()
         {
             cout << "Deleting student: " << it->getName() << endl;
             students.erase(it);
-            cout << "Student deleted successfully!" << endl;
+            //cout << "Student deleted successfully!" << endl;
+            break;
+        }
+    }
+    for (auto it = students_map.begin(); it != students_map.end(); ++it)
+    {
+        if (it->first == rollNo)
+        {
+            cout << "Deleting student: " << it->second->getName() << endl;
+            students_map.erase(it);
+            //cout << "Student deleted successfully!" << endl;
             return;
         }
     }
@@ -1004,10 +1054,12 @@ void addfaculty()
             id = branch + to_string(count + 1) + toUpper(name).substr(0, 2);
 
         faculties.push_back(Faculty(id, id + "@iitbbs", name, id, gender, id + "@iitbbs.ac.in", branch, officeNo, is_FA));
+        faculties_map[id] = &faculties.back();
         cout << "Faculty " << name << " added successfully!" << endl;
         if (is_FA)
         {
             fa.push_back(FA(id, id + "@iitbbs", name, id, gender, id + "@iitbbs.ac.in", branch, officeNo, is_FA));
+            fa_map[id] = &fa.back();
             // cout << "FA " << name << " added successfully!" << endl;
         }
         Sleep(1000);
@@ -1030,6 +1082,16 @@ void deletefaculty()
             faculties.erase(faculties.begin() + i);
             cout << "Faculty with ID " << facultyID << " deleted successfully." << endl;
             break;
+        }
+    }
+    for (auto it = faculties_map.begin(); it != faculties_map.end(); ++it)
+    {
+        if (it->first == facultyID)
+        {
+            found = true;
+            cout << "Faculty with ID " << facultyID << " deleted successfully." << endl;
+            faculties_map.erase(it);
+            return;
         }
     }
     if (!found)
@@ -1113,10 +1175,12 @@ void addcourse()
         if (semester == 1)
         {
             courses_sem1.push_back(Course(id, branch, credits, is_compulsory));
+            courses_sem1_map[id] = &courses_sem1.back();
         }
         else
         {
             courses_sem2.push_back(Course(id, branch, credits, is_compulsory));
+            courses_sem2_map[id] = &courses_sem2.back();
         }
 
         cout << "Course " << id << " added successfully!" << endl;
@@ -1141,6 +1205,16 @@ void deletecourse()
             return;
         }
     }
+    for(auto it = courses_sem1_map.begin(); it != courses_sem1_map.end(); ++it)
+    {
+        if (it->first == id)
+        {
+            cout << "Deleting course: " << it->first << endl;
+            courses_sem1_map.erase(it);
+            cout << "Course deleted successfully!" << endl;
+            return;
+        }
+    }
     for (auto it = courses_sem2.begin(); it != courses_sem2.end(); ++it)
     {
         if (it->getID() == id)
@@ -1151,43 +1225,19 @@ void deletecourse()
             return;
         }
     }
+    for(auto it = courses_sem2_map.begin(); it != courses_sem2_map.end(); ++it)
+    {
+        if (it->first == id)
+        {
+            cout << "Deleting course: " << it->first << endl;
+            courses_sem2_map.erase(it);
+            cout << "Course deleted successfully!" << endl;
+            return;
+        }
+    }
     cout << "Course with ID " << id << " not found." << endl;
 }
 
-unordered_map<string, Student *> students_map;
-unordered_map<string, Faculty *> faculties_map;
-unordered_map<string, Course *> courses_sem1_map;
-unordered_map<string, Course *> courses_sem2_map;
-unordered_map<string, FA *> fa_map;
-unordered_map<string, LeaveApplication *> leave_applications_map;
-
-void fillMaps()
-{
-    for (auto &student : students)
-    {
-        students_map[student.getRollNo()] = &student;
-    }
-    for (auto &faculty : faculties)
-    {
-        faculties_map[faculty.getFacultyID()] = &faculty;
-    }
-    for (auto &course : courses_sem1)
-    {
-        courses_sem1_map[course.getID()] = &course;
-    }
-    for (auto &course : courses_sem2)
-    {
-        courses_sem2_map[course.getID()] = &course;
-    }
-    for (auto &fa : fa)
-    {
-        fa_map[fa.getID()] = &fa;
-    }
-    for (auto &leave : leaveApplications)
-    {
-        leave_applications_map[leave.getRollNo()] = &leave;
-    }
-}
 /*
 
 */
@@ -1517,8 +1567,9 @@ int Student ::getSem()
 }
 void Student ::applyForLeave(string reason, Date startDate, Date endDate)
 {
-    LeaveApplication leave(reason, startDate, endDate);
+    LeaveApplication leave(reason, startDate, endDate, "Pending", FA_ID, rollNo);
     leaveHistory.push_back(leave);
+    leaveApplications.push_back(leave);
     fa_map[FA_ID]->submitApplication(this, leave);
     cout << "Leave application submitted successfully." << endl;
 }
