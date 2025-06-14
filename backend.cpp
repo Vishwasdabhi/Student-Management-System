@@ -24,6 +24,13 @@ vector<Faculty> faculties;
 vector<FA> fa;
 vector<LeaveApplication> leaveApplications;
 
+string toUpper(string &str)
+{
+    string upperStr = str;
+    transform(upperStr.begin(), upperStr.end(), upperStr.begin(), ::toupper);
+    return upperStr;
+}
+
 void retrieve_info()
 {
     ifstream file("student_information.csv");
@@ -469,11 +476,11 @@ void createheader()
     fprintf(file, "Name,Password,Branch,Roll Number,Sem Number,FA ID,Gender,DOB,Email,Year,CGPA\n");
     fclose(file);
 
-    //vector<pair<string, pair<int, bool>>> subject_name_sem1;
-    //vector<pair<string, pair<int, bool>>> subject_name_sem2;
+    // vector<pair<string, pair<int, bool>>> subject_name_sem1;
+    // vector<pair<string, pair<int, bool>>> subject_name_sem2;
 
     system("cls");
-    cout << "Enter the number of subjects for Semester 1:" << endl;
+    cout << "Enter the number of subjects for Semester 1: ";
     int no_subjects_sem1;
     cin >> no_subjects_sem1;
     getchar(); // to consume the newline character after entering number of subjects
@@ -484,14 +491,14 @@ void createheader()
         string subject_name;
         int credits;
         bool is_compulsory;
-        cout << "Subject ID" << i + 1 << ": ";
+        cout << "Subject ID of subject number " << i + 1 << ": ";
         getline(cin, subject_name);
         cout << "Credits: ";
         cin >> credits;
         cout << "Is it a compulsory subject? (1 for Yes, 0 for No): ";
         cin >> is_compulsory;
         getchar(); // to consume the newline character after entering is_compulsory
-        //subject_name_sem1.push_back(make_pair(subject_name, make_pair(credits, is_compulsory)));
+        // subject_name_sem1.push_back(make_pair(subject_name, make_pair(credits, is_compulsory)));
         courses_sem1.push_back(Course(subject_name, subject_name.substr(0, 2), credits, is_compulsory));
     }
 
@@ -513,21 +520,21 @@ void createheader()
 
     system("cls");
 
-    cout << "Enter the number of subjects for Semester 2:" << endl;
+    cout << "Enter the number of subjects for Semester 2: ";
 
     int no_subjects_sem2;
     cin >> no_subjects_sem2;
 
     getchar(); // to consume the newline character after entering number of subjects
 
-    cout << "Enter Subject Name, Credits and whether it is a compulsory subject (1 for Yes, 0 for No):" << endl;
+    cout << "Enter Subject ID, Credits and whether it is a compulsory subject (1 for Yes, 0 for No):" << endl;
 
     for (int i = 0; i < no_subjects_sem2; i++)
     {
         string subject_name;
         int credits;
         bool is_compulsory;
-        cout << "Subject " << i + 1 << ": ";
+        cout << "Subject ID of subject number " << i + 1 << ": ";
         getline(cin, subject_name);
         cout << "Credits: ";
         cin >> credits;
@@ -811,17 +818,53 @@ void addstudents()
         string name, rollNo, branch, FA_ID, gender, dob, email;
         int year, sem_num;
         cout << "Enter details for Student " << i + 1 << ":" << endl;
-        cin.ignore();
         cout << "Name: ";
         getline(cin, name);
-        cout << "Roll Number: ";
-        getline(cin, rollNo);
+        bool valid = false;
+        while (!valid)
+        {
+            cout << "Select the branch from the available branches:" << endl;
+            cout << "1. CSE" << endl;
+            cout << "2. ECE" << endl;
+            cout << "3. EE" << endl;
+            cout << "4. ME" << endl;
+            cout << "5. CE" << endl;
+            cout << "Enter your choice (1-5): ";
+            int branch_choice;
+            cin >> branch_choice;
+            switch (branch_choice)
+            {
+            case 1:
+                branch = "CS";
+                valid = true;
+                break;
+            case 2:
+                branch = "EC";
+                valid = true;
+                break;
+            case 3:
+                branch = "EE";
+                valid = true;
+                break;
+            case 4:
+                branch = "ME";
+                valid = true;
+                break;
+            case 5:
+                branch = "CE";
+                valid = true;
+                break;
+            default:
+                cout << "Invalid choice" << endl;
+                cout << "Please select a valid branch." << endl;
+                break;
+            }
+        }
         cin.ignore();
-        cout << "Branch: ";
-        getline(cin, branch);
         cout << "FA ID: ";
-        getline(cin, FA_ID);
-        cout << "Year: ";
+        cin >> FA_ID;
+        cin.ignore();
+        cout << "Year(Batch year): ";
         cin >> year;
         cout << "Semester Number: ";
         cin >> sem_num;
@@ -833,7 +876,19 @@ void addstudents()
         cin.ignore();
         cout << "Gender: ";
         getline(cin, gender);
-        students.push_back(Student(rollNo, rollNo + "@iitbbs", name, rollNo, year, branch, FA_ID, 0.0, gender, dob, rollNo + "@iitbbs", sem_num));
+        int count = 0;
+        for (int j = 0; j < students.size(); j++)
+        {
+            if (students[j].getRollNo().substr(0, 2) == to_string(year).substr(2, 2) && students[j].getRollNo().substr(2, 2) == branch)
+            {
+                count = max(count, stoi(students[j].getRollNo().substr(4)));
+            }
+        }
+        if (count < 9)
+            rollNo = to_string(year).substr(2, 2) + branch + "0" + to_string(count + 1);
+        else
+            rollNo = to_string(year).substr(2, 2) + branch + to_string(count + 1);
+        students.push_back(Student(rollNo, rollNo + "@iitbbs", name, rollNo, year, branch, FA_ID, 0.0, gender, dob, rollNo + "@iitbbs.ac.in", sem_num));
 
         for (int j = 0; j < fa.size(); j++)
         {
@@ -846,6 +901,8 @@ void addstudents()
         }
 
         cout << "Student " << name << " added successfully!" << endl;
+        Sleep(1000);
+        system("cls");
     }
 }
 
@@ -854,6 +911,7 @@ void deletestudents()
     cout << "Enter the Roll Number of the student to delete: ";
     string rollNo;
     cin >> rollNo;
+    cin.ignore();
     for (auto it = students.begin(); it != students.end(); ++it)
     {
         if (it->getRollNo() == rollNo)
@@ -872,7 +930,7 @@ void addfaculty()
     cout << "Enter the number of faculty members to add: ";
     int n;
     cin >> n;
-    cin.ignore(); // to ignore the newline character after entering n
+    cin.ignore();
     for (int i = 0; i < n; i++)
     {
         string name, id, branch, gender, email, officeNo, is_FA_str;
@@ -880,43 +938,105 @@ void addfaculty()
         cout << "Enter details for Faculty " << i + 1 << ":" << endl;
         cout << "Name: ";
         getline(cin, name);
-        cout << "ID: ";
-        getline(cin, id);
-        cout << "Branch: ";
-        getline(cin, branch);
+        bool valid = false;
+        while (!valid)
+        {
+            cout << "Select the branch from the available branches:" << endl;
+            cout << "1. CSE" << endl;
+            cout << "2. ECE" << endl;
+            cout << "3. EE" << endl;
+            cout << "4. ME" << endl;
+            cout << "5. CE" << endl;
+            cout << "Enter your choice (1-5): ";
+            int branch_choice;
+            cin >> branch_choice;
+            switch (branch_choice)
+            {
+            case 1:
+                branch = "CS";
+                valid = true;
+                break;
+            case 2:
+                branch = "EC";
+                valid = true;
+                break;
+            case 3:
+                branch = "EE";
+                valid = true;
+                break;
+            case 4:
+                branch = "ME";
+                valid = true;
+                break;
+            case 5:
+                branch = "CE";
+                valid = true;
+                break;
+            default:
+                cout << "Invalid choice" << endl;
+                cout << "Please select a valid branch." << endl;
+                break;
+            }
+        }
+        cin.ignore();
         cout << "Gender: ";
-        getline(cin, gender);
+        cin >> gender;
+        cin.ignore();
         cout << "Office Number: ";
-        getline(cin, officeNo);
+        cin >> officeNo;
+        cin.ignore();
         cout << "Is this faculty a FA? (1 for Yes, 0 for No): ";
-        getline(cin, is_FA_str);
+        cin >> is_FA_str;
+        cin.ignore();
         is_FA = (is_FA_str == "1");
-        faculties.push_back(Faculty(id, id + "@iitbbs", name, id, gender, id + "@iitbbs", branch, officeNo, is_FA));
+
+        int count = 0;
+        for (int j = 0; j < faculties.size(); j++)
+        {
+            if (faculties[j].getFacultyID().substr(0, 2) == branch)
+            {
+                count = max(count, stoi(faculties[j].getFacultyID().substr(2)));
+            }
+        }
+        if (count < 9)
+            id = branch + "0" + to_string(count + 1) + toUpper(name).substr(0, 2);
+        else
+            id = branch + to_string(count + 1) + toUpper(name).substr(0, 2);
+
+        faculties.push_back(Faculty(id, id + "@iitbbs", name, id, gender, id + "@iitbbs.ac.in", branch, officeNo, is_FA));
         cout << "Faculty " << name << " added successfully!" << endl;
         if (is_FA)
         {
-            fa.push_back(FA(id, id + "@iitbbs", name, id, gender, id + "@iitbbs", branch, officeNo, is_FA));
-            cout << "FA " << name << " added successfully!" << endl;
+            fa.push_back(FA(id, id + "@iitbbs", name, id, gender, id + "@iitbbs.ac.in", branch, officeNo, is_FA));
+            // cout << "FA " << name << " added successfully!" << endl;
         }
+        Sleep(1000);
+        system("cls");
     }
 }
 
 void deletefaculty()
 {
-    cout << "Enter the ID of the faculty to delete: ";
-    string id;
-    cin >> id;
-    for (auto it = faculties.begin(); it != faculties.end(); ++it)
+    cout << "Enter the Faculty ID to delete: ";
+    string facultyID;
+    cin >> facultyID;
+    cin.ignore();
+    bool found = false;
+    for (int i = 0; i < faculties.size(); i++)
     {
-        if (it->getFacultyID() == id)
+        if (faculties[i].getFacultyID() == facultyID)
         {
-            cout << "Deleting faculty: " << it->getFacultyName() << endl;
-            faculties.erase(it);
-            cout << "Faculty deleted successfully!" << endl;
-            return;
+            found = true;
+            faculties.erase(faculties.begin() + i);
+            cout << "Faculty with ID " << facultyID << " deleted successfully." << endl;
+            break;
         }
     }
-    cout << "Faculty with ID " << id << " not found." << endl;
+    if (!found)
+    {
+        system("cls");
+        cout << "Faculty with ID " << facultyID << " not found." << endl;
+    }
 }
 
 void addcourse()
@@ -933,23 +1053,61 @@ void addcourse()
         bool is_compulsory;
         cout << "Enter details for Course " << i + 1 << ":" << endl;
         cout << "Course ID: ";
-        cin>> id;
-        cout<< "Enter semester number (1 or 2): ";
-        cin >> semester;        
-        while(semester != 1 && semester != 2)
+        cin >> id;
+        cout << "Enter semester number (1 or 2): ";
+        cin >> semester;
+        while (semester != 1 && semester != 2)
         {
             cout << "Invalid semester number. Please enter 1 or 2: ";
             cin >> semester;
         }
         cin.ignore();
-        cout << "Branch: ";
-        cin>> branch;
-        cin.ignore();
+        bool valid = false;
+        while (!valid)
+        {
+            cout << "Select the branch from the available branches:" << endl;
+            cout << "1. CSE" << endl;
+            cout << "2. ECE" << endl;
+            cout << "3. EE" << endl;
+            cout << "4. ME" << endl;
+            cout << "5. CE" << endl;
+            cout << "Enter your choice (1-5): ";
+            int branch_choice;
+            cin >> branch_choice;
+            switch (branch_choice)
+            {
+            case 1:
+                branch = "CS";
+                valid = true;
+                break;
+            case 2:
+                branch = "EC";
+                valid = true;
+                break;
+            case 3:
+                branch = "EE";
+                valid = true;
+                break;
+            case 4:
+                branch = "ME";
+                valid = true;
+                break;
+            case 5:
+                branch = "CE";
+                valid = true;
+                break;
+            default:
+                cout << "Invalid choice" << endl;
+                cout << "Please select a valid branch." << endl;
+                break;
+            }
+        }
         cout << "Credits: ";
         cin >> credits;
         cin.ignore();
         cout << "Is this course compulsory? (1 for Yes, 0 for No): ";
-        getline(cin, is_compulsory_str);
+        cin >> is_compulsory_str;
+        cin.ignore();
         is_compulsory = (is_compulsory_str == "1");
 
         if (semester == 1)
@@ -962,6 +1120,8 @@ void addcourse()
         }
 
         cout << "Course " << id << " added successfully!" << endl;
+        Sleep(1000);
+        system("cls");
     }
 }
 
@@ -970,14 +1130,23 @@ void deletecourse()
     cout << "Enter the Course ID to delete: ";
     string id;
     cin >> id;
-    vector<Course> *courses = (id.find("sem1") != string::npos) ? &courses_sem1 : &courses_sem2;
-
-    for (auto it = courses->begin(); it != courses->end(); ++it)
+    cin.ignore();
+    for (auto it = courses_sem1.begin(); it != courses_sem1.end(); ++it)
     {
         if (it->getID() == id)
         {
             cout << "Deleting course: " << it->getID() << endl;
-            courses->erase(it);
+            courses_sem1.erase(it);
+            cout << "Course deleted successfully!" << endl;
+            return;
+        }
+    }
+    for (auto it = courses_sem2.begin(); it != courses_sem2.end(); ++it)
+    {
+        if (it->getID() == id)
+        {
+            cout << "Deleting course: " << it->getID() << endl;
+            courses_sem2.erase(it);
             cout << "Course deleted successfully!" << endl;
             return;
         }
@@ -1592,16 +1761,14 @@ void FA ::LeaveRequests(Student *student, LeaveApplication leave)
     New_Notification = true;
 }
 
-
-
-
-
-bool Student::changePassword(string newPass) {
+bool Student::changePassword(string newPass)
+{
     password = newPass;
     return true;
 }
 
-bool Faculty::changePassword(string newPass) {
+bool Faculty::changePassword(string newPass)
+{
     password = newPass;
     return true;
 }

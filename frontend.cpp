@@ -1,6 +1,5 @@
 #include "backend.cpp"
 #include <conio.h>
-#include <windows.h>
 
 /*
 think if we can add some colsole based design
@@ -124,7 +123,7 @@ void loginPage()
 
 void adminMenu()
 {
-    cout << "\n--- Admin Panel ---" << endl;
+    cout << "--- Admin Panel ---" << endl;
     cout << "1. View Students" << endl;
     cout << "2. Add Student" << endl;
     cout << "3. Delete Student" << endl;
@@ -143,7 +142,17 @@ void adminMenu()
     case 1:
     {
         system("cls");
-        cout << "Viewing Students..." << endl;
+        cout << "Roll No of the present students:" << endl;
+        cin.ignore();
+        if (students.empty())
+        {
+            cout << "No students available." << endl;
+            cout << "\nPress any key to continue..." << endl;
+            cin.ignore();
+            system("cls");
+            adminMenu();
+            return;
+        }
         for (int i = 0; i < students.size(); i++)
         {
             cout << students[i].getRollNo() << endl;
@@ -157,108 +166,220 @@ void adminMenu()
             if (students[i].getRollNo() == rollNo)
             {
                 found = true;
+                system("cls");
                 cout << "Details of Student with Roll Number " << rollNo << ":" << endl;
                 cin.ignore();
                 students[i].viewDetails();
                 break;
             }
         }
-        cout << "\n\nPress any key to continue..." << endl;
-        cin.get();
+        if (found == false)
+        {
+            cin.ignore();
+            cout << "Student with Roll Number " << rollNo << " not found." << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();
+        }
+        else
+        {
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();
+        }
         system("cls");
         adminMenu();
         break;
     }
     case 2:
     {
+        system("cls");
         addstudents();
         cout << "\n\nPress any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         adminMenu();
         break;
     }
     case 3:
     {
+        system("cls");
+        int size = students.size();
+        if (size == 0)
+        {
+            cin.ignore();
+            cout << "No students available to delete." << endl;
+            cout << "\n\nPress any key to continue..." << endl;
+            cin.ignore();
+            system("cls");
+            adminMenu();
+            return;
+        }
+        cout << "List of students present:" << endl;
+        for (int i = 0; i < size; i++)
+        {
+            cout << students[i].getRollNo() << endl;
+        }
         deletestudents();
         cout << "\n\nPress any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         adminMenu();
         break;
     }
     case 4:
     {
-        cout << "Viewing Faculty..." << endl;
+        system("cls");
+        if (faculties.empty())
+        {
+            cin.ignore();
+            system("cls");
+            cout << "No faculty available." << endl;
+            cout << "\nPress any key to continue..." << endl;
+            cin.ignore();
+            system("cls");
+            adminMenu();
+            return;
+        }
+        cout << "List of Faculty IDs:" << endl;
         for (int i = 0; i < faculties.size(); i++)
         {
-            faculties[i].viewDetails();
+            cout << faculties[i].getFacultyID() << endl;
         }
-        cout << "\n\nPress any key to continue..." << endl;
+        cout << "Enter the Faculty ID to view details: ";
+        string facultyID;
+        cin >> facultyID;
+        bool found = false;
+        for (int i = 0; i < faculties.size(); i++)
+        {
+            if (faculties[i].getFacultyID() == facultyID)
+            {
+                found = true;
+                system("cls");
+                cout << "Details of Faculty with ID " << facultyID << ":" << endl;
+                cin.ignore();
+                faculties[i].viewDetails();
+                break;
+            }
+        }
+        if (!found)
+        {
+            cin.ignore();
+            system("cls");
+            cout << "Faculty with ID " << facultyID << " not found." << endl;
+        }
+        cout << "\nPress any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         adminMenu();
         break;
     }
     case 5:
     {
+        system("cls");
+        cout << "Adding Faculty..." << endl;
         addfaculty();
         cout << "\n\nPress any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         adminMenu();
         break;
     }
     case 6:
     {
+        system("cls");
+        if (faculties.empty())
+        {
+            cin.ignore();
+            cout << "No faculty available to delete." << endl;
+            cout << "\n\nPress any key to continue..." << endl;
+            cin.ignore();
+            system("cls");
+            adminMenu();
+            return;
+        }
+        cout << "List of Faculty IDs:" << endl;
+        for (int i = 0; i < faculties.size(); i++)
+        {
+            cout << faculties[i].getFacultyID() << endl;
+        }
         deletefaculty();
-        cout << "\n\nPress any key to continue..." << endl;
+        cout << "\nPress any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         adminMenu();
         break;
     }
     case 7:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Courses..." << endl;
         cout << "Semester 1 Courses:" << endl;
-        for (int i = 0; i < courses_sem1.size(); i++)
+        if (courses_sem1.empty())
         {
-            cout << "Course ID: " << courses_sem1[i].getID() << ", Credits: " << courses_sem1[i].getCredits() << endl;
+            cout << "No courses available for Semester 1." << endl;
+        }
+        else
+        {
+            for (int i = 0; i < courses_sem1.size(); i++)
+            {
+                cout << "Course ID: " << courses_sem1[i].getID() << ", Credits: " << courses_sem1[i].getCredits() << endl;
+            }
         }
         cout << "Semester 2 Courses:" << endl;
-        for (int i = 0; i < courses_sem2.size(); i++)
+        if (courses_sem2.empty())
         {
-            cout << "Course ID: " << courses_sem2[i].getID() << ", Credits: " << courses_sem2[i].getCredits() << endl;
+            cout << "No courses available for Semester 2." << endl;
         }
-        cout << "\n\nPress any key to continue..." << endl;
+        else
+        {
+            for (int i = 0; i < courses_sem2.size(); i++)
+            {
+                cout << "Course ID: " << courses_sem2[i].getID() << ", Credits: " << courses_sem2[i].getCredits() << endl;
+            }
+        }
+        cout << "\nPress any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         adminMenu();
         break;
     }
     case 8:
     {
+        system("cls");
         addcourse();
         cout << "\n\nPress any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         adminMenu();
         break;
     }
     case 9:
     {
-        deletecourse();
-        cout << "\n\nPress any key to continue..." << endl;
+        system("cls");
         cin.ignore();
-        cin.get();
+        cout << "Courses available for deletion in Semester 1:" << endl;
+        if (courses_sem1.empty())
+            cout << "No courses available for Semester 1." << endl;
+        else
+        {
+            for (int i = 0; i < courses_sem1.size(); i++)
+            {
+                cout << "Course ID: " << courses_sem1[i].getID() << ", Credits: " << courses_sem1[i].getCredits() << endl;
+            }
+        }
+        cout << "Courses available for deletion in Semester 2:" << endl;
+        if (courses_sem2.empty())
+            cout << "No courses available for Semester 2." << endl;
+        else
+        {
+            for (int i = 0; i < courses_sem2.size(); i++)
+            {
+                cout << "Course ID: " << courses_sem2[i].getID() << ", Credits: " << courses_sem2[i].getCredits() << endl;
+            }
+        }
+        deletecourse();
+        cout << "\nPress any key to continue..." << endl;
+        cin.ignore();
         system("cls");
         adminMenu();
         break;
@@ -297,7 +418,6 @@ void studentMenu(Student *student)
         student->viewDetails();
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         studentMenu(student);
         break;
@@ -307,7 +427,6 @@ void studentMenu(Student *student)
         student->editProfile();
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         studentMenu(student);
         break;
@@ -330,7 +449,6 @@ void studentMenu(Student *student)
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         studentMenu(student);
         break;
@@ -352,7 +470,6 @@ void studentMenu(Student *student)
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         studentMenu(student);
         break;
@@ -374,7 +491,6 @@ void studentMenu(Student *student)
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         studentMenu(student);
         break;
@@ -407,7 +523,6 @@ void studentMenu(Student *student)
         student->applyForLeave(reason, startDate, endDate);
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         studentMenu(student);
         break;
@@ -418,7 +533,6 @@ void studentMenu(Student *student)
         student->viewNotifications();
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         studentMenu(student);
         break;
@@ -433,7 +547,6 @@ void studentMenu(Student *student)
             cout << "No courses registered." << endl;
             cout << "Press any key to continue..." << endl;
             cin.ignore();
-            cin.get();
             system("cls");
             studentMenu(student);
             return;
@@ -452,7 +565,6 @@ void studentMenu(Student *student)
         student->giveFeedback(courseID, feedback); // to be implemented
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         studentMenu(student);
         break;
@@ -476,7 +588,6 @@ void studentMenu(Student *student)
             cout << "No courses available for this semester." << endl;
             cout << "Press any key to continue..." << endl;
             cin.ignore();
-            cin.get();
             system("cls");
             studentMenu(student);
             return;
@@ -486,7 +597,6 @@ void studentMenu(Student *student)
             cout << "No courses available." << endl;
             cout << "Press any key to continue..." << endl;
             cin.ignore();
-            cin.get();
             system("cls");
             studentMenu(student);
             return;
@@ -509,7 +619,6 @@ void studentMenu(Student *student)
                         cout << "Yes" << endl;
                         cout << "Press any key to continue..." << endl;
                         cin.ignore();
-                        cin.get();
                         system("cls");
                         studentMenu(student);
                         break;
@@ -544,7 +653,6 @@ void studentMenu(Student *student)
                     student->addSubject(&course);
                     cout << "Press any key to continue..." << endl;
                     cin.ignore();
-                    cin.get();
                     system("cls");
                     studentMenu(student);
                     break;
@@ -557,7 +665,6 @@ void studentMenu(Student *student)
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         studentMenu(student);
         break;
@@ -580,7 +687,6 @@ void studentMenu(Student *student)
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         studentMenu(student);
         break;
@@ -615,7 +721,6 @@ void facultyMenu(Faculty *faculty)
         faculty->viewDetails();
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         facultyMenu(faculty);
         break;
@@ -637,7 +742,6 @@ void facultyMenu(Faculty *faculty)
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         facultyMenu(faculty);
         break;
@@ -685,7 +789,6 @@ void facultyMenu(Faculty *faculty)
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         facultyMenu(faculty);
         break;
@@ -732,7 +835,6 @@ void facultyMenu(Faculty *faculty)
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         facultyMenu(faculty);
         break;
@@ -839,7 +941,6 @@ void facultyMenu(Faculty *faculty)
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         facultyMenu(faculty);
         break;
@@ -875,7 +976,6 @@ void FAMenu(FA *fa)
         fa->viewDetails();
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         FAMenu(fa);
         break;
@@ -897,7 +997,6 @@ void FAMenu(FA *fa)
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         FAMenu(fa);
         break;
@@ -945,7 +1044,6 @@ void FAMenu(FA *fa)
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         FAMenu(fa);
         break;
@@ -992,7 +1090,6 @@ void FAMenu(FA *fa)
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         FAMenu(fa);
         break;
@@ -1100,7 +1197,6 @@ void FAMenu(FA *fa)
         break;
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         FAMenu(fa);
         break;
@@ -1111,7 +1207,6 @@ void FAMenu(FA *fa)
         fa->viewAssignedStudents();
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         FAMenu(fa);
         break;
@@ -1129,7 +1224,6 @@ void FAMenu(FA *fa)
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
-        cin.get();
         system("cls");
         FAMenu(fa);
         break;
@@ -1149,7 +1243,7 @@ int main()
         cout << "No database found." << endl;
     }
     system("cls");
-    cout << "Welcome to the Student Management System!" << endl;
+    cout << "Welcome to the Student Management System!";
     Sleep(2000);
     system("cls");
     loginPage();
