@@ -1,3 +1,4 @@
+
 // Arit & Shashank will write here to load and save data from file.
 /*
 include classes.cpp
@@ -468,8 +469,8 @@ void createheader()
     fprintf(file, "Name,Password,Branch,Roll Number,Sem Number,FA ID,Gender,DOB,Email,Year,CGPA\n");
     fclose(file);
 
-    vector<pair<string, pair<int, bool>>> subject_name_sem1;
-    vector<pair<string, pair<int, bool>>> subject_name_sem2;
+    //vector<pair<string, pair<int, bool>>> subject_name_sem1;
+    //vector<pair<string, pair<int, bool>>> subject_name_sem2;
 
     system("cls");
     cout << "Enter the number of subjects for Semester 1:" << endl;
@@ -490,20 +491,20 @@ void createheader()
         cout << "Is it a compulsory subject? (1 for Yes, 0 for No): ";
         cin >> is_compulsory;
         getchar(); // to consume the newline character after entering is_compulsory
-        subject_name_sem1.push_back(make_pair(subject_name, make_pair(credits, is_compulsory)));
+        //subject_name_sem1.push_back(make_pair(subject_name, make_pair(credits, is_compulsory)));
+        courses_sem1.push_back(Course(subject_name, subject_name.substr(0, 2), credits, is_compulsory));
     }
 
     fprintf(inFile1, "Roll Number,");
     for (int i = 0; i < no_subjects_sem1; i++)
     {
-        fprintf(inFile1, "%s,", subject_name_sem1[i].first.c_str());
+        fprintf(inFile1, "%s,", courses_sem1[i].getID().c_str());
     }
     fprintf(inFile1, "\n");
-
     fprintf(inFile3, "Roll Number,");
     for (int i = 0; i < no_subjects_sem1; i++)
     {
-        fprintf(inFile3, "%s(%d-%d)", subject_name_sem1[i].first.c_str(), subject_name_sem1[i].second.first, subject_name_sem1[i].second.second);
+        fprintf(inFile3, "%s(%d-%d),", courses_sem1[i].getID().c_str(), courses_sem1[i].getCredits(), courses_sem1[i].isCompulsoryCourse());
     }
     fprintf(inFile3, "\n");
 
@@ -533,20 +534,20 @@ void createheader()
         cout << "Is it a compulsory subject? (1 for Yes, 0 for No): ";
         cin >> is_compulsory;
         getchar(); // to consume the newline character after entering is_compulsory
-        subject_name_sem2.push_back(make_pair(subject_name, make_pair(credits, is_compulsory)));
+        courses_sem2.push_back(Course(subject_name, subject_name.substr(0, 2), credits, is_compulsory));
     }
 
     fprintf(inFile2, "Roll Number,");
     for (int i = 0; i < no_subjects_sem2; i++)
     {
-        fprintf(inFile2, "%s,", subject_name_sem2[i].first.c_str());
+        fprintf(inFile2, "%s,", courses_sem2[i].getID().c_str());
     }
     fprintf(inFile2, "\n");
 
     fprintf(inFile4, "Roll Number,");
     for (int i = 0; i < no_subjects_sem2; i++)
     {
-        fprintf(inFile4, "%s(%d-%d)", subject_name_sem2[i].first.c_str(), subject_name_sem2[i].second.first, subject_name_sem2[i].second.second);
+        fprintf(inFile4, "%s(%d-%d),", courses_sem2[i].getID().c_str(), courses_sem2[i].getCredits(), courses_sem2[i].isCompulsoryCourse());
     }
     fprintf(inFile4, "\n");
 
@@ -574,7 +575,6 @@ bool headercheck()
     ifstream file1("student_information.csv");
     if (!file1.is_open())
     {
-        createheader();
         file1.close();
         return false;
     }
@@ -582,10 +582,11 @@ bool headercheck()
     getline(file1, header);
     if (header != "Name,Password,Branch,Roll Number,Sem Number,FA ID,Gender,DOB,Email,Year,CGPA")
     {
-        createheader();
         file1.close();
         return false;
     }
+    retrieve_info();
+    file1.close();
     return true;
 }
 
@@ -925,28 +926,42 @@ void addcourse()
     cout << "Enter the number of courses to add: ";
     int n;
     cin >> n;
-    cin.ignore(); // to ignore the newline character after entering n
+    cin.ignore();
     for (int i = 0; i < n; i++)
     {
         string id, branch, is_compulsory_str;
+        int semester;
         int credits;
         bool is_compulsory;
         cout << "Enter details for Course " << i + 1 << ":" << endl;
         cout << "Course ID: ";
-        getline(cin, id);
+        cin>> id;
+        cout<< "Enter semester number (1 or 2): ";
+        cin >> semester;        
+        while(semester != 1 && semester != 2)
+        {
+            cout << "Invalid semester number. Please enter 1 or 2: ";
+            cin >> semester;
+        }
+        cin.ignore();
         cout << "Branch: ";
-        getline(cin, branch);
+        cin>> branch;
+        cin.ignore();
         cout << "Credits: ";
         cin >> credits;
-        cin.ignore(); // to ignore the newline character after entering credits
+        cin.ignore();
         cout << "Is this course compulsory? (1 for Yes, 0 for No): ";
         getline(cin, is_compulsory_str);
         is_compulsory = (is_compulsory_str == "1");
 
-        if (id.find("sem1") != string::npos)
+        if (semester == 1)
+        {
             courses_sem1.push_back(Course(id, branch, credits, is_compulsory));
-        else if (id.find("sem2") != string::npos)
+        }
+        else
+        {
             courses_sem2.push_back(Course(id, branch, credits, is_compulsory));
+        }
 
         cout << "Course " << id << " added successfully!" << endl;
     }

@@ -21,110 +21,13 @@ void exit_program()
     exit(0);
 }
 
-// void loginPage()
-// {
-//     cout << "Welcome to ..." << endl; // to be decided
-//     cout << "Login as :" << endl;
-//     cout << "1. Admin" << endl;
-//     cout << "2. Student" << endl;
-//     cout << "3. Faculty" << endl;
-//     cout << "4. FA" << endl;
-//     cout << "0. Exit" << endl;
-//     cout << "Please select an option: ";
-//     int choice;
-//     cin >> choice;
-//     switch (choice)
-//     {
-//     case 1:
-//     {
-//         string username, password;
-//         cout << "Enter Admin Username: ";
-//         cin >> username;
-//         cout << "Enter Admin Password: ";
-//         cin >> password;
-//         if (username == ADMIN_USERNAME && password == ADMIN_PASSWORD)
-//         {
-//             system("cls");
-//             adminMenu();
-//         }
-//         else
-//         {
-//             cout << "Invalid credentials." << endl;
-//         }
-//         break;
-//     }
-//     case 2:
-//     {
-//         string username, password;
-//         cout << "Enter Student Username: ";
-//         cin >> username;
-//         cout << "Enter Student Password: ";
-//         cin >> password;
-//         for (int i = 0; i < students.size(); i++)
-//         {
-//             if (students[i].login(username, password))
-//             {
-//                 system("cls");
-//                 studentMenu(&students[i]);
-//                 return;
-//             }
-//         }
-//         cout << "Invalid credentials." << endl;
-//         break;
-//     }
-//     case 3:
-//     {
-//         string username, password;
-//         cout << "Enter Faculty Username: ";
-//         cin >> username;
-//         cout << "Enter Faculty Password: ";
-//         cin >> password;
-//         for (int i = 0; i < faculties.size(); i++)
-//         {
-//             if (faculties[i].login(username, password))
-//             {
-//                 system("cls");
-//                 facultyMenu(&faculties[i]);
-//                 return;
-//             }
-//         }
-//         cout << "Invalid credentials." << endl;
-//         break;
-//     }
-//     case 4:
-//     {
-//         string username, password;
-//         cout << "Enter FA Username: ";
-//         cin >> username;
-//         cout << "Enter FA Password: ";
-//         cin >> password;
-//         for (int i = 0; i < fa.size(); i++)
-//         {
-//             if (fa[i].login(username, password))
-//             {
-//                 system("cls");
-//                 FAMenu(&fa[i]);
-//                 return;
-//             }
-//         }
-//         cout << "Invalid credentials." << endl;
-//         break;
-//     }
-//     case 0:
-//     {
-//         cout << "Exiting..." << endl;
-//         return;
-//     }
-//     }
-// }
-
 void maskInput(string &password)
 {
     password.clear();
     char ch;
     while (true)
     {
-        ch = _getch();
+        ch = getchar();
         if (ch == '\r' || ch == '\n')
         {
             cout << endl;
@@ -151,6 +54,7 @@ void loginPage()
     cin >> username;
     if (username == "quit")
         exit_program();
+        cin.ignore();
     cout << "Enter Password: ";
     maskInput(password);
     cout << "You entered: " << password << endl; // For debugging, can be removed later
@@ -159,6 +63,15 @@ void loginPage()
     if (username == ADMIN_USERNAME && password == ADMIN_PASSWORD)
     {
         system("cls");
+        if(headercheck())
+        {
+            cout << "Welcome to the Admin Panel!" << endl;
+        }
+        else
+        {
+            cout << "Database not created yet. Please create the database first." << endl;
+            createheader();
+        }
         adminMenu();
         loginPage();
         return;
@@ -204,7 +117,9 @@ void loginPage()
     }
 
     cout << "Invalid credentials." << endl;
-    exit_program();
+    Sleep(1500);
+    system("cls");
+    loginPage();
 }
 
 void adminMenu()
@@ -231,7 +146,21 @@ void adminMenu()
         cout << "Viewing Students..." << endl;
         for (int i = 0; i < students.size(); i++)
         {
-            students[i].viewDetails();
+            students[i].getRollNo();
+        }
+        cout << "Enter the Roll Number of the student to view details: ";
+        string rollNo;
+        cin >> rollNo;
+        bool found = false;
+        for (int i = 0; i < students.size(); i++)
+        {
+            if (students[i].getRollNo() == rollNo)
+            {
+                found = true;
+                cout << "Details of Student with Roll Number " << rollNo << ":" << endl;
+                students[i].viewDetails();
+                break;
+            }
         }
         cout << "\n\nPress any key to continue..." << endl;
         cin.ignore();
@@ -1215,10 +1144,9 @@ void FAMenu(FA *fa)
 
 int main()
 {
-    cout << "Initializing Student Management System..." << endl;
-    if (headercheck())
+    if(!headercheck())
     {
-        retrieve_info();
+        cout<<"No database found."<<endl;
     }
     system("cls");
     cout << "Welcome to the Student Management System!" << endl;
