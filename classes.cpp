@@ -108,7 +108,7 @@ public:
     bool login(string uname, string pass);
     bool changePassword(string newPass);
     bool is_FA_function();
-    void AssignSubject(Course *course); // done
+    void AssignSubject(Course *course, bool temp = false); // done
     // Faculty -> Course -> Student -> Update,View.
     vector<Course *> getSubjects(); // done
     string getFacultyID();
@@ -119,8 +119,7 @@ public:
     string getBranch();
     string getOfficeNo();
     void viewDetails(); // what to show will be decided
-    void editProfile(); // to be implemented
-
+    void editProfile(); // to be implemente
     // void viewStudents(string courseID); // courseId should be from his subjects
     // void enterMarks(Course *course, int mark);
     // void viewMarks(string studentID);

@@ -701,8 +701,12 @@ void studentMenu(Student *student)
         {
             for (auto &&leave : leaveHistory)
             {
-                cout << "Reason: " << leave.getReason() << endl<< "Start Date: " << leave.getStartDate().showDate()
-                     << endl<< "End Date: " << leave.getEndDate().showDate() << endl;
+                cout << endl
+                     << "Reason: " << leave.getReason() << endl
+                     << "Start Date: " << leave.getStartDate().showDate()
+                     << endl
+                     << "End Date: " << leave.getEndDate().showDate() << endl
+                     << "Status: " << leave.getStatus() << endl;
             }
         }
         cout << "Press any key to continue..." << endl;
@@ -737,6 +741,8 @@ void facultyMenu(Faculty *faculty)
     {
     case 1:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Profile..." << endl;
         faculty->viewDetails();
         cout << "Press any key to continue..." << endl;
@@ -747,6 +753,8 @@ void facultyMenu(Faculty *faculty)
     }
     case 2:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Courses..." << endl;
         vector<Course *> subjects = faculty->getSubjects();
         if (subjects.empty())
@@ -768,6 +776,8 @@ void facultyMenu(Faculty *faculty)
     }
     case 3:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Attendance..." << endl;
 
         cout << "Available Courses: " << endl;
@@ -815,6 +825,8 @@ void facultyMenu(Faculty *faculty)
     }
     case 4:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Marks..." << endl;
         cout << "Available Courses: " << endl;
         for (auto &&it : faculty->getSubjects())
@@ -861,6 +873,8 @@ void facultyMenu(Faculty *faculty)
     }
     case 5:
     {
+        cin.ignore();
+        system("cls");
         cout << "Add Marks..." << endl;
         cout << "Available Courses: " << endl;
         for (auto &&it : faculty->getSubjects())
@@ -983,6 +997,7 @@ void FAMenu(FA *fa)
     cout << "5. Add Marks" << endl;
     cout << "6. View Assigned Students" << endl;
     cout << "7. View Notifications / Review Leave application" << endl;
+    cout << "8. Add Courses" << endl;
     cout << "0. Log Out" << endl;
 
     cout << "Please select an option: ";
@@ -992,6 +1007,8 @@ void FAMenu(FA *fa)
     {
     case 1:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Profile..." << endl;
         fa->viewDetails();
         cout << "Press any key to continue..." << endl;
@@ -1002,6 +1019,8 @@ void FAMenu(FA *fa)
     }
     case 2:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Courses..." << endl;
         vector<Course *> subjects = fa->getSubjects();
         if (subjects.empty())
@@ -1010,7 +1029,7 @@ void FAMenu(FA *fa)
         }
         else
         {
-            for (auto &&course : subjects)
+            for (auto &course : subjects)
             {
                 cout << "Course ID: " << course->getID() << ", Credits: " << course->getCredits() << endl;
             }
@@ -1023,9 +1042,20 @@ void FAMenu(FA *fa)
     }
     case 3:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Attendance..." << endl;
 
         cout << "Available Courses: " << endl;
+        if (fa->getSubjects().empty())
+        {
+            cout << "No courses assigned." << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();
+            system("cls");
+            FAMenu(fa);
+            return;
+        }
         for (auto &&it : fa->getSubjects())
         {
             cout << "Course ID: " << it->getID() << ", Credits: " << it->getCredits() << endl;
@@ -1070,8 +1100,19 @@ void FAMenu(FA *fa)
     }
     case 4:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Marks..." << endl;
         cout << "Available Courses: " << endl;
+        if (fa->getSubjects().empty())
+        {
+            cout << "No courses assigned." << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();
+            system("cls");
+            FAMenu(fa);
+            return;
+        }
         for (auto &&it : fa->getSubjects())
         {
             cout << "Course ID: " << it->getID() << ", Credits: " << it->getCredits() << endl;
@@ -1116,8 +1157,19 @@ void FAMenu(FA *fa)
     }
     case 5:
     {
+        cin.ignore();
+        system("cls");
         cout << "Add Marks..." << endl;
         cout << "Available Courses: " << endl;
+        if (fa->getSubjects().empty())
+        {
+            cout << "No courses assigned." << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();
+            system("cls");
+            FAMenu(fa);
+            return;
+        }
         for (auto &&it : fa->getSubjects())
         {
             cout << "Course ID: " << it->getID() << ", Credits: " << it->getCredits() << endl;
@@ -1214,7 +1266,6 @@ void FAMenu(FA *fa)
                 cout << "Invalid Course ID. Please try again: " << endl;
             }
         }
-        break;
         cout << "Press any key to continue..." << endl;
         cin.ignore();
         system("cls");
@@ -1223,6 +1274,8 @@ void FAMenu(FA *fa)
     }
     case 6:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Assigned Students..." << endl;
         fa->viewAssignedStudents();
         cout << "Press any key to continue..." << endl;
@@ -1233,6 +1286,8 @@ void FAMenu(FA *fa)
     }
     case 7:
     {
+        cin.ignore();
+        system("cls");
         cout << "Viewing Notifications / Reviewing Leave application..." << endl;
         if (fa->isNewNotification())
         {
@@ -1241,6 +1296,111 @@ void FAMenu(FA *fa)
         else
         {
             cout << "No new notifications." << endl;
+        }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        system("cls");
+        FAMenu(fa);
+        break;
+    }
+    case 8:
+    {
+        cin.ignore();
+        system("cls");
+        cout << "Adding Courses..." << endl;
+        int count = 0;
+        Faculty *faculty = faculties_map[fa->getID()];
+        vector<Course> availableCourses;
+        vector<Course *> alreadyRegistered = faculty->getSubjects();
+        count = alreadyRegistered.size();
+        if (count == 0)
+        {
+            cout << "No courses registered." << endl;
+        }
+        else
+        {
+            cout << "Already registered courses: " << endl;
+            for (auto &&course : alreadyRegistered)
+            {
+                cout << "Course ID: " << course->getID() << ", Credits: " << course->getCredits() << endl;
+            }
+        }
+        if (count >= 5)
+        {
+            cout << "You cannot add more than 5 courses." << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();
+            system("cls");
+            FAMenu(fa);
+            return;
+        }
+        for (auto &course : courses_sem1)
+        {
+            bool flag = false;
+            for(auto &registeredCourse : alreadyRegistered)
+            {
+                if (course.getID() == registeredCourse->getID())
+                {
+                    flag = true;
+                    continue;
+                }
+            }
+            if (!flag)
+            {
+                availableCourses.push_back(course);
+            }
+        }
+        for (auto &course : courses_sem2)
+        {
+            bool flag = false;
+            for(auto &registeredCourse : alreadyRegistered)
+            {
+                if (course.getID() == registeredCourse->getID())
+                {
+                    flag = true;
+                    continue;
+                }
+            }
+            if (!flag)
+            {
+                availableCourses.push_back(course);
+            }
+        }
+        if (availableCourses.empty())
+        {
+            cout << "No courses available." << endl;
+            cout << "Press any key to continue..." << endl;
+            cin.ignore();
+            system("cls");
+            FAMenu(fa);
+            return;
+        }
+        bool found = false;
+        cout << "Available Courses: " << endl;
+        for (auto &course : availableCourses)
+        {
+            cout << "Course ID: " << course.getID() << ", Credits: " << course.getCredits() << endl;
+        }
+        cout << "Enter Course ID to add: ";
+        string courseID;
+        cin >> courseID;
+        cin.ignore();
+        for (auto &course : availableCourses)
+        {
+            if (course.getID() == courseID)
+            {
+                found = true;
+                fa->AssignSubject(&course, false);
+                faculty->AssignSubject(&course, true);
+                cout << "Course ID: " << courseID << " added successfully." << endl;
+                break;
+            }
+        }
+        if (!found)
+        {
+            cout << "Course ID not found." << endl;
+            Sleep(1000);
+            system("cls");
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();

@@ -804,6 +804,8 @@ void write_all_files()
         cout << "Error opening faculty information file for writing." << endl;
         return;
     }
+    cout << "Writing faculty information to file..." << endl;
+    Sleep(1000);
     inFile5 << "Faculty ID,Password,Faculty Name,Gender,Email,Branch,Office_No,is_FA,Subject_1,Subject_2,Subject_3,Subject_4,Subject_5\n";
     for (int i = 0; i < faculties.size(); i++)
     {
@@ -815,17 +817,27 @@ void write_all_files()
                 << faculties[i].getBranch() << ","
                 << faculties[i].getOfficeNo() << ","
                 << (faculties[i].is_FA_function() ? "1" : "0") << ",";
-        vector<Course *> subjects = faculties[i].getSubjects();
+        const vector<Course *> &subjects = faculties[i].getSubjects();
+        cout << subjects.size() << endl;
+        // cout<<subjects[0]->getID() << endl;
+        // Sleep(1000);
         for (int j = 0; j < subjects.size(); j++)
         {
-            inFile5 << subjects[j]->getID() << ",";
+            if (subjects[j]) // ✅ null check
+                inFile5 << subjects[j]->getID() << ",";
+            else
+                inFile5 << "NULL,";
         }
+        cout<<"Hi"<<endl;
+
         for (int j = subjects.size(); j < 5; j++)
         {
             inFile5 << ",";
         }
         inFile5 << "\n";
     }
+    cout << "Faculty information written successfully!" << endl;
+    Sleep(1000);
     inFile5.close();
     ofstream inFile6("leave_applications.txt");
     if (!inFile6.is_open())
@@ -958,7 +970,7 @@ void deletestudents()
         {
             cout << "Deleting student: " << it->getName() << endl;
             students.erase(it);
-            //cout << "Student deleted successfully!" << endl;
+            // cout << "Student deleted successfully!" << endl;
             break;
         }
     }
@@ -968,7 +980,7 @@ void deletestudents()
         {
             cout << "Deleting student: " << it->second->getName() << endl;
             students_map.erase(it);
-            //cout << "Student deleted successfully!" << endl;
+            // cout << "Student deleted successfully!" << endl;
             return;
         }
     }
@@ -1205,7 +1217,7 @@ void deletecourse()
             return;
         }
     }
-    for(auto it = courses_sem1_map.begin(); it != courses_sem1_map.end(); ++it)
+    for (auto it = courses_sem1_map.begin(); it != courses_sem1_map.end(); ++it)
     {
         if (it->first == id)
         {
@@ -1225,7 +1237,7 @@ void deletecourse()
             return;
         }
     }
-    for(auto it = courses_sem2_map.begin(); it != courses_sem2_map.end(); ++it)
+    for (auto it = courses_sem2_map.begin(); it != courses_sem2_map.end(); ++it)
     {
         if (it->first == id)
         {
@@ -1469,9 +1481,21 @@ bool Faculty::is_FA_function()
     return is_FA;
 }
 
-void Faculty::AssignSubject(Course *course)
+void Faculty::AssignSubject(Course *course, bool temp)
 {
+    if (course == nullptr)
+    {
+        cout << "Invalid course." << endl;
+        return;
+    }
+    if (find(subjects.begin(), subjects.end(), course) != subjects.end())
+    {
+        cout << "You are already assigned to this course." << endl;
+        return;
+    }
     subjects.push_back(course);
+    if (!temp)
+        return;
     course->addfaculty(this->getFacultyID());
 }
 
