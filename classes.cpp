@@ -120,13 +120,9 @@ public:
     string getBranch();
     string getOfficeNo();
     void viewDetails(); // what to show will be decided
-    void editProfile(); // to be implemente
-    // void viewStudents(string courseID); // courseId should be from his subjects
-    // void enterMarks(Course *course, int mark);
-    // void viewMarks(string studentID);
-    // while accessing check if student is registered in that course and he is the faculty of that course
-    // void updateAttendance(Course *course);
-    // void viewAttendance(Course *course);
+    void editProfile();
+    void setName(string);
+    void setOffice(string);
 };
 
 class Student : public User
@@ -207,4 +203,5 @@ public:
     void setNewNotification(bool status);
     void newLeaveRequests(Student *student, LeaveApplication leave);
     void LeaveRequests(Student *student, LeaveApplication leave);
+    void editProfile();
 };

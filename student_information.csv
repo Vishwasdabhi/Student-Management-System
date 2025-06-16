@@ -1,3 +1,6 @@
 Name,Password,Branch,Roll Number,Sem Number,FA ID,Gender,DOB,Email,Year,CGPA
-sa,23CS01@iitbbs,CS,23CS01,1,CS01BI,male,25 11 2001,23CS01@iitbbs.ac.in,2023,0
+sa,1,CS,23CS01,1,CS01BI,male,25 11 2001,23CS01@iitbbs.ac.in,2023,0
 Arut,1,CS,23CS02,1,CS01BI,Male,25 11 2005,23CS02@iitbbs.ac.in,2023,0
+Arit,23CS03@iitbbs,CS,23CS03,1,CS01BI,Male,25 11 2005,23CS03@iitbbs.ac.in,2023,0
+Arit,23CS04@iitbbs,CS,23CS04,1,CS01BI,Male,25 11 2005,23CS04@iitbbs.ac.in,2023,0
+Arit Gandhi,23CS05@iitbbs,CS,23CS05,1,CS01BI,Male,25 11 2005,23CS05@iitbbs.ac.in,2023,0

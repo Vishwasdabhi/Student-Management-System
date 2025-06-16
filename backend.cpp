@@ -943,7 +943,34 @@ void addstudents()
             }
         }
         students_map[students.back()->getRollNo()] = students.back();
-
+        if(sem_num == 1)
+        {
+            for(int j = 0; j < courses_sem1.size(); j++)
+            {
+                if(courses_sem1[j]->isCompulsoryCourse())
+                {
+                    courses_sem1[j]->enrollStudent(rollNo);
+                    students.back()->addSubject(courses_sem1[j]);
+                    courses_sem1[j]->add_marks(rollNo, -1);
+                    courses_sem1[j]->add_attendance(rollNo, -1);
+                    students.back()->addMarks(courses_sem1[j]->getID(), -1);
+                    students.back()->addAttendance(courses_sem1[j]->getID(), -1);
+                }
+            }
+        }
+        else if(sem_num == 2)
+        {
+            for(int j = 0; j < courses_sem2.size(); j++)
+            {
+                if(courses_sem2[j]->isCompulsoryCourse())
+                {
+                    courses_sem2[j]->enrollStudent(rollNo);
+                    students.back()->addSubject(courses_sem2[j]);
+                    courses_sem2[j]->add_marks(rollNo, -1);
+                    courses_sem2[j]->add_attendance(rollNo, -1);
+                }
+            }
+        }
         cout << "Student " << name << " added successfully!" << endl;
         Sleep(1000);
         system("cls");
@@ -1520,7 +1547,6 @@ void Faculty::removeSubject(Course *course)
         string facultyID = this->getFacultyID();
         Faculty *faculty = faculties_map[facultyID];
         course->removeFacultyWithID(facultyID);
-        cout << "Subject removed successfully." << endl;
     }
     else
     {
@@ -1577,6 +1603,48 @@ void Faculty::viewDetails()
     cout << "Office No: " << officeNo << endl;
 }
 
+void Faculty::editProfile()
+{
+    cout << "Editing profile for " << name << endl;
+    cout << "Current details:" << endl;
+    viewDetails();
+    cout << "What do you want to edit?" << endl;
+    cout << "1. Name" << endl;
+    cout << "2. Office No" << endl;
+    int choice;
+    cin >> choice;
+    system("cls");
+    cin.ignore();
+    if (choice == 1)
+    {
+        cout << "Enter new name: ";
+        getline(cin, name);
+    }
+    else if (choice == 2)
+    {
+        cout << "Enter new office number: ";
+        cin >> officeNo;
+        cin.ignore();
+    }
+    else
+    {
+        cout << "Invalid choice." << endl;
+        Sleep(1000);
+        system("cls");
+        return;
+    }
+    cout << "Profile updated successfully!" << endl;
+}
+
+void Faculty :: setName(string name1)
+{
+    name = name1;
+}
+
+void Faculty :: setOffice(string office_num)
+{
+    officeNo = office_num;
+}
 /*
 
 
@@ -1863,6 +1931,44 @@ void FA ::LeaveRequests(Student *student, LeaveApplication leave)
 {
     leaveRequests[student] = leave;
     New_Notification = true;
+}
+
+void FA::editProfile()
+{
+    cout << "Editing profile for " << name << endl;
+    cout << "Current details:" << endl;
+    viewDetails();
+    cout << "What do you want to edit?" << endl;
+    cout << "1. Name" << endl;
+    cout << "2. Office No" << endl;
+    int choice;
+    cin >> choice;
+    system("cls");
+    cin.ignore();
+    Faculty *faculty = faculties_map[id];
+    if (choice == 1)
+    {
+        string name1;
+        cout << "Enter new name: ";
+        getline(cin, name1);
+        name = name1;
+        faculty->setName(name1);
+    }
+    else if (choice == 2)
+    {
+        cout << "Enter new office number: ";
+        cin >> officeNo;
+        faculty->setOffice(officeNo);
+        cin.ignore();
+    }
+    else
+    {
+        cout << "Invalid choice." << endl;
+        Sleep(1000);
+        system("cls");
+        return;
+    }
+    cout << "Profile updated successfully!" << endl;
 }
 
 bool Student::changePassword(string newPass)
