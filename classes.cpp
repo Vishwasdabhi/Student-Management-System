@@ -79,6 +79,7 @@ public:
 
     void addfaculty(string facultyId);
     void removefaculty();
+    void removeFacultyWithID(string facultyId);
     void enrollStudent(string studentId);
     void receiveFeedback(string feedback);
     string getID();
@@ -108,8 +109,8 @@ public:
     bool login(string uname, string pass);
     bool changePassword(string newPass);
     bool is_FA_function();
-    void AssignSubject(Course *course, bool temp = false); // done
-    // Faculty -> Course -> Student -> Update,View.
+    void AssignSubject(Course *course, bool temp = false);
+    void removeSubject(Course *course);
     vector<Course *> getSubjects(); // done
     string getFacultyID();
     string getFacultyName();

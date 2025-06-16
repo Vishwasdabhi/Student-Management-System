@@ -17,12 +17,12 @@ using namespace std;
 // 5) Leave application file .json/.txt Start Date, End Date, Reason, Status, FA id, Roll Numeber.
 // 6) Login file -> student.txt -> faculty.txt(username, password, isFA)
 
-vector<Student*> students;
-vector<Course*> courses_sem1;
-vector<Course*> courses_sem2;
-vector<Faculty*> faculties;
-vector<FA*> fa;
-vector<LeaveApplication*> leaveApplications;
+vector<Student *> students;
+vector<Course *> courses_sem1;
+vector<Course *> courses_sem2;
+vector<Faculty *> faculties;
+vector<FA *> fa;
+vector<LeaveApplication *> leaveApplications;
 
 unordered_map<string, Student *> students_map;
 unordered_map<string, Faculty *> faculties_map;
@@ -414,7 +414,7 @@ void retrieve_info()
         if (faculties[j]->is_FA_function())
         {
             fa[fa_index] = new FA(faculties[j]->getFacultyID(), faculties[j]->getPassword(), faculties[j]->getFacultyName(), faculties[j]->getFacultyID(),
-                              faculties[j]->getGender(), faculties[j]->getEmail(), faculties[j]->getBranch(), faculties[j]->getOfficeNo(), true);
+                                  faculties[j]->getGender(), faculties[j]->getEmail(), faculties[j]->getBranch(), faculties[j]->getOfficeNo(), true);
             fa_index++;
         }
     }
@@ -1171,18 +1171,32 @@ void addcourse()
         cin >> is_compulsory_str;
         cin.ignore();
         is_compulsory = (is_compulsory_str == "1");
-
+        Course *course = new Course(id, branch, credits, is_compulsory);
         if (semester == 1)
         {
-            courses_sem1.push_back(new Course(id, branch, credits, is_compulsory));
+            courses_sem1.push_back(course);
             courses_sem1_map[id] = courses_sem1.back();
         }
         else
         {
-            courses_sem2.push_back(new Course(id, branch, credits, is_compulsory));
+            courses_sem2.push_back(course);
             courses_sem2_map[id] = courses_sem2.back();
         }
-
+        if (is_compulsory)
+        {
+            for (auto &student : students)
+            {
+                if (student->getSemNum() == semester)
+                {
+                    student->addSubject(course);
+                    course->enrollStudent(student->getRollNo());
+                    student->addAttendance(course->getID(), -1);
+                    student->addMarks(course->getID(), -1);
+                    course->add_attendance(student->getRollNo(), -1);
+                    course->add_marks(student->getRollNo(), -1);
+                }
+            }
+        }
         cout << "Course " << id << " added successfully!" << endl;
         Sleep(1000);
         system("cls");
@@ -1398,6 +1412,16 @@ void Course::removefaculty()
         cout << "Faculty with ID " << facultyID << " not found." << endl;
     }
 }
+
+void Course::removeFacultyWithID(string facultyId)
+{
+    auto it = find(facultyIDs.begin(), facultyIDs.end(), facultyId);
+    if (it != facultyIDs.end())
+    {
+        facultyIDs.erase(it);
+    }
+}
+
 void Course::enrollStudent(string studentId)
 {
     studentIDs.push_back(studentId);
@@ -1485,6 +1509,23 @@ void Faculty::AssignSubject(Course *course, bool temp)
     if (!temp)
         return;
     course->addfaculty(this->getFacultyID());
+}
+
+void Faculty::removeSubject(Course *course)
+{
+    auto it = find(subjects.begin(), subjects.end(), course);
+    if (it != subjects.end())
+    {
+        subjects.erase(it);
+        string facultyID = this->getFacultyID();
+        Faculty *faculty = faculties_map[facultyID];
+        course->removeFacultyWithID(facultyID);
+        cout << "Subject removed successfully." << endl;
+    }
+    else
+    {
+        cout << "You are not assigned to this subject." << endl;
+    }
 }
 
 vector<Course *> Faculty::getSubjects()
