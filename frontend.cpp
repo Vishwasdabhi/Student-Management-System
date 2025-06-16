@@ -79,10 +79,10 @@ void loginPage()
     // Check Students
     for (int i = 0; i < students.size(); i++)
     {
-        if (students[i].login(username, password))
+        if (students[i]->login(username, password))
         {
             system("cls");
-            studentMenu(&students[i]);
+            studentMenu(students[i]);
             loginPage();
             return;
         }
@@ -91,16 +91,16 @@ void loginPage()
     // Check Faculty (including FA)
     for (int i = 0; i < faculties.size(); i++)
     {
-        if (faculties[i].login(username, password))
+        if (faculties[i]->login(username, password))
         {
             system("cls");
-            if (faculties[i].is_FA_function())
+            if (faculties[i]->is_FA_function())
             {
                 for (int j = 0; j < fa.size(); j++)
                 {
-                    if (fa[j].getFacultyID() == faculties[i].getFacultyID())
+                    if (fa[j]->getFacultyID() == faculties[i]->getFacultyID())
                     {
-                        FAMenu(&fa[j]);
+                        FAMenu(fa[j]);
                         loginPage();
                         break;
                     }
@@ -108,7 +108,7 @@ void loginPage()
             }
             else
             {
-                facultyMenu(&faculties[i]);
+                facultyMenu(faculties[i]);
                 loginPage();
             }
             return;
@@ -155,7 +155,7 @@ void adminMenu()
         }
         for (int i = 0; i < students.size(); i++)
         {
-            cout << students[i].getRollNo() << endl;
+            cout << students[i]->getRollNo() << endl;
         }
         cout << "Enter the Roll Number of the student to view details: ";
         string rollNo;
@@ -163,13 +163,13 @@ void adminMenu()
         bool found = false;
         for (int i = 0; i < students.size(); i++)
         {
-            if (students[i].getRollNo() == rollNo)
+            if (students[i]->getRollNo() == rollNo)
             {
                 found = true;
                 system("cls");
                 cout << "Details of Student with Roll Number " << rollNo << ":" << endl;
                 cin.ignore();
-                students[i].viewDetails();
+                students[i]->viewDetails();
                 break;
             }
         }
@@ -216,7 +216,7 @@ void adminMenu()
         cout << "List of students present:" << endl;
         for (int i = 0; i < size; i++)
         {
-            cout << students[i].getRollNo() << endl;
+            cout << students[i]->getRollNo() << endl;
         }
         deletestudents();
         cout << "\n\nPress any key to continue..." << endl;
@@ -242,7 +242,7 @@ void adminMenu()
         cout << "List of Faculty IDs:" << endl;
         for (int i = 0; i < faculties.size(); i++)
         {
-            cout << faculties[i].getFacultyID() << endl;
+            cout << faculties[i]->getFacultyID() << endl;
         }
         cout << "Enter the Faculty ID to view details: ";
         string facultyID;
@@ -250,13 +250,13 @@ void adminMenu()
         bool found = false;
         for (int i = 0; i < faculties.size(); i++)
         {
-            if (faculties[i].getFacultyID() == facultyID)
+            if (faculties[i]->getFacultyID() == facultyID)
             {
                 found = true;
                 system("cls");
                 cout << "Details of Faculty with ID " << facultyID << ":" << endl;
                 cin.ignore();
-                faculties[i].viewDetails();
+                faculties[i]->viewDetails();
                 break;
             }
         }
@@ -299,7 +299,7 @@ void adminMenu()
         cout << "List of Faculty IDs:" << endl;
         for (int i = 0; i < faculties.size(); i++)
         {
-            cout << faculties[i].getFacultyID() << endl;
+            cout << faculties[i]->getFacultyID() << endl;
         }
         deletefaculty();
         cout << "\nPress any key to continue..." << endl;
@@ -322,7 +322,7 @@ void adminMenu()
         {
             for (int i = 0; i < courses_sem1.size(); i++)
             {
-                cout << "Course ID: " << courses_sem1[i].getID() << ", Credits: " << courses_sem1[i].getCredits() << endl;
+                cout << "Course ID: " << courses_sem1[i]->getID() << ", Credits: " << courses_sem1[i]->getCredits() << endl;
             }
         }
         cout << "Semester 2 Courses:" << endl;
@@ -334,7 +334,7 @@ void adminMenu()
         {
             for (int i = 0; i < courses_sem2.size(); i++)
             {
-                cout << "Course ID: " << courses_sem2[i].getID() << ", Credits: " << courses_sem2[i].getCredits() << endl;
+                cout << "Course ID: " << courses_sem2[i]->getID() << ", Credits: " << courses_sem2[i]->getCredits() << endl;
             }
         }
         cout << "\nPress any key to continue..." << endl;
@@ -364,7 +364,7 @@ void adminMenu()
         {
             for (int i = 0; i < courses_sem1.size(); i++)
             {
-                cout << "Course ID: " << courses_sem1[i].getID() << ", Credits: " << courses_sem1[i].getCredits() << endl;
+                cout << "Course ID: " << courses_sem1[i]->getID() << ", Credits: " << courses_sem1[i]->getCredits() << endl;
             }
         }
         cout << "Courses available for deletion in Semester 2:" << endl;
@@ -374,7 +374,7 @@ void adminMenu()
         {
             for (int i = 0; i < courses_sem2.size(); i++)
             {
-                cout << "Course ID: " << courses_sem2[i].getID() << ", Credits: " << courses_sem2[i].getCredits() << endl;
+                cout << "Course ID: " << courses_sem2[i]->getID() << ", Credits: " << courses_sem2[i]->getCredits() << endl;
             }
         }
         deletecourse();
@@ -592,7 +592,7 @@ void studentMenu(Student *student)
         cout << "Registering for Courses..." << endl;
         cout << "Available Courses: " << endl;
         int sem_num = student->getSemNum();
-        vector<Course> availableCourses;
+        vector<Course*> availableCourses;
         if (sem_num == 1)
         {
             availableCourses = courses_sem1;
@@ -622,16 +622,16 @@ void studentMenu(Student *student)
 
         cout << "Extra Courses for Semester " << sem_num << ":" << endl;
         cout << "Course ID\tCredits\tRegistered" << endl;
-        vector<Course> notCompulsoryCourses;
+        vector<Course*> notCompulsoryCourses;
         int count = 0;
         for (auto &&course : availableCourses)
         {
-            if (!course.isCompulsoryCourse())
+            if (!course->isCompulsoryCourse())
             {
-                cout << course.getID() << "\t" << course.getCredits() << "\t";
+                cout << course->getID() << "\t" << course->getCredits() << "\t";
                 for (auto &&registeredCourse : student->getRegisteredCourses())
                 {
-                    if (registeredCourse->getID() == course.getID())
+                    if (registeredCourse->getID() == course->getID())
                     {
                         count++;
                         cout << "Yes" << endl;
@@ -662,13 +662,13 @@ void studentMenu(Student *student)
             bool found = false;
             for (auto &&course : notCompulsoryCourses)
             {
-                if (course.getID() == courseID)
+                if (course->getID() == courseID)
                 {
                     found = true;
                     cout << "Registered for course: " << courseID << endl;
-                    course.enrollStudent(student->getRollNo());
+                    course->enrollStudent(student->getRollNo());
                     cout << "Course ID: " << courseID << " registered successfully." << endl;
-                    student->addSubject(&course);
+                    student->addSubject(course);
                     cout << "Press any key to continue..." << endl;
                     cin.ignore();
                     system("cls");
@@ -1022,14 +1022,17 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         cout << "Viewing Courses..." << endl;
-        vector<Course *> subjects = fa->getSubjects();
-        if (subjects.empty())
+        Faculty *faculty = faculties_map[fa->getID()];
+        vector<Course*> availableCourses;
+        vector<Course *> alreadyRegistered = faculty->getSubjects();
+        if (alreadyRegistered.empty())
         {
-            cout << "No courses assigned." << endl;
+            cout << "No courses registered." << endl;
         }
         else
         {
-            for (auto &course : subjects)
+            cout << "Already registered courses: " << endl;
+            for (auto &&course : alreadyRegistered)
             {
                 cout << "Course ID: " << course->getID() << ", Credits: " << course->getCredits() << endl;
             }
@@ -1310,7 +1313,7 @@ void FAMenu(FA *fa)
         cout << "Adding Courses..." << endl;
         int count = 0;
         Faculty *faculty = faculties_map[fa->getID()];
-        vector<Course> availableCourses;
+        vector<Course*> availableCourses;
         vector<Course *> alreadyRegistered = faculty->getSubjects();
         count = alreadyRegistered.size();
         if (count == 0)
@@ -1339,7 +1342,7 @@ void FAMenu(FA *fa)
             bool flag = false;
             for(auto &registeredCourse : alreadyRegistered)
             {
-                if (course.getID() == registeredCourse->getID())
+                if (course->getID() == registeredCourse->getID())
                 {
                     flag = true;
                     continue;
@@ -1355,7 +1358,7 @@ void FAMenu(FA *fa)
             bool flag = false;
             for(auto &registeredCourse : alreadyRegistered)
             {
-                if (course.getID() == registeredCourse->getID())
+                if (course->getID() == registeredCourse->getID())
                 {
                     flag = true;
                     continue;
@@ -1379,7 +1382,7 @@ void FAMenu(FA *fa)
         cout << "Available Courses: " << endl;
         for (auto &course : availableCourses)
         {
-            cout << "Course ID: " << course.getID() << ", Credits: " << course.getCredits() << endl;
+            cout << "Course ID: " << course->getID() << ", Credits: " << course->getCredits() << endl;
         }
         cout << "Enter Course ID to add: ";
         string courseID;
@@ -1387,11 +1390,11 @@ void FAMenu(FA *fa)
         cin.ignore();
         for (auto &course : availableCourses)
         {
-            if (course.getID() == courseID)
+            if (course->getID() == courseID)
             {
                 found = true;
-                fa->AssignSubject(&course, false);
-                faculty->AssignSubject(&course, true);
+                fa->AssignSubject(course, false);
+                faculty->AssignSubject(course, true);
                 cout << "Course ID: " << courseID << " added successfully." << endl;
                 break;
             }

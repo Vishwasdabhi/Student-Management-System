@@ -17,12 +17,12 @@ using namespace std;
 // 5) Leave application file .json/.txt Start Date, End Date, Reason, Status, FA id, Roll Numeber.
 // 6) Login file -> student.txt -> faculty.txt(username, password, isFA)
 
-vector<Student> students;
-vector<Course> courses_sem1;
-vector<Course> courses_sem2;
-vector<Faculty> faculties;
-vector<FA> fa;
-vector<LeaveApplication> leaveApplications;
+vector<Student*> students;
+vector<Course*> courses_sem1;
+vector<Course*> courses_sem2;
+vector<Faculty*> faculties;
+vector<FA*> fa;
+vector<LeaveApplication*> leaveApplications;
 
 unordered_map<string, Student *> students_map;
 unordered_map<string, Faculty *> faculties_map;
@@ -33,29 +33,30 @@ unordered_map<string, LeaveApplication *> leave_applications_map;
 
 void fillMaps()
 {
-    for (auto &student : students)
+    for (auto &&student : students)
     {
-        students_map[student.getRollNo()] = &student;
+        students_map[student->getRollNo()] = student;
+        // students_map[student.getRollNo()] = student; // if we want to store the object instead of pointer
     }
-    for (auto &faculty : faculties)
+    for (auto &&faculty : faculties)
     {
-        faculties_map[faculty.getFacultyID()] = &faculty;
+        faculties_map[faculty->getFacultyID()] = faculty;
     }
-    for (auto &course : courses_sem1)
+    for (auto &&course : courses_sem1)
     {
-        courses_sem1_map[course.getID()] = &course;
+        courses_sem1_map[course->getID()] = course;
     }
-    for (auto &course : courses_sem2)
+    for (auto &&course : courses_sem2)
     {
-        courses_sem2_map[course.getID()] = &course;
+        courses_sem2_map[course->getID()] = course;
     }
-    for (auto &fa : fa)
+    for (auto &&fa : fa)
     {
-        fa_map[fa.getID()] = &fa;
+        fa_map[fa->getID()] = fa;
     }
-    for (auto &leave : leaveApplications)
+    for (auto &&leave : leaveApplications)
     {
-        leave_applications_map[leave.getRollNo()] = &leave;
+        leave_applications_map[leave->getRollNo()] = leave;
     }
 }
 
@@ -118,7 +119,7 @@ void retrieve_info()
         sem_num = stoi(sem_num_str);
         year = stoi(year_str);
         cgpa = stof(cgpa_str);
-        students[j] = Student(rollNo, password, name, rollNo, year, branch, FA_ID, cgpa, Gender, dob, email, sem_num);
+        students[j] = new Student(rollNo, password, name, rollNo, year, branch, FA_ID, cgpa, Gender, dob, email, sem_num);
     }
     file.close();
 
@@ -152,7 +153,7 @@ void retrieve_info()
     for (int i = 0; i < subject_names_sem1.size(); i++)
     {
         string branch = subject_names_sem1[i].substr(0, 2);
-        courses_sem1[i] = Course(subject_names_sem1[i], branch, credits_sem1[i], is_compulsory_sem1[i]);
+        courses_sem1[i] = new Course(subject_names_sem1[i], branch, credits_sem1[i], is_compulsory_sem1[i]);
     }
 
     while (getline(file1, s))
@@ -169,14 +170,14 @@ void retrieve_info()
                 int marks = stoi(marks_str);
                 for (int j = 0; j < line_count; j++)
                 {
-                    if (students[j].getRollNo() == rollNo)
+                    if (students[j]->getRollNo() == rollNo)
                     {
-                        students[j].addSubject(&courses_sem1[i]); // add the course to the student's registered courses
+                        students[j]->addSubject(courses_sem1[i]); // add the course to the student's registered courses
 
-                        courses_sem1[i].enrollStudent(students[j].getRollNo());
-                        students[j].addMarks(subject_names_sem1[i], marks);
+                        courses_sem1[i]->enrollStudent(students[j]->getRollNo());
+                        students[j]->addMarks(subject_names_sem1[i], marks);
 
-                        courses_sem1[i].add_marks(students[j].getRollNo(), marks);
+                        courses_sem1[i]->add_marks(students[j]->getRollNo(), marks);
                         break;
                     }
                 }
@@ -206,11 +207,11 @@ void retrieve_info()
                 int attendance = stoi(attendance_str);
                 for (int j = 0; j < line_count; j++)
                 {
-                    if (students[j].getRollNo() == rollNo)
+                    if (students[j]->getRollNo() == rollNo)
                     {
-                        students[j].addAttendance(subject_names_sem1[i], attendance);
+                        students[j]->addAttendance(subject_names_sem1[i], attendance);
 
-                        courses_sem1[i].add_attendance(students[j].getRollNo(), attendance);
+                        courses_sem1[i]->add_attendance(students[j]->getRollNo(), attendance);
 
                         break;
                     }
@@ -249,7 +250,7 @@ void retrieve_info()
     for (int i = 0; i < subject_names_sem2.size(); i++)
     {
         string branch = subject_names_sem2[i].substr(0, 2);
-        courses_sem2[i] = Course(subject_names_sem2[i], branch, credits_sem2[i], is_compulsory_sem2[i]);
+        courses_sem2[i] = new Course(subject_names_sem2[i], branch, credits_sem2[i], is_compulsory_sem2[i]);
     }
     while (getline(file3, s))
     {
@@ -265,15 +266,15 @@ void retrieve_info()
                 int marks = stoi(marks_str);
                 for (int j = 0; j < line_count; j++)
                 {
-                    if (students[j].getRollNo() == rollNo)
+                    if (students[j]->getRollNo() == rollNo)
                     {
-                        students[j].addSubject(&courses_sem2[i]);
+                        students[j]->addSubject(courses_sem2[i]);
 
-                        courses_sem2[i].enrollStudent(students[j].getRollNo());
+                        courses_sem2[i]->enrollStudent(students[j]->getRollNo());
 
-                        students[j].addMarks(subject_names_sem2[i], marks);
+                        students[j]->addMarks(subject_names_sem2[i], marks);
 
-                        courses_sem2[i].add_marks(students[j].getRollNo(), marks);
+                        courses_sem2[i]->add_marks(students[j]->getRollNo(), marks);
                         break;
                     }
                 }
@@ -303,11 +304,11 @@ void retrieve_info()
                 int attendance = stoi(attendance_str);
                 for (int j = 0; j < line_count; j++)
                 {
-                    if (students[j].getRollNo() == rollNo)
+                    if (students[j]->getRollNo() == rollNo)
                     {
-                        students[j].addAttendance(subject_names_sem2[i], attendance);
+                        students[j]->addAttendance(subject_names_sem2[i], attendance);
 
-                        courses_sem2[i].add_attendance(students[j].getRollNo(), attendance);
+                        courses_sem2[i]->add_attendance(students[j]->getRollNo(), attendance);
                         break;
                     }
                 }
@@ -367,7 +368,7 @@ void retrieve_info()
             }
         }
 
-        faculties[i] = Faculty(faculty_id, password, faculty_name, faculty_id, gender, email, branch, officeNo, is_FA);
+        faculties[i] = new Faculty(faculty_id, password, faculty_name, faculty_id, gender, email, branch, officeNo, is_FA);
         for (const auto &sub : subjects)
         {
             int flag = 0;
@@ -375,8 +376,8 @@ void retrieve_info()
             {
                 if (sub == subject_names_sem1[j])
                 {
-                    faculties[i].AssignSubject(&courses_sem1[j]);
-                    courses_sem1[j].addfaculty(faculties[i].getFacultyID());
+                    faculties[i]->AssignSubject(courses_sem1[j]);
+                    courses_sem1[j]->addfaculty(faculties[i]->getFacultyID());
                     flag = 1;
                     break;
                 }
@@ -387,8 +388,8 @@ void retrieve_info()
                 {
                     if (sub == subject_names_sem2[j])
                     {
-                        faculties[i].AssignSubject(&courses_sem2[j]);
-                        courses_sem2[j].addfaculty(faculties[i].getFacultyID());
+                        faculties[i]->AssignSubject(courses_sem2[j]);
+                        courses_sem2[j]->addfaculty(faculties[i]->getFacultyID());
                         break;
                     }
                 }
@@ -399,7 +400,7 @@ void retrieve_info()
     int faculty_count_fa = 0;
     for (int j = 0; j < faculty_count; j++)
     {
-        if (faculties[j].is_FA_function())
+        if (faculties[j]->is_FA_function())
         {
             faculty_count_fa++;
         }
@@ -410,10 +411,10 @@ void retrieve_info()
     int fa_index = 0;
     for (int j = 0; j < faculty_count; j++)
     {
-        if (faculties[j].is_FA_function())
+        if (faculties[j]->is_FA_function())
         {
-            fa[fa_index] = FA(faculties[j].getFacultyID(), faculties[j].getPassword(), faculties[j].getFacultyName(), faculties[j].getFacultyID(),
-                              faculties[j].getGender(), faculties[j].getEmail(), faculties[j].getBranch(), faculties[j].getOfficeNo(), true);
+            fa[fa_index] = new FA(faculties[j]->getFacultyID(), faculties[j]->getPassword(), faculties[j]->getFacultyName(), faculties[j]->getFacultyID(),
+                              faculties[j]->getGender(), faculties[j]->getEmail(), faculties[j]->getBranch(), faculties[j]->getOfficeNo(), true);
             fa_index++;
         }
     }
@@ -422,9 +423,9 @@ void retrieve_info()
     {
         for (int j = 0; j < faculty_count_fa; j++)
         {
-            if (students[i].getFA_ID() == fa[j].getID())
+            if (students[i]->getFA_ID() == fa[j]->getID())
             {
-                fa[j].setAssignedStudents(&students[i]);
+                fa[j]->setAssignedStudents(students[i]);
                 break;
             }
         }
@@ -457,29 +458,29 @@ void retrieve_info()
         startDate = Date(start_day, start_month, start_year);
         endDate = Date(end_day, end_month, end_year);
         LeaveApplication leave(reason, startDate, endDate, status, fa_id, rollNo);
-        leaveApplications.push_back(leave);
+        leaveApplications.push_back(&leave);
 
         for (int i = 0; i < line_count; i++)
         {
-            if (students[i].getRollNo() == rollNo)
+            if (students[i]->getRollNo() == rollNo)
             {
-                students[i].addLeaveApplication(leave);
+                students[i]->addLeaveApplication(leave);
                 break;
             }
         }
 
         for (int i = 0; i < faculty_count_fa; i++)
         {
-            if (fa[i].getID() == fa_id)
+            if (fa[i]->getID() == fa_id)
             {
                 if (status == "Pending")
                 {
-                    fa[i].setNewNotification(true);
-                    fa[i].newLeaveRequests(&students[i], leave);
+                    fa[i]->setNewNotification(true);
+                    fa[i]->newLeaveRequests(students[i], leave);
                 }
                 else
                 {
-                    fa[i].LeaveRequests(&students[i], leave);
+                    fa[i]->LeaveRequests(students[i], leave);
                 }
                 break;
             }
@@ -537,19 +538,19 @@ void createheader()
         cin >> is_compulsory;
         getchar(); // to consume the newline character after entering is_compulsory
         // subject_name_sem1.push_back(make_pair(subject_name, make_pair(credits, is_compulsory)));
-        courses_sem1.push_back(Course(subject_name, subject_name.substr(0, 2), credits, is_compulsory));
+        courses_sem1.push_back(new Course(subject_name, subject_name.substr(0, 2), credits, is_compulsory));
     }
 
     fprintf(inFile1, "Roll Number,");
     for (int i = 0; i < no_subjects_sem1; i++)
     {
-        fprintf(inFile1, "%s,", courses_sem1[i].getID().c_str());
+        fprintf(inFile1, "%s,", courses_sem1[i]->getID().c_str());
     }
     fprintf(inFile1, "\n");
     fprintf(inFile3, "Roll Number,");
     for (int i = 0; i < no_subjects_sem1; i++)
     {
-        fprintf(inFile3, "%s(%d-%d),", courses_sem1[i].getID().c_str(), courses_sem1[i].getCredits(), courses_sem1[i].isCompulsoryCourse());
+        fprintf(inFile3, "%s(%d-%d),", courses_sem1[i]->getID().c_str(), courses_sem1[i]->getCredits(), courses_sem1[i]->isCompulsoryCourse());
     }
     fprintf(inFile3, "\n");
 
@@ -579,20 +580,20 @@ void createheader()
         cout << "Is it a compulsory subject? (1 for Yes, 0 for No): ";
         cin >> is_compulsory;
         getchar(); // to consume the newline character after entering is_compulsory
-        courses_sem2.push_back(Course(subject_name, subject_name.substr(0, 2), credits, is_compulsory));
+        courses_sem2.push_back(new Course(subject_name, subject_name.substr(0, 2), credits, is_compulsory));
     }
 
     fprintf(inFile2, "Roll Number,");
     for (int i = 0; i < no_subjects_sem2; i++)
     {
-        fprintf(inFile2, "%s,", courses_sem2[i].getID().c_str());
+        fprintf(inFile2, "%s,", courses_sem2[i]->getID().c_str());
     }
     fprintf(inFile2, "\n");
 
     fprintf(inFile4, "Roll Number,");
     for (int i = 0; i < no_subjects_sem2; i++)
     {
-        fprintf(inFile4, "%s(%d-%d),", courses_sem2[i].getID().c_str(), courses_sem2[i].getCredits(), courses_sem2[i].isCompulsoryCourse());
+        fprintf(inFile4, "%s(%d-%d),", courses_sem2[i]->getID().c_str(), courses_sem2[i]->getCredits(), courses_sem2[i]->isCompulsoryCourse());
     }
     fprintf(inFile4, "\n");
 
@@ -646,17 +647,17 @@ void write_all_files()
     file << "Name,Password,Branch,Roll Number,Sem Number,FA ID,Gender,DOB,Email,Year,CGPA\n";
     for (int i = 0; i < students.size(); i++)
     {
-        file << students[i].getName() << ","
-             << students[i].getPassword() << ","
-             << students[i].getBranch() << ","
-             << students[i].getRollNo() << ","
-             << students[i].getSemNum() << ","
-             << students[i].getFA_ID() << ","
-             << students[i].getGender() << ","
-             << students[i].getDOB() << ","
-             << students[i].getEmail() << ","
-             << students[i].getYear() << ","
-             << students[i].getCGPA() << "\n";
+        file << students[i]->getName() << ","
+             << students[i]->getPassword() << ","
+             << students[i]->getBranch() << ","
+             << students[i]->getRollNo() << ","
+             << students[i]->getSemNum() << ","
+             << students[i]->getFA_ID() << ","
+             << students[i]->getGender() << ","
+             << students[i]->getDOB() << ","
+             << students[i]->getEmail() << ","
+             << students[i]->getYear() << ","
+             << students[i]->getCGPA() << "\n";
     }
     file.close();
 
@@ -669,23 +670,23 @@ void write_all_files()
     inFile1 << "Roll Number,";
     for (int i = 0; i < courses_sem1.size(); i++)
     {
-        string subject_name = courses_sem1[i].getID();
-        int credits = courses_sem1[i].getCredits();
-        bool is_compulsory = courses_sem1[i].isCompulsoryCourse();
+        string subject_name = courses_sem1[i]->getID();
+        int credits = courses_sem1[i]->getCredits();
+        bool is_compulsory = courses_sem1[i]->isCompulsoryCourse();
         inFile1 << subject_name << "(" << credits << "-" << is_compulsory << "),";
     }
     inFile1 << "\n";
     for (int i = 0; i < students.size(); i++)
     {
-        if (students[i].getSemNum() != 1)
+        if (students[i]->getSemNum() != 1)
             continue;
-        inFile1 << students[i].getRollNo() << ",";
-        map<string, int> marks = students[i].getMarks();
+        inFile1 << students[i]->getRollNo() << ",";
+        map<string, int> marks = students[i]->getMarks();
         for (int j = 0; j < courses_sem1.size(); j++)
         {
-            if (marks.find(courses_sem1[j].getID()) != marks.end())
+            if (marks.find(courses_sem1[j]->getID()) != marks.end())
             {
-                inFile1 << marks.at(courses_sem1[j].getID()) << ",";
+                inFile1 << marks.at(courses_sem1[j]->getID()) << ",";
             }
             else
             {
@@ -705,20 +706,20 @@ void write_all_files()
     inFile2 << "Roll Number,";
     for (int i = 0; i < courses_sem1.size(); i++)
     {
-        inFile2 << courses_sem1[i].getID() << ",";
+        inFile2 << courses_sem1[i]->getID() << ",";
     }
     inFile2 << "\n";
     for (int i = 0; i < students.size(); i++)
     {
-        if (students[i].getSemNum() != 1)
+        if (students[i]->getSemNum() != 1)
             continue;
-        inFile2 << students[i].getRollNo() << ",";
-        map<string, int> attendance = students[i].getAttendance();
+        inFile2 << students[i]->getRollNo() << ",";
+        map<string, int> attendance = students[i]->getAttendance();
         for (int j = 0; j < courses_sem1.size(); j++)
         {
-            if (attendance.find(courses_sem1[j].getID()) != attendance.end())
+            if (attendance.find(courses_sem1[j]->getID()) != attendance.end())
             {
-                inFile2 << attendance.at(courses_sem1[j].getID()) << ",";
+                inFile2 << attendance.at(courses_sem1[j]->getID()) << ",";
             }
             else
             {
@@ -738,23 +739,23 @@ void write_all_files()
     inFile3 << "Roll Number,";
     for (int i = 0; i < courses_sem2.size(); i++)
     {
-        string subject_name = courses_sem2[i].getID();
-        int credits = courses_sem2[i].getCredits();
-        bool is_compulsory = courses_sem2[i].isCompulsoryCourse();
+        string subject_name = courses_sem2[i]->getID();
+        int credits = courses_sem2[i]->getCredits();
+        bool is_compulsory = courses_sem2[i]->isCompulsoryCourse();
         inFile3 << subject_name << "(" << credits << "-" << is_compulsory << "),";
     }
     inFile3 << "\n";
     for (int i = 0; i < students.size(); i++)
     {
-        if (students[i].getSemNum() != 2)
+        if (students[i]->getSemNum() != 2)
             continue;
-        inFile3 << students[i].getRollNo() << ",";
-        map<string, int> marks = students[i].getMarks();
+        inFile3 << students[i]->getRollNo() << ",";
+        map<string, int> marks = students[i]->getMarks();
         for (int j = 0; j < courses_sem2.size(); j++)
         {
-            if (marks.find(courses_sem2[j].getID()) != marks.end())
+            if (marks.find(courses_sem2[j]->getID()) != marks.end())
             {
-                inFile3 << marks.at(courses_sem2[j].getID()) << ",";
+                inFile3 << marks.at(courses_sem2[j]->getID()) << ",";
             }
             else
             {
@@ -774,20 +775,20 @@ void write_all_files()
     inFile4 << "Roll Number,";
     for (int i = 0; i < courses_sem2.size(); i++)
     {
-        inFile4 << courses_sem2[i].getID() << ",";
+        inFile4 << courses_sem2[i]->getID() << ",";
     }
     inFile4 << "\n";
     for (int i = 0; i < students.size(); i++)
     {
-        if (students[i].getSemNum() != 2)
+        if (students[i]->getSemNum() != 2)
             continue;
-        inFile4 << students[i].getRollNo() << ",";
-        map<string, int> attendance = students[i].getAttendance();
+        inFile4 << students[i]->getRollNo() << ",";
+        map<string, int> attendance = students[i]->getAttendance();
         for (int j = 0; j < courses_sem2.size(); j++)
         {
-            if (attendance.find(courses_sem2[j].getID()) != attendance.end())
+            if (attendance.find(courses_sem2[j]->getID()) != attendance.end())
             {
-                inFile4 << attendance.at(courses_sem2[j].getID()) << ",";
+                inFile4 << attendance.at(courses_sem2[j]->getID()) << ",";
             }
             else
             {
@@ -804,23 +805,18 @@ void write_all_files()
         cout << "Error opening faculty information file for writing." << endl;
         return;
     }
-    cout << "Writing faculty information to file..." << endl;
-    Sleep(1000);
     inFile5 << "Faculty ID,Password,Faculty Name,Gender,Email,Branch,Office_No,is_FA,Subject_1,Subject_2,Subject_3,Subject_4,Subject_5\n";
     for (int i = 0; i < faculties.size(); i++)
     {
-        inFile5 << faculties[i].getFacultyID() << ","
-                << faculties[i].getPassword() << ","
-                << faculties[i].getFacultyName() << ","
-                << faculties[i].getGender() << ","
-                << faculties[i].getEmail() << ","
-                << faculties[i].getBranch() << ","
-                << faculties[i].getOfficeNo() << ","
-                << (faculties[i].is_FA_function() ? "1" : "0") << ",";
-        const vector<Course *> &subjects = faculties[i].getSubjects();
-        cout << subjects.size() << endl;
-        // cout<<subjects[0]->getID() << endl;
-        // Sleep(1000);
+        inFile5 << faculties[i]->getFacultyID() << ","
+                << faculties[i]->getPassword() << ","
+                << faculties[i]->getFacultyName() << ","
+                << faculties[i]->getGender() << ","
+                << faculties[i]->getEmail() << ","
+                << faculties[i]->getBranch() << ","
+                << faculties[i]->getOfficeNo() << ","
+                << (faculties[i]->is_FA_function() ? "1" : "0") << ",";
+        const vector<Course *> &subjects = faculties[i]->getSubjects();
         for (int j = 0; j < subjects.size(); j++)
         {
             if (subjects[j]) // ✅ null check
@@ -828,16 +824,12 @@ void write_all_files()
             else
                 inFile5 << "NULL,";
         }
-        cout<<"Hi"<<endl;
-
         for (int j = subjects.size(); j < 5; j++)
         {
             inFile5 << ",";
         }
         inFile5 << "\n";
     }
-    cout << "Faculty information written successfully!" << endl;
-    Sleep(1000);
     inFile5.close();
     ofstream inFile6("leave_applications.txt");
     if (!inFile6.is_open())
@@ -848,12 +840,12 @@ void write_all_files()
     inFile6 << "Roll Number,FA ID,Reason,Start Date,End Date,Status\n";
     for (auto &leave : leaveApplications)
     {
-        inFile6 << leave.getRollNo() << ","
-                << leave.getFA_ID() << ","
-                << leave.getReason() << ","
-                << leave.getStartDate().showDate() << ","
-                << leave.getEndDate().showDate() << ","
-                << leave.getStatus() << "\n";
+        inFile6 << leave->getRollNo() << ","
+                << leave->getFA_ID() << ","
+                << leave->getReason() << ","
+                << leave->getStartDate().showDate() << ","
+                << leave->getEndDate().showDate() << ","
+                << leave->getStatus() << "\n";
     }
     inFile6.close();
 }
@@ -930,27 +922,27 @@ void addstudents()
         int count = 0;
         for (int j = 0; j < students.size(); j++)
         {
-            if (students[j].getRollNo().substr(0, 2) == to_string(year).substr(2, 2) && students[j].getRollNo().substr(2, 2) == branch)
+            if (students[j]->getRollNo().substr(0, 2) == to_string(year).substr(2, 2) && students[j]->getRollNo().substr(2, 2) == branch)
             {
-                count = max(count, stoi(students[j].getRollNo().substr(4)));
+                count = max(count, stoi(students[j]->getRollNo().substr(4)));
             }
         }
         if (count < 9)
             rollNo = to_string(year).substr(2, 2) + branch + "0" + to_string(count + 1);
         else
             rollNo = to_string(year).substr(2, 2) + branch + to_string(count + 1);
-        students.push_back(Student(rollNo, rollNo + "@iitbbs", name, rollNo, year, branch, FA_ID, 0.0, gender, dob, rollNo + "@iitbbs.ac.in", sem_num));
+        students.push_back(new Student(rollNo, rollNo + "@iitbbs", name, rollNo, year, branch, FA_ID, 0.0, gender, dob, rollNo + "@iitbbs.ac.in", sem_num));
 
         for (int j = 0; j < fa.size(); j++)
         {
-            if (fa[j].getID() == FA_ID)
+            if (fa[j]->getID() == FA_ID)
             {
-                fa[j].setAssignedStudents(&students.back());
-                students.back().setFA(fa[j].getID());
+                fa[j]->setAssignedStudents(students.back());
+                students.back()->setFA(fa[j]->getID());
                 break;
             }
         }
-        students_map[students.back().getRollNo()] = &students.back();
+        students_map[students.back()->getRollNo()] = students.back();
 
         cout << "Student " << name << " added successfully!" << endl;
         Sleep(1000);
@@ -966,9 +958,9 @@ void deletestudents()
     cin.ignore();
     for (auto it = students.begin(); it != students.end(); ++it)
     {
-        if (it->getRollNo() == rollNo)
+        if ((*it)->getRollNo() == rollNo)
         {
-            cout << "Deleting student: " << it->getName() << endl;
+            cout << "Deleting student: " << (*it)->getName() << endl;
             students.erase(it);
             // cout << "Student deleted successfully!" << endl;
             break;
@@ -1055,9 +1047,9 @@ void addfaculty()
         int count = 0;
         for (int j = 0; j < faculties.size(); j++)
         {
-            if (faculties[j].getFacultyID().substr(0, 2) == branch)
+            if (faculties[j]->getFacultyID().substr(0, 2) == branch)
             {
-                count = max(count, stoi(faculties[j].getFacultyID().substr(2)));
+                count = max(count, stoi(faculties[j]->getFacultyID().substr(2)));
             }
         }
         if (count < 9)
@@ -1065,13 +1057,13 @@ void addfaculty()
         else
             id = branch + to_string(count + 1) + toUpper(name).substr(0, 2);
 
-        faculties.push_back(Faculty(id, id + "@iitbbs", name, id, gender, id + "@iitbbs.ac.in", branch, officeNo, is_FA));
-        faculties_map[id] = &faculties.back();
+        faculties.push_back(new Faculty(id, id + "@iitbbs", name, id, gender, id + "@iitbbs.ac.in", branch, officeNo, is_FA));
+        faculties_map[id] = faculties.back();
         cout << "Faculty " << name << " added successfully!" << endl;
         if (is_FA)
         {
-            fa.push_back(FA(id, id + "@iitbbs", name, id, gender, id + "@iitbbs.ac.in", branch, officeNo, is_FA));
-            fa_map[id] = &fa.back();
+            fa.push_back(new FA(id, id + "@iitbbs", name, id, gender, id + "@iitbbs.ac.in", branch, officeNo, is_FA));
+            fa_map[id] = fa.back();
             // cout << "FA " << name << " added successfully!" << endl;
         }
         Sleep(1000);
@@ -1088,7 +1080,7 @@ void deletefaculty()
     bool found = false;
     for (int i = 0; i < faculties.size(); i++)
     {
-        if (faculties[i].getFacultyID() == facultyID)
+        if (faculties[i]->getFacultyID() == facultyID)
         {
             found = true;
             faculties.erase(faculties.begin() + i);
@@ -1186,13 +1178,13 @@ void addcourse()
 
         if (semester == 1)
         {
-            courses_sem1.push_back(Course(id, branch, credits, is_compulsory));
-            courses_sem1_map[id] = &courses_sem1.back();
+            courses_sem1.push_back(new Course(id, branch, credits, is_compulsory));
+            courses_sem1_map[id] = courses_sem1.back();
         }
         else
         {
-            courses_sem2.push_back(Course(id, branch, credits, is_compulsory));
-            courses_sem2_map[id] = &courses_sem2.back();
+            courses_sem2.push_back(new Course(id, branch, credits, is_compulsory));
+            courses_sem2_map[id] = courses_sem2.back();
         }
 
         cout << "Course " << id << " added successfully!" << endl;
@@ -1209,9 +1201,9 @@ void deletecourse()
     cin.ignore();
     for (auto it = courses_sem1.begin(); it != courses_sem1.end(); ++it)
     {
-        if (it->getID() == id)
+        if ((*it)->getID() == id)
         {
-            cout << "Deleting course: " << it->getID() << endl;
+            cout << "Deleting course: " << (*it)->getID() << endl;
             courses_sem1.erase(it);
             cout << "Course deleted successfully!" << endl;
             return;
@@ -1229,9 +1221,9 @@ void deletecourse()
     }
     for (auto it = courses_sem2.begin(); it != courses_sem2.end(); ++it)
     {
-        if (it->getID() == id)
+        if ((*it)->getID() == id)
         {
-            cout << "Deleting course: " << it->getID() << endl;
+            cout << "Deleting course: " << (*it)->getID() << endl;
             courses_sem2.erase(it);
             cout << "Course deleted successfully!" << endl;
             return;
@@ -1593,7 +1585,7 @@ void Student ::applyForLeave(string reason, Date startDate, Date endDate)
 {
     LeaveApplication leave(reason, startDate, endDate, "Pending", FA_ID, rollNo);
     leaveHistory.push_back(leave);
-    leaveApplications.push_back(leave);
+    leaveApplications.push_back(&leave);
     fa_map[FA_ID]->submitApplication(this, leave);
     cout << "Leave application submitted successfully." << endl;
 }

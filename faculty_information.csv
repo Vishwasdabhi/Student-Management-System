@@ -1,2 +1,2 @@
 Faculty ID,Password,Faculty Name,Gender,Email,Branch,Office_No,is_FA,Subject_1,Subject_2,Subject_3,Subject_4,Subject_5
-CS01BI,CS01BI@iitbbs,Biplab,Male,CS01BI@iitbbs.ac.in,CS,101,1,,,,,,
+CS01BI,CS01BI@iitbbs,Biplab,Male,CS01BI@iitbbs.ac.in,CS,101,1,CS01001,ME01001,EE01001,,,
