@@ -592,7 +592,7 @@ void studentMenu(Student *student)
         cout << "Registering for Courses..." << endl;
         cout << "Available Courses: " << endl;
         int sem_num = student->getSemNum();
-        vector<Course*> availableCourses;
+        vector<Course *> availableCourses;
         if (sem_num == 1)
         {
             availableCourses = courses_sem1;
@@ -622,7 +622,7 @@ void studentMenu(Student *student)
 
         cout << "Extra Courses for Semester " << sem_num << ":" << endl;
         cout << "Course ID\tCredits\tRegistered" << endl;
-        vector<Course*> notCompulsoryCourses;
+        vector<Course *> notCompulsoryCourses;
         int count = 0;
         for (auto &&course : availableCourses)
         {
@@ -1023,7 +1023,7 @@ void FAMenu(FA *fa)
         system("cls");
         cout << "Viewing Courses..." << endl;
         Faculty *faculty = faculties_map[fa->getID()];
-        vector<Course*> availableCourses;
+        vector<Course *> availableCourses;
         vector<Course *> alreadyRegistered = faculty->getSubjects();
         if (alreadyRegistered.empty())
         {
@@ -1048,52 +1048,55 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         cout << "Viewing Attendance..." << endl;
-
-        cout << "Available Courses: " << endl;
-        if (fa->getSubjects().empty())
+        Faculty *faculty = faculties_map[fa->getID()];
+        vector<Course *> availableCourses;
+        vector<Course *> alreadyRegistered = faculty->getSubjects();
+        if (alreadyRegistered.empty())
         {
-            cout << "No courses assigned." << endl;
+            cout << "No courses registered." << endl;
             cout << "Press any key to continue..." << endl;
             cin.ignore();
             system("cls");
             FAMenu(fa);
-            return;
+            break;
         }
-        for (auto &&it : fa->getSubjects())
+        else
         {
-            cout << "Course ID: " << it->getID() << ", Credits: " << it->getCredits() << endl;
+            cout << "Already registered courses: " << endl;
+            for (auto &&course : alreadyRegistered)
+            {
+                cout << "Course ID: " << course->getID() << ", Credits: " << course->getCredits() << endl;
+            }
         }
         cout << "Enter Course ID to view attendance: ";
         string subjectId;
+        cin >> subjectId;
         bool flag = false;
-        while (!flag)
+        cin.ignore();
+        system("cls");
+        for (auto &&it : faculty->getSubjects())
         {
-            flag = false;
-            cin >> subjectId;
-            for (auto &&it : fa->getSubjects())
+            if (it->getID() == subjectId)
             {
-                if (it->getID() == subjectId)
+                flag = true;
+                cout << "Attendance for Course ID: " << it->getID() << endl;
+                map<string, int> attendance = it->getAttendance();
+                if (attendance.empty())
                 {
-                    flag = true;
-                    cout << "Attendance for Course ID: " << it->getID() << endl;
-                    map<string, int> attendance = it->getAttendance();
-                    if (attendance.empty())
+                    cout << "No attendance records found." << endl;
+                }
+                else
+                {
+                    for (auto &&subject : attendance)
                     {
-                        cout << "No attendance records found." << endl;
-                    }
-                    else
-                    {
-                        for (auto &&subject : attendance)
-                        {
-                            cout << "Student Roll No: " << subject.first << ", Attendance: " << subject.second << "." << endl;
-                        }
+                        cout << "Student Roll No: " << subject.first << ", Attendance: " << subject.second << "." << endl;
                     }
                 }
             }
-            if (!flag)
-            {
-                cout << "Invalid Course ID. Please try again: " << endl;
-            }
+        }
+        if (!flag)
+        {
+            cout << "Invalid Course ID. Please try again: " << endl;
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
@@ -1106,51 +1109,55 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         cout << "Viewing Marks..." << endl;
-        cout << "Available Courses: " << endl;
-        if (fa->getSubjects().empty())
+        Faculty *faculty = faculties_map[fa->getID()];
+        vector<Course *> availableCourses;
+        vector<Course *> alreadyRegistered = faculty->getSubjects();
+        if (alreadyRegistered.empty())
         {
-            cout << "No courses assigned." << endl;
+            cout << "No courses registered." << endl;
             cout << "Press any key to continue..." << endl;
             cin.ignore();
             system("cls");
             FAMenu(fa);
-            return;
+            break;
         }
-        for (auto &&it : fa->getSubjects())
+        else
         {
-            cout << "Course ID: " << it->getID() << ", Credits: " << it->getCredits() << endl;
+            cout << "Already registered courses: " << endl;
+            for (auto &&course : alreadyRegistered)
+            {
+                cout << "Course ID: " << course->getID() << ", Credits: " << course->getCredits() << endl;
+            }
         }
         cout << "Enter Course ID to view marks: ";
         string subjectId;
+        cin >> subjectId;
         bool flag = false;
-        while (!flag)
+        cin.ignore();
+        system("cls");
+        for (auto &&it : faculty->getSubjects())
         {
-            flag = false;
-            cin >> subjectId;
-            for (auto &&it : fa->getSubjects())
+            if (it->getID() == subjectId)
             {
-                if (it->getID() == subjectId)
+                flag = true;
+                cout << "Marks for Course ID: " << it->getID() << endl;
+                map<string, int> marks = it->getMarks();
+                if (marks.empty())
                 {
-                    flag = true;
-                    cout << "Marks for Course ID: " << it->getID() << endl;
-                    map<string, int> marks = it->getMarks();
-                    if (marks.empty())
+                    cout << "No marks records found." << endl;
+                }
+                else
+                {
+                    for (auto &&subject : marks)
                     {
-                        cout << "No marks records found." << endl;
-                    }
-                    else
-                    {
-                        for (auto &&subject : marks)
-                        {
-                            cout << "Student Roll No: " << subject.first << ", Marks: " << subject.second << "." << endl;
-                        }
+                        cout << "Student Roll No: " << subject.first << ", Marks: " << subject.second << "." << endl;
                     }
                 }
             }
-            if (!flag)
-            {
-                cout << "Invalid Course ID. Please try again: " << endl;
-            }
+        }
+        if (!flag)
+        {
+            cout << "Invalid Course ID. Please try again: " << endl;
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
@@ -1164,110 +1171,111 @@ void FAMenu(FA *fa)
         system("cls");
         cout << "Add Marks..." << endl;
         cout << "Available Courses: " << endl;
-        if (fa->getSubjects().empty())
+        Faculty *faculty = faculties_map[fa->getID()];
+        vector<Course *> availableCourses;
+        vector<Course *> alreadyRegistered = faculty->getSubjects();
+        if (alreadyRegistered.empty())
         {
-            cout << "No courses assigned." << endl;
+            cout << "No courses registered." << endl;
             cout << "Press any key to continue..." << endl;
             cin.ignore();
             system("cls");
             FAMenu(fa);
-            return;
+            break;
         }
-        for (auto &&it : fa->getSubjects())
+        for (auto &&it : alreadyRegistered)
         {
             cout << "Course ID: " << it->getID() << ", Credits: " << it->getCredits() << endl;
         }
         cout << "Enter Course ID to add marks: ";
         string subjectId;
+        cin >> subjectId;
+        cin.ignore();
         bool flag = false;
-        while (!flag)
+        cin >> subjectId;
+        for (auto &&it : alreadyRegistered)
         {
-            flag = false;
-            cin >> subjectId;
-            for (auto &&it : fa->getSubjects())
+            if (it->getID() == subjectId)
             {
-                if (it->getID() == subjectId)
+                flag = true;
+                cout << "Adding Marks for Course ID: " << it->getID() << endl;
+                vector<string> students = it->getStudents();
+                if (students.empty())
                 {
-                    flag = true;
-                    cout << "Adding Marks for Course ID: " << it->getID() << endl;
-                    vector<string> students = it->getStudents();
-                    if (students.empty())
-                    {
-                        cout << "No students enrolled in this course." << endl;
-                        break;
-                    }
-                    cout << "1. Add Marks for all students." << endl;
-                    cout << "2. Add Marks for specific students." << endl;
-                    int choice2;
+                    cout << "No students enrolled in this course." << endl;
+                    break;
+                }
+                cout << "1. Add Marks for all students." << endl;
+                cout << "2. Add Marks for specific students." << endl;
+                int choice2;
+                cin >> choice2;
+                while (choice2 < 1 || choice2 > 2)
+                {
+                    cout << "Invalid choice. Please try again." << endl;
                     cin >> choice2;
-                    while (choice2 < 1 || choice2 > 2)
+                }
+                switch (choice2)
+                {
+                case 1:
+                {
+                    cout << "Enter marks for each student:" << endl;
+                    for (auto &&student : students)
                     {
-                        cout << "Invalid choice. Please try again." << endl;
-                        cin >> choice2;
-                    }
-                    switch (choice2)
-                    {
-                    case 1:
-                    {
-                        cout << "Enter marks for each student:" << endl;
-                        for (auto &&student : students)
+                        int mark;
+                        cout << "Student Roll No: " << student << ", Enter Marks: ";
+                        cin >> mark;
+                        while (mark < 0 || mark > 100)
                         {
-                            int mark;
-                            cout << "Student Roll No: " << student << ", Enter Marks: ";
+                            cout << "Invalid marks. Please enter marks between 0 and 100: ";
                             cin >> mark;
-                            while (mark < 0 || mark > 100)
-                            {
-                                cout << "Invalid marks. Please enter marks between 0 and 100: ";
-                                cin >> mark;
-                            }
-                            it->add_marks(student, mark);
-                            cout << "Marks added for " << student << ": " << mark << endl;
                         }
-                        break;
+                        it->add_marks(student, mark);
+                        cout << "Marks added for " << student << ": " << mark << endl;
                     }
-                    case 2:
+                    break;
+                }
+                case 2:
+                {
+                    cout << "All students : " << endl;
+                    for (auto &&student : students)
                     {
-                        cout << "All students : " << endl;
+                        cout << student << endl;
+                    }
+                    cout << "Enter Roll No of student to add marks: ";
+                    string rollNo;
+                    bool flag2 = false;
+                    while (!flag2)
+                    {
+                        cin >> rollNo;
                         for (auto &&student : students)
                         {
-                            cout << student << endl;
-                        }
-                        cout << "Enter Roll No of student to add marks: ";
-                        string rollNo;
-                        bool flag2 = false;
-                        while (!flag2)
-                        {
-                            cin >> rollNo;
-                            for (auto &&student : students)
+                            if (student == rollNo)
                             {
-                                if (student == rollNo)
+                                flag2 = true;
+                                int mark;
+                                cout << "Student Roll No: " << student << ", Enter Marks: ";
+                                cin >> mark;
+                                while (mark < 0 || mark > 100)
                                 {
-                                    flag2 = true;
-                                    int mark;
-                                    cout << "Student Roll No: " << student << ", Enter Marks: ";
+                                    cout << "Invalid marks. Please enter marks between 0 and 100: ";
                                     cin >> mark;
-                                    while (mark < 0 || mark > 100)
-                                    {
-                                        cout << "Invalid marks. Please enter marks between 0 and 100: ";
-                                        cin >> mark;
-                                    }
-                                    it->add_marks(student, mark);
-                                    cout << "Marks added for " << student << ": " << mark << endl;
                                 }
-                            }
-                            if (!flag2)
-                            {
-                                cout << "Invalid Roll No. Please try again." << endl;
+                                it->add_marks(student, mark);
+                                cout << "Marks added for " << student << ": " << mark << endl;
                             }
                         }
-                    }
+                        if (!flag2)
+                        {
+                            cout << "Invalid Roll No. Please try again." << endl;
+                        }
                     }
                 }
+                }
             }
-            if (!flag)
-            {
-                cout << "Invalid Course ID. Please try again: " << endl;
-            }
+        }
+        if (!flag)
+        {
+            cout << "Invalid Course ID. Please try again: " << endl;
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();
@@ -1313,7 +1321,7 @@ void FAMenu(FA *fa)
         cout << "Adding Courses..." << endl;
         int count = 0;
         Faculty *faculty = faculties_map[fa->getID()];
-        vector<Course*> availableCourses;
+        vector<Course *> availableCourses;
         vector<Course *> alreadyRegistered = faculty->getSubjects();
         count = alreadyRegistered.size();
         if (count == 0)
@@ -1340,7 +1348,7 @@ void FAMenu(FA *fa)
         for (auto &course : courses_sem1)
         {
             bool flag = false;
-            for(auto &registeredCourse : alreadyRegistered)
+            for (auto &registeredCourse : alreadyRegistered)
             {
                 if (course->getID() == registeredCourse->getID())
                 {
@@ -1356,7 +1364,7 @@ void FAMenu(FA *fa)
         for (auto &course : courses_sem2)
         {
             bool flag = false;
-            for(auto &registeredCourse : alreadyRegistered)
+            for (auto &registeredCourse : alreadyRegistered)
             {
                 if (course->getID() == registeredCourse->getID())
                 {
