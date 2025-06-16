@@ -405,6 +405,7 @@ void studentMenu(Student *student)
     cout << "8. Give Feedback" << endl;
     cout << "9. Register for Courses" << endl;
     cout << "10. View Leave Records" << endl;
+    cout << "11. Change Password" << endl;
     cout << "0. Log Out" << endl;
 
     cout << "Please select an option: ";
@@ -708,6 +709,32 @@ void studentMenu(Student *student)
                      << "End Date: " << leave.getEndDate().showDate() << endl
                      << "Status: " << leave.getStatus() << endl;
             }
+        }
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        system("cls");
+        studentMenu(student);
+        break;
+    }
+    case 11:
+    {
+        cin.ignore();
+        system("cls");
+        cout << "Changing Password..." << endl;
+        string newPassword;
+        cout << "Enter new password: ";
+        maskInput(newPassword);
+        cout << "Confirm new password: ";
+        string confirmPassword;
+        cin >> confirmPassword;
+        cin.ignore();
+        if (confirmPassword == newPassword && student->changePassword(newPassword))
+        {
+            cout << "Password changed successfully." << endl;
+        }
+        else
+        {
+            cout << "Both the passwords dont match or failed to change password." << endl;
         }
         cout << "Press any key to continue..." << endl;
         cin.ignore();

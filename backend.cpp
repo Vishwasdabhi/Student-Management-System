@@ -962,7 +962,6 @@ void deletestudents()
         {
             cout << "Deleting student: " << (*it)->getName() << endl;
             students.erase(it);
-            // cout << "Student deleted successfully!" << endl;
             break;
         }
     }
@@ -970,9 +969,7 @@ void deletestudents()
     {
         if (it->first == rollNo)
         {
-            cout << "Deleting student: " << it->second->getName() << endl;
-            students_map.erase(it);
-            // cout << "Student deleted successfully!" << endl;
+            cout << "Student deleted successfully!" << endl;
             return;
         }
     }
@@ -1084,7 +1081,6 @@ void deletefaculty()
         {
             found = true;
             faculties.erase(faculties.begin() + i);
-            cout << "Faculty with ID " << facultyID << " deleted successfully." << endl;
             break;
         }
     }
@@ -1261,7 +1257,7 @@ bool User::changePassword(string newPass)
 {
     if (newPass.empty())
     {
-        cout << "New password cannot be empty." << endl;
+        cout << "Password cannot be empty." << endl;
         return false;
     }
     password = newPass;
