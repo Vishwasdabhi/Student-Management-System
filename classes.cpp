@@ -134,7 +134,7 @@ private:
     float CGPA;
     bool New_Notification;
     vector<string> notifications;
-    vector<LeaveApplication> leaveHistory;
+    vector<LeaveApplication *> leaveHistory;
     vector<Course *> registeredCourses;
     map<string, int> marks;
     map<string, int> attendance;
@@ -175,18 +175,18 @@ public:
     float getCGPA();
     map<string, int> getMarks();
     map<string, int> getAttendance();
-    void addLeaveApplication(LeaveApplication leave);
+    void addLeaveApplication(LeaveApplication *leave);
     void editProfile();
     vector<Course *> getRegisteredCourses();
-    vector<LeaveApplication> getLeaveHistory();
+    vector<LeaveApplication *> getLeaveHistory();
 };
 
 class FA : public Faculty
 {
 private:
     vector<Student *> assignedStudents;
-    map<Student *, LeaveApplication> newleaveRequests; // key -> pointer to student object, value -> leave applicaiton
-    map<Student *, LeaveApplication> leaveRequests;    // key -> pointer to student object, value -> leave applicaiton
+    vector<LeaveApplication *> newleaveRequests; // key -> pointer to student object, value -> leave applicaiton
+    vector<LeaveApplication *> leaveRequests;    // key -> pointer to student object, value -> leave applicaiton
     bool New_Notification;
 
 public:
@@ -198,10 +198,10 @@ public:
     void setAssignedStudents(Student *student);
     void viewAssignedStudents();
     void reviewLeaveApplication();
-    void submitApplication(Student *, LeaveApplication leave);
+    void submitApplication(LeaveApplication *leave);
     bool isNewNotification();
     void setNewNotification(bool status);
-    void newLeaveRequests(Student *student, LeaveApplication leave);
-    void LeaveRequests(Student *student, LeaveApplication leave);
+    void newLeaveRequests(LeaveApplication *leave);
+    void LeaveRequests(LeaveApplication *leave);
     void editProfile();
 };

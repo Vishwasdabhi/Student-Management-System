@@ -457,14 +457,14 @@ void retrieve_info()
         sscanf(endDate_str.c_str(), "%d-%d-%d", &end_day, &end_month, &end_year);
         startDate = Date(start_day, start_month, start_year);
         endDate = Date(end_day, end_month, end_year);
-        LeaveApplication leave(reason, startDate, endDate, status, fa_id, rollNo);
-        leaveApplications.push_back(&leave);
+        LeaveApplication *leavePtr = new LeaveApplication(reason, startDate, endDate, status, fa_id, rollNo);
+        leaveApplications.push_back(leavePtr);
 
         for (int i = 0; i < line_count; i++)
         {
             if (students[i]->getRollNo() == rollNo)
             {
-                students[i]->addLeaveApplication(leave);
+                students[i]->addLeaveApplication(leavePtr);
                 break;
             }
         }
@@ -476,11 +476,11 @@ void retrieve_info()
                 if (status == "Pending")
                 {
                     fa[i]->setNewNotification(true);
-                    fa[i]->newLeaveRequests(students[i], leave);
+                    fa[i]->newLeaveRequests(leavePtr);
                 }
                 else
                 {
-                    fa[i]->LeaveRequests(students[i], leave);
+                    fa[i]->LeaveRequests(leavePtr);
                 }
                 break;
             }
@@ -1688,10 +1688,10 @@ int Student ::getSem()
 }
 void Student ::applyForLeave(string reason, Date startDate, Date endDate)
 {
-    LeaveApplication leave(reason, startDate, endDate, "Pending", FA_ID, rollNo);
+    LeaveApplication* leave = new LeaveApplication(reason, startDate, endDate, "Pending", FA_ID, rollNo);
     leaveHistory.push_back(leave);
-    leaveApplications.push_back(&leave);
-    fa_map[FA_ID]->submitApplication(this, leave);
+    leaveApplications.push_back(leave);
+    fa_map[FA_ID]->submitApplication(leave);
     cout << "Leave application submitted successfully." << endl;
 }
 
@@ -1738,7 +1738,7 @@ void Student ::viewLeaveRecords()
     {
         for (auto &&leave : leaveHistory)
         {
-            cout << leave.getReason() << " From: " << leave.getStartDate().showDate() << " To: " << leave.getEndDate().showDate() << endl;
+            cout << leave->getReason() << " From: " << leave->getStartDate().showDate() << " To: " << leave->getEndDate().showDate() << endl;
         }
     }
 }
@@ -1815,7 +1815,7 @@ map<string, int> Student::getAttendance()
 {
     return attendance;
 }
-void Student ::addLeaveApplication(LeaveApplication leave)
+void Student ::addLeaveApplication(LeaveApplication *leave)
 {
     leaveHistory.push_back(leave);
 }
@@ -1837,7 +1837,7 @@ vector<Course *> Student ::getRegisteredCourses()
 {
     return registeredCourses;
 }
-vector<LeaveApplication> Student ::getLeaveHistory()
+vector<LeaveApplication*> Student ::getLeaveHistory()
 {
     return leaveHistory;
 }
@@ -1882,10 +1882,10 @@ void FA::reviewLeaveApplication()
 {
     for (auto &&request : newleaveRequests)
     {
-        string rollNo = request.first->getRollNo();
-        string reason = request.second.getReason();
-        Date startDate = request.second.getStartDate();
-        Date endDate = request.second.getEndDate();
+        string rollNo = request->getRollNo();
+        string reason = request->getReason();
+        Date startDate = request->getStartDate();
+        Date endDate = request->getEndDate();
 
         cout << "Leave Request from " << rollNo << " for :" << reason << " from " << startDate.showDate() << " to " << endDate.showDate() << endl;
 
@@ -1894,23 +1894,40 @@ void FA::reviewLeaveApplication()
         cin >> choice;
         if (choice == 'y' || choice == 'Y')
         {
-            leaveRequests[request.first] = request.second;
-            cout << "Leave request approved for " << request.first->getRollNo() << endl;
-            request.first->addnotification("Your leave request has been approved");
+            leaveRequests.push_back(request);
+            cout << "Leave request approved for " << rollNo << endl;
+            request->setStatus("Approved");
+            for(auto &leaveApplication : leaveApplications)
+            {
+                if(leaveApplication->getRollNo() == request->getRollNo() && leaveApplication->getStartDate().showDate() == startDate.showDate() && leaveApplication->getEndDate().showDate() == endDate.showDate())
+                {
+                    leaveApplication->setStatus("Approved");
+                    break;
+                }
+            }
         }
         else
         {
-            cout << "Leave request rejected for " << request.first->getRollNo() << endl;
-            request.first->addnotification("Your leave request has been rejected");
+            leaveRequests.push_back(request);
+            cout << "Leave request rejected for " << rollNo << endl;
+            request->setStatus("Rejected");
+            for(auto &leaveApplication : leaveApplications)
+            {
+                if(leaveApplication->getRollNo() == request->getRollNo() && leaveApplication->getStartDate().showDate() == startDate.showDate() && leaveApplication->getEndDate().showDate() == endDate.showDate())
+                {
+                    leaveApplication->setStatus("Rejected");
+                    break;
+                }
+            }
         }
     }
     newleaveRequests.clear();
     New_Notification = false;
 }
 
-void FA ::submitApplication(Student *student, LeaveApplication leave)
+void FA ::submitApplication(LeaveApplication *leave)
 {
-    newleaveRequests[student] = leave;
+    newleaveRequests.push_back(leave);
     New_Notification = true;
 }
 
@@ -1922,14 +1939,14 @@ void FA ::setNewNotification(bool status)
 {
     New_Notification = status;
 }
-void FA ::newLeaveRequests(Student *student, LeaveApplication leave)
+void FA ::newLeaveRequests(LeaveApplication *leave)
 {
-    newleaveRequests[student] = leave;
+    newleaveRequests.push_back(leave);
     New_Notification = true;
 }
-void FA ::LeaveRequests(Student *student, LeaveApplication leave)
+void FA ::LeaveRequests(LeaveApplication *leave)
 {
-    leaveRequests[student] = leave;
+    leaveRequests.push_back(leave);
     New_Notification = true;
 }
 

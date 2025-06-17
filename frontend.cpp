@@ -401,11 +401,9 @@ void studentMenu(Student *student)
     cout << "4. View Attendance" << endl;
     cout << "5. View Marks" << endl;
     cout << "6. Apply for Leave" << endl;
-    cout << "7. View Notifications" << endl;
-    cout << "8. Give Feedback" << endl;
-    cout << "9. Register for Courses" << endl;
-    cout << "10. View Leave Records" << endl;
-    cout << "11. Change Password" << endl;
+    cout << "7. Register for Courses" << endl;
+    cout << "8. View Leave Records" << endl;
+    cout << "9. Change Password" << endl;
     cout << "0. Log Out" << endl;
 
     cout << "Please select an option: ";
@@ -559,52 +557,6 @@ void studentMenu(Student *student)
     {
         cin.ignore();
         system("cls");
-        cout << "Viewing Notifications..." << endl;
-        student->viewNotifications();
-        cout << "Press any key to continue..." << endl;
-        cin.ignore();
-        system("cls");
-        studentMenu(student);
-        break;
-    }
-    case 8:
-    {
-        cin.ignore();
-        system("cls");
-        cout << "Giving Feedback..." << endl;
-        cout << "Available Courses: " << endl;
-        vector<Course *> registeredCourses = student->getRegisteredCourses();
-        if (registeredCourses.empty())
-        {
-            cout << "No courses registered." << endl;
-            cout << "Press any key to continue..." << endl;
-            cin.ignore();
-            system("cls");
-            studentMenu(student);
-            return;
-        }
-        for (auto &&course : registeredCourses)
-        {
-            cout << "Course ID: " << course->getID() << ", Credits: " << course->getCredits() << endl;
-        }
-        cout << "Enter Course ID to give feedback: ";
-        string courseID;
-        cin >> courseID;
-        string feedback;
-        cout << "Enter your feedback: ";
-        cin.ignore();
-        getline(cin, feedback);
-        student->giveFeedback(courseID, feedback); // to be implemented
-        cout << "Press any key to continue..." << endl;
-        cin.ignore();
-        system("cls");
-        studentMenu(student);
-        break;
-    }
-    case 9:
-    {
-        cin.ignore();
-        system("cls");
         cout << "Registering for Courses..." << endl;
         int sem_num = student->getSemNum();
         vector<Course *> availableCourses;
@@ -711,26 +663,26 @@ void studentMenu(Student *student)
         studentMenu(student);
         return;
     }
-    case 10:
+    case 8:
     {
         cin.ignore();
         system("cls");
         cout << "Viewing Leave Records..." << endl;
-        vector<LeaveApplication> leaveHistory = student->getLeaveHistory();
+        vector<LeaveApplication*> leaveHistory = student->getLeaveHistory();
         if (leaveHistory.empty())
         {
             cout << "No leave records found." << endl;
         }
         else
         {
-            for (auto &&leave : leaveHistory)
+            for (auto leave : leaveHistory)
             {
                 cout << endl
-                     << "Reason: " << leave.getReason() << endl
-                     << "Start Date: " << leave.getStartDate().showDate()
+                     << "Reason: " << leave->getReason() << endl
+                     << "Start Date: " << leave->getStartDate().showDate()
                      << endl
-                     << "End Date: " << leave.getEndDate().showDate() << endl
-                     << "Status: " << leave.getStatus() << endl;
+                     << "End Date: " << leave->getEndDate().showDate() << endl
+                     << "Status: " << leave->getStatus() << endl;
             }
         }
         cout << "Press any key to continue..." << endl;
@@ -739,7 +691,7 @@ void studentMenu(Student *student)
         studentMenu(student);
         return;
     }
-    case 11:
+    case 9:
     {
         cin.ignore();
         system("cls");
