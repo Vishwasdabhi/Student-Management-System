@@ -826,6 +826,11 @@ void facultyMenu(Faculty *faculty)
                 {
                     for (auto &&subject : attendance)
                     {
+                        if (subject.second == -1)
+                        {
+                            cout << "Student Roll No: " << subject.first << ", Attendance: Not recorded" << endl;
+                            continue;
+                        }
                         cout << "Student Roll No: " << subject.first << ", Attendance: " << subject.second << "." << endl;
                     }
                 }
@@ -929,7 +934,7 @@ void facultyMenu(Faculty *faculty)
                             {
                                 flag2 = true;
                                 int attendance;
-                                cout << "Student Roll No: " << student << ", Is Present (1 for Yes, 0 for No): ";
+                                cout << "No. of classes attended by Student Roll No: " << student << " is: ";
                                 cin >> attendance;
                                 while (attendance < 0 || attendance > 100)
                                 {
@@ -1006,6 +1011,11 @@ void facultyMenu(Faculty *faculty)
                 {
                     for (auto &&subject : marks)
                     {
+                        if (subject.second == -1)
+                        {
+                            cout << "Student Roll No: " << subject.first << ", Marks: Not recorded" << endl;
+                            continue;
+                        }
                         cout << "Student Roll No: " << subject.first << ", Marks: " << subject.second << "." << endl;
                     }
                 }
@@ -1444,6 +1454,11 @@ void FAMenu(FA *fa)
                 {
                     for (auto &&subject : attendance)
                     {
+                        if (subject.second == -1)
+                        {
+                            cout << "Student Roll No: " << subject.first << ", Attendance: Not recorded" << endl;
+                            continue;
+                        }
                         cout << "Student Roll No: " << subject.first << ", Attendance: " << subject.second << "." << endl;
                     }
                 }
@@ -1628,6 +1643,11 @@ void FAMenu(FA *fa)
                 {
                     for (auto &&subject : marks)
                     {
+                        if (subject.second == -1)
+                        {
+                            cout << "Student Roll No: " << subject.first << ", Marks: Not recorded" << endl;
+                            continue;
+                        }
                         cout << "Student Roll No: " << subject.first << ", Marks: " << subject.second << "." << endl;
                     }
                 }
