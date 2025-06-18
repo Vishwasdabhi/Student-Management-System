@@ -16,7 +16,20 @@ const int MAX_PASSWORD_LENGTH = 100;
 
 void exit_program()
 {
+    system("cls");
     write_all_files();
+    string thank = " ========= Thank You =========\n";
+    string greet = " ======== See You Soon =======\n";
+    for (char c : thank)
+    {
+        printf("%c", c);
+        Sleep(40);
+    }
+    for (char c : greet)
+    {
+        printf("%c", c);
+        Sleep(40);
+    }
     exit(0);
 }
 
@@ -45,28 +58,43 @@ void maskInput(string &password)
     }
 }
 
-void loginPage()
+void loginPage(bool firstTime = false)
 {
-    cout << "Login (Press quit in username to log out)" << endl;
+    if (!firstTime)
+    {
+        cout << "Press 1 to continue to login page or 0 to go back to main menu: ";
+        int choice;
+        cin >> choice;
+        if (choice == 0)
+        {
+            system("cls");
+            return;
+        }
+        else if (choice != 1)
+        {
+            cout << "Invalid choice. Returning to main menu." << endl;
+            Sleep(1500);
+            system("cls");
+            return;
+        }
+    }
+
+    system("cls");
+    cout << "===========================" << endl
+         << "         Login Page        " << endl
+         << "===========================" << endl;
     cout << "Enter Username: ";
     string username, password;
     cin >> username;
-    if (username == "quit")
-        exit_program();
     cin.ignore();
     cout << "Enter Password: ";
     maskInput(password);
-    cout << "You entered: " << password << endl; // For debugging, can be removed later
 
     // Check Admin
     if (username == ADMIN_USERNAME && password == ADMIN_PASSWORD)
     {
         system("cls");
-        if (headercheck())
-        {
-            cout << "Welcome to the Admin Panel!" << endl;
-        }
-        else
+        if (!headercheck(false))
         {
             cout << "Database not created yet. Please create the database first." << endl;
             createheader();
@@ -118,23 +146,27 @@ void loginPage()
     cout << "Invalid username or password." << endl;
     Sleep(1500);
     system("cls");
-    loginPage();
+    loginPage(true);
 }
 
 void adminMenu()
 {
-    cout << "--- Admin Panel ---" << endl;
-    cout << "1. View Students" << endl;
-    cout << "2. Add Student" << endl;
-    cout << "3. Delete Student" << endl;
-    cout << "4. View Faculty" << endl;
-    cout << "5. Add Faculty" << endl;
-    cout << "6. Delete Faculty" << endl;
-    cout << "7. View Courses" << endl;
-    cout << "8. Add Course" << endl;
-    cout << "9. Delete Course" << endl;
-    cout << "0. Log Out" << endl;
-    cout << "Please select an option: ";
+    cout << "===========================" << endl
+         << "        Admin Panel        " << endl
+         << "===========================" << endl
+         << "      1. View Students     " << endl
+         << "      2. Add Student       " << endl
+         << "      3. Delete Student    " << endl
+         << "      4. View Faculty      " << endl
+         << "      5. Add Faculty       " << endl
+         << "      6. Delete Faculty    " << endl
+         << "      7. View Courses      " << endl
+         << "      8. Add Course        " << endl
+         << "      9. Delete Course     " << endl
+         << "      0. Log Out           " << endl
+         << "===========================" << endl
+         << endl
+         << "Please select an option: ";
     int choice;
     cin >> choice;
     switch (choice)
@@ -394,18 +426,25 @@ void adminMenu()
 
 void studentMenu(Student *student)
 {
-    cout << "\n--- Student Panel ---" << endl;
-    cout << "1. View Profile" << endl;
-    cout << "2. Edit Profile" << endl;
-    cout << "3. View Courses" << endl;
-    cout << "4. View Attendance" << endl;
-    cout << "5. View Marks" << endl;
-    cout << "6. Apply for Leave" << endl;
-    cout << "7. Register for Courses" << endl;
-    cout << "8. View Leave Records" << endl;
-    cout << "9. Change Password" << endl;
-    cout << "0. Log Out" << endl;
+    system("cls");
+    cout << "Welcome, " << student->getName() << "!" << endl;
+    cout << "Roll Number: " << student->getRollNo() << endl;
 
+    cout << "=================================" << endl
+         << "          Student Panel          " << endl
+         << "=================================" << endl
+         << "         1. View Profile         " << endl
+         << "         2. Edit Profile         " << endl
+         << "         3. View Courses         " << endl
+         << "         4. View Attendance      " << endl
+         << "         5. View Marks           " << endl
+         << "         6. Apply for Leave      " << endl
+         << "         7. Register for Courses " << endl
+         << "         8. View Leave Records   " << endl
+         << "         9. Change Password      " << endl
+         << "         0. Log Out              " << endl
+         << "=================================" << endl
+         << endl;
     cout << "Please select an option: ";
     int choice;
     cin >> choice;
@@ -668,7 +707,7 @@ void studentMenu(Student *student)
         cin.ignore();
         system("cls");
         cout << "Viewing Leave Records..." << endl;
-        vector<LeaveApplication*> leaveHistory = student->getLeaveHistory();
+        vector<LeaveApplication *> leaveHistory = student->getLeaveHistory();
         if (leaveHistory.empty())
         {
             cout << "No leave records found." << endl;
@@ -727,20 +766,27 @@ void studentMenu(Student *student)
 
 void facultyMenu(Faculty *faculty)
 {
-    cout << "\n--- Faculty Panel ---" << endl;
-    cout << "1. View Profile" << endl;
-    cout << "2. View Courses" << endl;
-    cout << "3. View Attendance" << endl;
-    cout << "4. Add Attendance" << endl;
-    cout << "5. View Marks" << endl;
-    cout << "6. Add Marks" << endl;
-    cout << "7. Add Course" << endl;
-    cout << "8. Remove Course" << endl;
-    cout << "9. Edit Profile" << endl;
-    cout << "10. Change Password" << endl;
-    cout << "0. Log Out" << endl;
+    system("cls");
+    cout << "Welcome, " << faculty->getFacultyName() << "!" << endl
+         << "Faculty ID: " << faculty->getFacultyID() << endl;
 
-    cout << "Please select an option: ";
+    cout << "=================================" << endl
+         << "          Faculty Panel          " << endl
+         << "=================================" << endl
+         << "          1. View Profile        " << endl
+         << "          2. View Courses        " << endl
+         << "          3. View Attendance     " << endl
+         << "          4. Add Attendance      " << endl
+         << "          5. View Marks          " << endl
+         << "          6. Add Marks           " << endl
+         << "          7. Add Course          " << endl
+         << "          8. Remove Course       " << endl
+         << "          9. Edit Profile        " << endl
+         << "          10. Change Password    " << endl
+         << "          0. Log Out             " << endl
+         << "=================================" << endl
+         << endl
+         << "Please select an option: ";
     int choice;
     cin >> choice;
     switch (choice)
@@ -1350,20 +1396,28 @@ void facultyMenu(Faculty *faculty)
 
 void FAMenu(FA *fa)
 {
-    cout << "\n--- Faculty Panel ---" << endl;
-    cout << "1. View Profile" << endl;
-    cout << "2. View Courses" << endl;
-    cout << "3. View Attendance" << endl;
-    cout << "4. Add Attendance" << endl;
-    cout << "5. View Marks" << endl;
-    cout << "6. Add Marks" << endl;
-    cout << "7. View Assigned Students" << endl;
-    cout << "8. View Notifications / Review Leave application" << endl;
-    cout << "9. Add Courses" << endl;
-    cout << "10. Delete Courses" << endl;
-    cout << "11. Edit Profile" << endl;
-    cout << "12. Change Password" << endl;
-    cout << "0. Log Out" << endl;
+    system("cls");
+    cout << "Welcome, " << fa->getFacultyName() << "!" << endl
+         << "FA ID: " << fa->getID() << endl;
+
+    cout << "=============================================" << endl
+         << "                Faculty Panel                " << endl
+         << "=============================================" << endl
+         << "               1. View Profile               " << endl
+         << "               2. View Courses               " << endl
+         << "               3. View Attendance            " << endl
+         << "               4. Add Attendance             " << endl
+         << "               5. View Marks                 " << endl
+         << "               6. Add Marks                  " << endl
+         << "               7. View Assigned Students     " << endl
+         << "               8. Review Leave applications  " << endl
+         << "               9. Add Courses                " << endl
+         << "               10. Delete Courses            " << endl
+         << "               11. Edit Profile              " << endl
+         << "               12. Change Password           " << endl
+         << "               0. Log Out                    " << endl
+         << "=============================================" << endl
+         << endl;
 
     cout << "Please select an option: ";
     int choice;
@@ -2019,16 +2073,100 @@ void FAMenu(FA *fa)
     }
 }
 
+void aboutUs()
+{
+    system("cls");
+    string Intro = "                               *************************************                               \n"
+               "--> This project is a collaborative effort by the authors to create a student database management portal,\n"
+               "    incorporating various possible features typically present in such a system.\n"
+               "--> The code, in its entirety, is based solely on the C++ language.\n"
+               "--> This is Version 2 of our previous model, now enhanced with Object-Oriented Programming (OOP) concepts\n"
+               "    for better structure, scalability, and maintainability.\n"
+               "                               *************************************                               \n\n";
+
+    for (char c : Intro)
+    {
+        printf("%c", c);
+        Sleep(20);
+    }
+
+    string Authors = "============================================\n|| Sl.no. |     Authors     | Roll number ||\n============================================\n||   1.   |  Vishwas Dabhi  |  23CS01015  ||\n||   2.   |  Shashank M N   |  23CS02010  ||\n||   3.   |  Arit Gandhi    |  23CS01006  ||\n============================================\n\n";
+    for (char c : Authors)
+    {
+        if (c == '\n')
+        {
+            printf("%c", c);
+            Sleep(50);
+            continue;
+        }
+        printf("%c", c);
+        Sleep(30);
+    }
+
+    cout << "Press any key to continue..." << endl;
+    cin.ignore();
+
+    system("cls");
+    int choice;
+    cout << "\nEnter  1: Go to Main Menu\n       0: Exit\n";
+    cout << "Enter the choice: ";
+    cin >> choice;
+    if (choice == 1)
+    {
+        system("cls");
+        return;
+    }
+    else
+        exit_program();
+}
+
 int main()
 {
-    if (!headercheck())
+    headercheck(true);
+    system("cls");
+
+    string forntline = "****************************************\n"
+                       "Welcome to the Student Management System!\n"
+                       "****************************************\n\n";
+    for (char c : forntline)
     {
-        cout << "No database found." << endl;
+        cout << c;
+        Sleep(40);
     }
-    system("cls");
-    cout << "Welcome to the Student Management System!";
-    Sleep(2000);
-    system("cls");
-    loginPage();
+
+    int choice;
+    while (true)
+    {
+        cout << "===========================" << endl
+             << "         Main Menu         " << endl
+             << "===========================" << endl
+             << "          1. Login         " << endl
+             << "          2. About Us      " << endl
+             << "          3. Exit          " << endl
+             << "===========================" << endl;
+        cout << "Please select an option: ";
+        cin >> choice;
+        cin.ignore();
+        while (choice < 1 || choice > 3)
+        {
+            cout << "Invalid choice. Please try again: ";
+            cin >> choice;
+            cin.ignore();
+        }
+        switch (choice)
+        {
+        case 1:
+            system("cls");
+            loginPage(true);
+            break;
+        case 2:
+            system("cls");
+            aboutUs();
+            break;
+        case 3:
+            system("cls");
+            exit_program();
+        }
+    }
     return 0;
 }

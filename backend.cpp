@@ -616,7 +616,7 @@ void createheader()
 }
 
 // function to check whether the file has an appropriate heading.
-bool headercheck()
+bool headercheck(bool retrieve)
 {
     ifstream file1("student_information.csv");
     if (!file1.is_open())
@@ -631,7 +631,10 @@ bool headercheck()
         file1.close();
         return false;
     }
-    retrieve_info();
+    if (retrieve)
+    {
+        retrieve_info();
+    }
     file1.close();
     return true;
 }
