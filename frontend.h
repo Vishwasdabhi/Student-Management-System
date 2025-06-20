@@ -1,4 +1,4 @@
-#include "backend.cpp"
+#include "backend.h"
 #include <conio.h>
 
 /*
@@ -30,6 +30,8 @@ void exit_program()
         printf("%c", c);
         Sleep(40);
     }
+    Sleep(1000);
+    system("cls");
     exit(0);
 }
 
@@ -2089,7 +2091,6 @@ void aboutUs()
         printf("%c", c);
         Sleep(20);
     }
-
     string Authors = "============================================\n|| Sl.no. |     Authors     | Roll number ||\n============================================\n||   1.   |  Vishwas Dabhi  |  23CS01015  ||\n||   2.   |  Shashank M N   |  23CS02010  ||\n||   3.   |  Arit Gandhi    |  23CS01006  ||\n============================================\n\n";
     for (char c : Authors)
     {
@@ -2118,55 +2119,4 @@ void aboutUs()
     }
     else
         exit_program();
-}
-
-int main()
-{
-    headercheck(true);
-    system("cls");
-
-    string forntline = "****************************************\n"
-                       "Welcome to the Student Management System!\n"
-                       "****************************************\n\n";
-    for (char c : forntline)
-    {
-        cout << c;
-        Sleep(40);
-    }
-
-    int choice;
-    while (true)
-    {
-        cout << "===========================" << endl
-             << "         Main Menu         " << endl
-             << "===========================" << endl
-             << "          1. Login         " << endl
-             << "          2. About Us      " << endl
-             << "          3. Exit          " << endl
-             << "===========================" << endl;
-        cout << "Please select an option: ";
-        cin >> choice;
-        cin.ignore();
-        while (choice < 1 || choice > 3)
-        {
-            cout << "Invalid choice. Please try again: ";
-            cin >> choice;
-            cin.ignore();
-        }
-        switch (choice)
-        {
-        case 1:
-            system("cls");
-            loginPage(true);
-            break;
-        case 2:
-            system("cls");
-            aboutUs();
-            break;
-        case 3:
-            system("cls");
-            exit_program();
-        }
-    }
-    return 0;
 }
