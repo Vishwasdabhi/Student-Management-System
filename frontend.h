@@ -65,14 +65,14 @@ void loginPage(bool firstTime = false)
     if (!firstTime)
     {
         cout << "Press 1 to continue to login page or 0 to go back to main menu: ";
-        int choice;
+        char choice;
         cin >> choice;
-        if (choice == 0)
+        if (choice == '0')
         {
             system("cls");
             return;
         }
-        else if (choice != 1)
+        else if (choice != '1')
         {
             cout << "Invalid choice. Returning to main menu." << endl;
             Sleep(1500);
@@ -145,10 +145,11 @@ void loginPage(bool firstTime = false)
         }
     }
 
-    cout << "Invalid username or password." << endl;
+    cout << "Invalid username or password." << endl
+         << "Returning to main menu..." << endl;
     Sleep(1500);
     system("cls");
-    loginPage(true);
+    return;
 }
 
 void adminMenu()
@@ -169,11 +170,11 @@ void adminMenu()
          << "===========================" << endl
          << endl
          << "Please select an option: ";
-    int choice;
+    char choice;
     cin >> choice;
     switch (choice)
     {
-    case 1:
+    case '1':
     {
         system("cls");
         cout << "Roll No of the present students:" << endl;
@@ -223,7 +224,7 @@ void adminMenu()
         adminMenu();
         break;
     }
-    case 2:
+    case '2':
     {
         system("cls");
         addstudents();
@@ -233,7 +234,7 @@ void adminMenu()
         adminMenu();
         break;
     }
-    case 3:
+    case '3':
     {
         system("cls");
         int size = students.size();
@@ -259,7 +260,7 @@ void adminMenu()
         adminMenu();
         break;
     }
-    case 4:
+    case '4':
     {
         system("cls");
         if (faculties.empty())
@@ -306,7 +307,7 @@ void adminMenu()
         adminMenu();
         break;
     }
-    case 5:
+    case '5':
     {
         system("cls");
         cout << "Adding Faculty..." << endl;
@@ -317,7 +318,7 @@ void adminMenu()
         adminMenu();
         break;
     }
-    case 6:
+    case '6':
     {
         system("cls");
         if (faculties.empty())
@@ -342,7 +343,7 @@ void adminMenu()
         adminMenu();
         break;
     }
-    case 7:
+    case '7':
     {
         cin.ignore();
         system("cls");
@@ -377,7 +378,7 @@ void adminMenu()
         adminMenu();
         break;
     }
-    case 8:
+    case '8':
     {
         system("cls");
         addcourse();
@@ -387,7 +388,7 @@ void adminMenu()
         adminMenu();
         break;
     }
-    case 9:
+    case '9':
     {
         system("cls");
         cin.ignore();
@@ -418,9 +419,20 @@ void adminMenu()
         adminMenu();
         break;
     }
-    case 0:
+    case '0':
     {
         system("cls");
+        return;
+    }
+    default:
+    {
+        cin.ignore();
+        system("cls");
+        cout << "Invalid choice. Please try again." << endl;
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        system("cls");
+        adminMenu();
         return;
     }
     }
@@ -448,11 +460,11 @@ void studentMenu(Student *student)
          << "=================================" << endl
          << endl;
     cout << "Please select an option: ";
-    int choice;
+    char choice;
     cin >> choice;
     switch (choice)
     {
-    case 1:
+    case '1':
     {
         cin.ignore();
         system("cls");
@@ -464,7 +476,7 @@ void studentMenu(Student *student)
         studentMenu(student);
         break;
     }
-    case 2:
+    case '2':
     {
         cin.ignore();
         system("cls");
@@ -475,7 +487,7 @@ void studentMenu(Student *student)
         studentMenu(student);
         break;
     }
-    case 3:
+    case '3':
     {
         cin.ignore();
         system("cls");
@@ -499,7 +511,7 @@ void studentMenu(Student *student)
         studentMenu(student);
         break;
     }
-    case 4:
+    case '4':
     {
         cin.ignore();
         system("cls");
@@ -529,7 +541,7 @@ void studentMenu(Student *student)
         studentMenu(student);
         break;
     }
-    case 5:
+    case '5':
     {
         cin.ignore();
         system("cls");
@@ -560,7 +572,7 @@ void studentMenu(Student *student)
         studentMenu(student);
         break;
     }
-    case 6:
+    case '6':
     {
         cin.ignore();
         system("cls");
@@ -594,7 +606,7 @@ void studentMenu(Student *student)
         studentMenu(student);
         break;
     }
-    case 7:
+    case '7':
     {
         cin.ignore();
         system("cls");
@@ -704,7 +716,7 @@ void studentMenu(Student *student)
         studentMenu(student);
         return;
     }
-    case 8:
+    case '8':
     {
         cin.ignore();
         system("cls");
@@ -732,7 +744,7 @@ void studentMenu(Student *student)
         studentMenu(student);
         return;
     }
-    case 9:
+    case '9':
     {
         cin.ignore();
         system("cls");
@@ -758,9 +770,20 @@ void studentMenu(Student *student)
         studentMenu(student);
         return;
     }
-    case 0:
+    case '0':
     {
         system("cls");
+        return;
+    }
+    default:
+    {
+        cin.ignore();
+        system("cls");
+        cout << "Invalid choice. Please try again." << endl;
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        system("cls");
+        studentMenu(student);
         return;
     }
     }
@@ -789,11 +812,9 @@ void facultyMenu(Faculty *faculty)
          << "=================================" << endl
          << endl
          << "Please select an option: ";
-    int choice;
+    string choice;
     cin >> choice;
-    switch (choice)
-    {
-    case 1:
+    if (choice == "1")
     {
         cin.ignore();
         system("cls");
@@ -803,9 +824,9 @@ void facultyMenu(Faculty *faculty)
         cin.ignore();
         system("cls");
         facultyMenu(faculty);
-        break;
+        return;
     }
-    case 2:
+    else if (choice == "2")
     {
         cin.ignore();
         system("cls");
@@ -827,9 +848,9 @@ void facultyMenu(Faculty *faculty)
         cin.ignore();
         system("cls");
         facultyMenu(faculty);
-        break;
+        return;
     }
-    case 3:
+    else if (choice == "3")
     {
         cin.ignore();
         system("cls");
@@ -843,7 +864,7 @@ void facultyMenu(Faculty *faculty)
             cin.ignore();
             system("cls");
             facultyMenu(faculty);
-            break;
+            return;
         }
         else
         {
@@ -892,9 +913,9 @@ void facultyMenu(Faculty *faculty)
         cin.ignore();
         system("cls");
         facultyMenu(faculty);
-        break;
+        return;
     }
-    case 4:
+    else if (choice == "4")
     {
         cin.ignore();
         system("cls");
@@ -909,7 +930,7 @@ void facultyMenu(Faculty *faculty)
             cin.ignore();
             system("cls");
             facultyMenu(faculty);
-            break;
+            return;
         }
         for (auto &&it : alreadyRegistered)
         {
@@ -934,16 +955,16 @@ void facultyMenu(Faculty *faculty)
                 }
                 cout << "1. Add Attendance for all students." << endl;
                 cout << "2. Add Attendance for specific students." << endl;
-                int choice2;
+                char choice2;
                 cin >> choice2;
-                while (choice2 < 1 || choice2 > 2)
+                while (choice2 < '1' || choice2 > '2')
                 {
                     cout << "Invalid choice. Please try again." << endl;
                     cin >> choice2;
                 }
                 switch (choice2)
                 {
-                case 1:
+                case '1':
                 {
                     cout << "Enter attendance for each student:" << endl;
                     for (auto &&student : students)
@@ -963,7 +984,7 @@ void facultyMenu(Faculty *faculty)
                     }
                     break;
                 }
-                case 2:
+                case '2':
                 {
                     cout << "All students : " << endl;
                     for (auto &&student : students)
@@ -1012,9 +1033,9 @@ void facultyMenu(Faculty *faculty)
         cin.ignore();
         system("cls");
         facultyMenu(faculty);
-        break;
+        return;
     }
-    case 5:
+    else if (choice == "5")
     {
         cin.ignore();
         system("cls");
@@ -1028,7 +1049,7 @@ void facultyMenu(Faculty *faculty)
             cin.ignore();
             system("cls");
             facultyMenu(faculty);
-            break;
+            return;
         }
         else
         {
@@ -1077,9 +1098,9 @@ void facultyMenu(Faculty *faculty)
         cin.ignore();
         system("cls");
         facultyMenu(faculty);
-        break;
+        return;
     }
-    case 6:
+    else if (choice == "6")
     {
         cin.ignore();
         system("cls");
@@ -1094,7 +1115,7 @@ void facultyMenu(Faculty *faculty)
             cin.ignore();
             system("cls");
             facultyMenu(faculty);
-            break;
+            return;
         }
         for (auto &&it : alreadyRegistered)
         {
@@ -1119,16 +1140,16 @@ void facultyMenu(Faculty *faculty)
                 }
                 cout << "1. Add Marks for all students." << endl;
                 cout << "2. Add Marks for specific students." << endl;
-                int choice2;
+                char choice2;
                 cin >> choice2;
-                while (choice2 < 1 || choice2 > 2)
+                while (choice2 < '1' || choice2 > '2')
                 {
                     cout << "Invalid choice. Please try again." << endl;
                     cin >> choice2;
                 }
                 switch (choice2)
                 {
-                case 1:
+                case '1':
                 {
                     cout << "Enter marks for each student:" << endl;
                     for (auto &&student : students)
@@ -1148,7 +1169,7 @@ void facultyMenu(Faculty *faculty)
                     }
                     break;
                 }
-                case 2:
+                case '2':
                 {
                     cout << "All students : " << endl;
                     for (auto &&student : students)
@@ -1197,9 +1218,9 @@ void facultyMenu(Faculty *faculty)
         cin.ignore();
         system("cls");
         facultyMenu(faculty);
-        break;
+        return;
     }
-    case 7:
+    else if (choice == "7")
     {
         cin.ignore();
         system("cls");
@@ -1300,9 +1321,9 @@ void facultyMenu(Faculty *faculty)
         cin.ignore();
         system("cls");
         facultyMenu(faculty);
-        break;
+        return;
     }
-    case 8:
+    else if (choice == "8")
     {
         cin.ignore();
         system("cls");
@@ -1349,9 +1370,9 @@ void facultyMenu(Faculty *faculty)
         cin.ignore();
         system("cls");
         facultyMenu(faculty);
-        break;
+        return;
     }
-    case 9:
+    else if (choice == "9")
     {
         cin.ignore();
         system("cls");
@@ -1360,9 +1381,9 @@ void facultyMenu(Faculty *faculty)
         cin.ignore();
         system("cls");
         facultyMenu(faculty);
-        break;
+        return;
     }
-    case 10:
+    else if (choice == "10")
     {
         cin.ignore();
         system("cls");
@@ -1386,13 +1407,23 @@ void facultyMenu(Faculty *faculty)
         cin.ignore();
         system("cls");
         facultyMenu(faculty);
-        break;
+        return;
     }
-    case 0:
+    else if (choice == "0")
     {
         system("cls");
         return;
     }
+    else
+    {
+        cin.ignore();
+        system("cls");
+        cout << "Invalid choice. Please try again." << endl;
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        system("cls");
+        facultyMenu(faculty);
+        return;
     }
 }
 
@@ -1422,11 +1453,9 @@ void FAMenu(FA *fa)
          << endl;
 
     cout << "Please select an option: ";
-    int choice;
+    string choice;
     cin >> choice;
-    switch (choice)
-    {
-    case 1:
+    if (choice == "1")
     {
         cin.ignore();
         system("cls");
@@ -1436,9 +1465,9 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         FAMenu(fa);
-        break;
+        return;
     }
-    case 2:
+    else if (choice == "2")
     {
         cin.ignore();
         system("cls");
@@ -1462,9 +1491,9 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         FAMenu(fa);
-        break;
+        return;
     }
-    case 3:
+    else if (choice == "3")
     {
         cin.ignore();
         system("cls");
@@ -1479,7 +1508,7 @@ void FAMenu(FA *fa)
             cin.ignore();
             system("cls");
             FAMenu(fa);
-            break;
+            return;
         }
         else
         {
@@ -1528,9 +1557,9 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         FAMenu(fa);
-        break;
+        return;
     }
-    case 4:
+    else if (choice == "4")
     {
         cin.ignore();
         system("cls");
@@ -1546,7 +1575,7 @@ void FAMenu(FA *fa)
             cin.ignore();
             system("cls");
             FAMenu(fa);
-            break;
+            return;
         }
         for (auto &&it : alreadyRegistered)
         {
@@ -1571,16 +1600,16 @@ void FAMenu(FA *fa)
                 }
                 cout << "1. Add Attendance for all students." << endl;
                 cout << "2. Add Attendance for specific students." << endl;
-                int choice2;
+                char choice2;
                 cin >> choice2;
-                while (choice2 < 1 || choice2 > 2)
+                while (choice2 < '1' || choice2 > '2')
                 {
                     cout << "Invalid choice. Please try again." << endl;
                     cin >> choice2;
                 }
                 switch (choice2)
                 {
-                case 1:
+                case '1':
                 {
                     system("cls");
                     cout << "Enter attendance for each student:" << endl;
@@ -1601,7 +1630,7 @@ void FAMenu(FA *fa)
                     }
                     break;
                 }
-                case 2:
+                case '2':
                 {
                     system("cls");
                     cout << "All students : " << endl;
@@ -1651,9 +1680,9 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         FAMenu(fa);
-        break;
+        return;
     }
-    case 5:
+    else if (choice == "5")
     {
         cin.ignore();
         system("cls");
@@ -1668,7 +1697,7 @@ void FAMenu(FA *fa)
             cin.ignore();
             system("cls");
             FAMenu(fa);
-            break;
+            return;
         }
         else
         {
@@ -1717,9 +1746,9 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         FAMenu(fa);
-        break;
+        return;
     }
-    case 6:
+    else if (choice == "6")
     {
         cin.ignore();
         system("cls");
@@ -1735,7 +1764,7 @@ void FAMenu(FA *fa)
             cin.ignore();
             system("cls");
             FAMenu(fa);
-            break;
+            return;
         }
         for (auto &&it : alreadyRegistered)
         {
@@ -1760,16 +1789,16 @@ void FAMenu(FA *fa)
                 }
                 cout << "1. Add Marks for all students." << endl;
                 cout << "2. Add Marks for specific students." << endl;
-                int choice2;
+                char choice2;
                 cin >> choice2;
-                while (choice2 < 1 || choice2 > 2)
+                while (choice2 < '1' || choice2 > '2')
                 {
                     cout << "Invalid choice. Please try again." << endl;
                     cin >> choice2;
                 }
                 switch (choice2)
                 {
-                case 1:
+                case '1':
                 {
                     system("cls");
                     cout << "Enter marks for each student:" << endl;
@@ -1790,7 +1819,7 @@ void FAMenu(FA *fa)
                     }
                     break;
                 }
-                case 2:
+                case '2':
                 {
                     system("cls");
                     cout << "All students : " << endl;
@@ -1841,9 +1870,9 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         FAMenu(fa);
-        break;
+        return;
     }
-    case 7:
+    else if (choice == "7")
     {
         cin.ignore();
         system("cls");
@@ -1853,9 +1882,9 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         FAMenu(fa);
-        break;
+        return;
     }
-    case 8:
+    else if (choice == "8")
     {
         cin.ignore();
         system("cls");
@@ -1872,9 +1901,9 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         FAMenu(fa);
-        break;
+        return;
     }
-    case 9:
+    else if (choice == "9")
     {
         cin.ignore();
         system("cls");
@@ -1977,9 +2006,9 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         FAMenu(fa);
-        break;
+        return;
     }
-    case 10:
+    else if (choice == "10")
     {
         cin.ignore();
         system("cls");
@@ -2027,9 +2056,9 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         FAMenu(fa);
-        break;
+        return;
     }
-    case 11:
+    else if (choice == "11")
     {
         cin.ignore();
         system("cls");
@@ -2038,9 +2067,9 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         FAMenu(fa);
-        break;
+        return;
     }
-    case 12:
+    else if (choice == "12")
     {
         cin.ignore();
         system("cls");
@@ -2065,13 +2094,23 @@ void FAMenu(FA *fa)
         cin.ignore();
         system("cls");
         FAMenu(fa);
-        break;
+        return;
     }
-    case 0:
+    else if (choice == "0")
     {
         system("cls");
         return;
     }
+    else
+    {
+        cin.ignore();
+        system("cls");
+        cout << "Invalid choice. Please try again." << endl;
+        cout << "Press any key to continue..." << endl;
+        cin.ignore();
+        system("cls");
+        FAMenu(fa);
+        return;
     }
 }
 
@@ -2079,12 +2118,12 @@ void aboutUs()
 {
     system("cls");
     string Intro = "                               *************************************                               \n"
-               "--> This project is a collaborative effort by the authors to create a student database management portal,\n"
-               "    incorporating various possible features typically present in such a system.\n"
-               "--> The code, in its entirety, is based solely on the C++ language.\n"
-               "--> This is Version 2 of our previous model, now enhanced with Object-Oriented Programming (OOP) concepts\n"
-               "    for better structure, scalability, and maintainability.\n"
-               "                               *************************************                               \n\n";
+                   "--> This project is a collaborative effort by the authors to create a student database management portal,\n"
+                   "    incorporating various possible features typically present in such a system.\n"
+                   "--> The code, in its entirety, is based solely on the C++ language.\n"
+                   "--> This is Version 2 of our previous model, now enhanced with Object-Oriented Programming (OOP) concepts\n"
+                   "    for better structure, scalability, and maintainability.\n"
+                   "                               *************************************                               \n\n";
 
     for (char c : Intro)
     {
@@ -2108,11 +2147,11 @@ void aboutUs()
     cin.ignore();
 
     system("cls");
-    int choice;
+    char choice;
     cout << "\nEnter  1: Go to Main Menu\n       0: Exit\n";
     cout << "Enter the choice: ";
     cin >> choice;
-    if (choice == 1)
+    if (choice == '1')
     {
         system("cls");
         return;

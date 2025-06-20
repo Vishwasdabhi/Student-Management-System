@@ -123,6 +123,7 @@ public:
     void editProfile();
     void setName(string);
     void setOffice(string);
+    void removeCourse(string courseID);
 };
 
 class Student : public User
@@ -179,6 +180,9 @@ public:
     void editProfile();
     vector<Course *> getRegisteredCourses();
     vector<LeaveApplication *> getLeaveHistory();
+    void removeSubject(string courseID);
+    void removeMarks(string courseID);
+    void removeAttendance(string courseID);
 };
 
 class FA : public Faculty
@@ -204,4 +208,5 @@ public:
     void newLeaveRequests(LeaveApplication *leave);
     void LeaveRequests(LeaveApplication *leave);
     void editProfile();
+    void removeCourse(string courseID);
 };

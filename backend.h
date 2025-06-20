@@ -876,27 +876,27 @@ void addstudents()
             cout << "4. ME" << endl;
             cout << "5. CE" << endl;
             cout << "Enter your choice (1-5): ";
-            int branch_choice;
+            char branch_choice;
             cin >> branch_choice;
             switch (branch_choice)
             {
-            case 1:
+            case '1':
                 branch = "CS";
                 valid = true;
                 break;
-            case 2:
+            case '2':
                 branch = "EC";
                 valid = true;
                 break;
-            case 3:
+            case '3':
                 branch = "EE";
                 valid = true;
                 break;
-            case 4:
+            case '4':
                 branch = "ME";
                 valid = true;
                 break;
-            case 5:
+            case '5':
                 branch = "CE";
                 valid = true;
                 break;
@@ -1164,27 +1164,27 @@ void addcourse()
             cout << "4. ME" << endl;
             cout << "5. CE" << endl;
             cout << "Enter your choice (1-5): ";
-            int branch_choice;
+            char branch_choice;
             cin >> branch_choice;
             switch (branch_choice)
             {
-            case 1:
+            case '1':
                 branch = "CS";
                 valid = true;
                 break;
-            case 2:
+            case '2':
                 branch = "EC";
                 valid = true;
                 break;
-            case 3:
+            case '3':
                 branch = "EE";
                 valid = true;
                 break;
-            case 4:
+            case '4':
                 branch = "ME";
                 valid = true;
                 break;
-            case 5:
+            case '5':
                 branch = "CE";
                 valid = true;
                 break;
@@ -1239,14 +1239,14 @@ void deletecourse()
     string id;
     cin >> id;
     cin.ignore();
+    bool found = false;
     for (auto it = courses_sem1.begin(); it != courses_sem1.end(); ++it)
     {
         if ((*it)->getID() == id)
         {
-            cout << "Deleting course: " << (*it)->getID() << endl;
             courses_sem1.erase(it);
-            cout << "Course deleted successfully!" << endl;
-            return;
+            found = true;
+            break;
         }
     }
     for (auto it = courses_sem1_map.begin(); it != courses_sem1_map.end(); ++it)
@@ -1255,18 +1255,17 @@ void deletecourse()
         {
             cout << "Deleting course: " << it->first << endl;
             courses_sem1_map.erase(it);
-            cout << "Course deleted successfully!" << endl;
-            return;
+            found = true;
+            break;
         }
     }
     for (auto it = courses_sem2.begin(); it != courses_sem2.end(); ++it)
     {
         if ((*it)->getID() == id)
         {
-            cout << "Deleting course: " << (*it)->getID() << endl;
             courses_sem2.erase(it);
-            cout << "Course deleted successfully!" << endl;
-            return;
+            found = true;
+            break;
         }
     }
     for (auto it = courses_sem2_map.begin(); it != courses_sem2_map.end(); ++it)
@@ -1275,9 +1274,26 @@ void deletecourse()
         {
             cout << "Deleting course: " << it->first << endl;
             courses_sem2_map.erase(it);
-            cout << "Course deleted successfully!" << endl;
-            return;
+            found = true;
+            break;
         }
+    }
+    for (auto &student : students)
+    {
+        student->removeSubject(id);
+    }
+    for (auto &faculty : faculties)
+    {
+        faculty->removeCourse(id);
+    }
+    for (auto &fa_member : fa)
+    {
+        fa_member->removeCourse(id);
+    }
+    if (found)
+    {
+        cout << "Course with ID " << id << " deleted successfully!" << endl;
+        return;
     }
     cout << "Course with ID " << id << " not found." << endl;
 }
@@ -1614,16 +1630,16 @@ void Faculty::editProfile()
     cout << "What do you want to edit?" << endl;
     cout << "1. Name" << endl;
     cout << "2. Office No" << endl;
-    int choice;
+    char choice;
     cin >> choice;
     system("cls");
     cin.ignore();
-    if (choice == 1)
+    if (choice == '1')
     {
         cout << "Enter new name: ";
         getline(cin, name);
     }
-    else if (choice == 2)
+    else if (choice == '2')
     {
         cout << "Enter new office number: ";
         cin >> officeNo;
@@ -1648,6 +1664,16 @@ void Faculty :: setOffice(string office_num)
 {
     officeNo = office_num;
 }
+
+void Faculty::removeCourse(string courseID)
+{
+    auto it = find_if(subjects.begin(), subjects.end(), [&](Course *course) { return course->getID() == courseID; });
+    if (it != subjects.end())
+    {
+        subjects.erase(it);
+    }
+}
+
 /*
 
 
@@ -1844,6 +1870,17 @@ vector<LeaveApplication*> Student ::getLeaveHistory()
 {
     return leaveHistory;
 }
+
+void Student::removeSubject(string courseID)
+{
+    auto it = find_if(registeredCourses.begin(), registeredCourses.end(), [&](Course *course) { return course->getID() == courseID; });
+    if (it != registeredCourses.end())
+    {
+        registeredCourses.erase(it);
+        marks.erase(courseID);
+        attendance.erase(courseID);
+    }
+}
 /*
 
 
@@ -1961,12 +1998,12 @@ void FA::editProfile()
     cout << "What do you want to edit?" << endl;
     cout << "1. Name" << endl;
     cout << "2. Office No" << endl;
-    int choice;
+    char choice;
     cin >> choice;
     system("cls");
     cin.ignore();
     Faculty *faculty = faculties_map[id];
-    if (choice == 1)
+    if (choice == '1')
     {
         string name1;
         cout << "Enter new name: ";
@@ -1974,7 +2011,7 @@ void FA::editProfile()
         name = name1;
         faculty->setName(name1);
     }
-    else if (choice == 2)
+    else if (choice == '2')
     {
         cout << "Enter new office number: ";
         cin >> officeNo;
@@ -2001,4 +2038,13 @@ bool Faculty::changePassword(string newPass)
 {
     password = newPass;
     return true;
+}
+
+void FA::removeCourse(string courseID)
+{
+    auto it = find_if(subjects.begin(), subjects.end(), [&](Course *course) { return course->getID() == courseID; });
+    if (it != subjects.end())
+    {
+        subjects.erase(it);
+    }
 }
