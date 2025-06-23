@@ -3,6 +3,7 @@
 int main()
 {
     headercheck(true);
+    generateSymmetricMapping();
     system("cls");
 
     string frontline = "****************************************\n"

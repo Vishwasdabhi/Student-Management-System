@@ -7,6 +7,7 @@ student -> course & FA ( we can remove FA)
 
 
 
+
 1. date
 2. leave application
 3. Course (if we give it the student and faculty Id)

@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include <windows.h>
+
 using namespace std;
 
 class User;
@@ -40,7 +41,6 @@ private:
     Date startDate;
     Date endDate;
     string status;
-    // status can be "Pending", "Approved", "Rejected"
     string fa_id;
     string rollNo;
 
@@ -61,16 +61,12 @@ class Course
 {
 private:
     string id, branch;
-    // vector<Student *> studentIDs;
-    // vector<Faculty *> facultyIDs;
     vector<string> studentIDs;
     vector<string> facultyIDs;
     int credits;
-    bool isCompulsory; // true if compulsory, false if breadth or lateral
-    // map<Student *, int> marks;
-    // map<Student *, int> attendance; // key = student object
-    map<string, int> marks;      // key = student roll number
-    map<string, int> attendance; // key = student roll number
+    bool isCompulsory; 
+    map<string, int> marks;      
+    map<string, int> attendance; 
     vector<string> feedbacks;
 
 public:
@@ -111,7 +107,7 @@ public:
     bool is_FA_function();
     void AssignSubject(Course *course, bool temp = false);
     void removeSubject(Course *course);
-    vector<Course *> getSubjects(); // done
+    vector<Course *> getSubjects();
     string getFacultyID();
     string getFacultyName();
     string getPassword();
@@ -119,7 +115,7 @@ public:
     string getEmail();
     string getBranch();
     string getOfficeNo();
-    void viewDetails(); // what to show will be decided
+    void viewDetails();
     void editProfile();
     void setName(string);
     void setOffice(string);
@@ -156,9 +152,7 @@ public:
     int getSem();
     void applyForLeave(string reason, Date startDate, Date endDate); 
     void addnotification(string notification);                       
-    void viewNotifications();                                        
-    void giveFeedback(string courseID, string feedback);    
-    void registerCourse(int sem_num);                              
+    void viewNotifications();                                                   
     void viewLeaveRecords();                                        
     string getRollNo();                                            
     void addSubject(Course *course);                              
@@ -185,8 +179,8 @@ class FA : public Faculty
 {
 private:
     vector<Student *> assignedStudents;
-    vector<LeaveApplication *> newleaveRequests; // key -> pointer to student object, value -> leave applicaiton
-    vector<LeaveApplication *> leaveRequests;    // key -> pointer to student object, value -> leave applicaiton
+    vector<LeaveApplication *> newleaveRequests; 
+    vector<LeaveApplication *> leaveRequests;    
     bool New_Notification;
 
 public:

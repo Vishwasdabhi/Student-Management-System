@@ -1,9 +1,6 @@
 #include "backend.h"
 #include <conio.h>
 
-/*
-think if we can add some colsole based design
-*/
 
 void adminMenu();
 void studentMenu(Student *student);
@@ -92,7 +89,6 @@ void loginPage(bool firstTime = false)
     cout << "Enter Password: ";
     maskInput(password);
 
-    // Check Admin
     if (username == ADMIN_USERNAME && password == ADMIN_PASSWORD)
     {
         system("cls");
@@ -106,7 +102,6 @@ void loginPage(bool firstTime = false)
         return;
     }
 
-    // Check Students
     for (int i = 0; i < students.size(); i++)
     {
         if (students[i]->login(username, password))
@@ -118,7 +113,6 @@ void loginPage(bool firstTime = false)
         }
     }
 
-    // Check Faculty (including FA)
     for (int i = 0; i < faculties.size(); i++)
     {
         if (faculties[i]->login(username, password))
@@ -144,7 +138,6 @@ void loginPage(bool firstTime = false)
             return;
         }
     }
-
     cout << "Invalid username or password." << endl;
     Sleep(1500);
     system("cls");
@@ -1333,7 +1326,6 @@ void facultyMenu(Faculty *faculty)
             if (course->getID() == courseID)
             {
                 found = true;
-                // fa->removeSubject(course);
                 faculty->removeSubject(course);
                 cout << "Course ID: " << courseID << " deleted successfully." << endl;
                 break;
@@ -2011,7 +2003,6 @@ void FAMenu(FA *fa)
             if (course->getID() == courseID)
             {
                 found = true;
-                // fa->removeSubject(course);
                 faculty->removeSubject(course);
                 cout << "Course ID: " << courseID << " deleted successfully." << endl;
                 break;

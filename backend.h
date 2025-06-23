@@ -1,10 +1,4 @@
 
-// Arit & Shashank will write here to load and save data from file.
-/*
-include classes.cpp
-make arrays/vectors of all classes
-write save and load data functions in good manner
-*/
 #include "classes.h"
 
 using namespace std;
@@ -31,33 +25,61 @@ unordered_map<string, Course *> courses_sem2_map;
 unordered_map<string, FA *> fa_map;
 unordered_map<string, LeaveApplication *> leave_applications_map;
 
+map<char, char> randomMappingOfCharacters;
+
+void generateSymmetricMapping()
+{
+    vector<char> chars;
+    for (int i = 32; i <= 126; i++)
+    {
+        chars.push_back((char)i);
+    }
+
+    unsigned seed = 37;
+    default_random_engine rng(seed);
+    shuffle(chars.begin(), chars.end(), rng);
+
+    for (int i = 0; i + 1 < chars.size(); i += 2)
+    {
+        char a = chars[i];
+        char b = chars[i + 1];
+        randomMappingOfCharacters[a] = b;
+        randomMappingOfCharacters[b] = a;
+    }
+
+    if (chars.size() % 2 != 0)
+    {
+        char last = chars.back();
+        randomMappingOfCharacters[last] = last;
+    }
+}
+
+string encrypt_decrypt(string pass)
+{
+    int n = pass.size();
+    string result = "";
+    for (int i = 0; i < n; i++)
+    {
+        result += randomMappingOfCharacters[pass[i]];
+    }
+    return result;
+}
+
 void fillMaps()
 {
+
     for (auto &&student : students)
-    {
         students_map[student->getRollNo()] = student;
-        // students_map[student.getRollNo()] = student; // if we want to store the object instead of pointer
-    }
     for (auto &&faculty : faculties)
-    {
         faculties_map[faculty->getFacultyID()] = faculty;
-    }
     for (auto &&course : courses_sem1)
-    {
         courses_sem1_map[course->getID()] = course;
-    }
     for (auto &&course : courses_sem2)
-    {
         courses_sem2_map[course->getID()] = course;
-    }
     for (auto &&fa : fa)
-    {
         fa_map[fa->getID()] = fa;
-    }
     for (auto &&leave : leaveApplications)
-    {
         leave_applications_map[leave->getRollNo()] = leave;
-    }
 }
 
 string toUpper(string &str)
@@ -82,19 +104,18 @@ void retrieve_info()
     {
         line_count++;
     }
-    line_count--; // to ignore the header line
+    line_count--;
     if (line_count == 0)
     {
         file.close();
         return;
     }
-    file.clear();            // clear the EOF flag
-    file.seekg(0, ios::beg); // move the cursor back to the beginning of the file
+    file.clear();            
+    file.seekg(0, ios::beg); 
 
     string header;
     getline(file, header);
 
-    // students = new Student[line_count];
     students.resize(line_count);
     char ch;
     string s;
@@ -119,6 +140,7 @@ void retrieve_info()
         sem_num = stoi(sem_num_str);
         year = stoi(year_str);
         cgpa = stof(cgpa_str);
+        password = encrypt_decrypt(password);
         students[j] = new Student(rollNo, password, name, rollNo, year, branch, FA_ID, cgpa, Gender, dob, email, sem_num);
     }
     file.close();
@@ -149,7 +171,6 @@ void retrieve_info()
         }
     }
     courses_sem1.resize(subject_names_sem1.size());
-    // courses_sem1 = new Course[subject_names_sem1.size()];
     for (int i = 0; i < subject_names_sem1.size(); i++)
     {
         string branch = subject_names_sem1[i].substr(0, 2);
@@ -172,8 +193,7 @@ void retrieve_info()
                 {
                     if (students[j]->getRollNo() == rollNo)
                     {
-                        students[j]->addSubject(courses_sem1[i]); // add the course to the student's registered courses
-
+                        students[j]->addSubject(courses_sem1[i]);
                         courses_sem1[i]->enrollStudent(students[j]->getRollNo());
                         students[j]->addMarks(subject_names_sem1[i], marks);
 
@@ -246,7 +266,6 @@ void retrieve_info()
         }
     }
     courses_sem2.resize(subject_names_sem2.size());
-    // courses_sem2 = new Course[subject_names_sem2.size()];
     for (int i = 0; i < subject_names_sem2.size(); i++)
     {
         string branch = subject_names_sem2[i].substr(0, 2);
@@ -334,7 +353,6 @@ void retrieve_info()
     getline(file5, header);
 
     faculties.resize(faculty_count);
-    // faculties = new Faculty[faculty_count];
     for (int i = 0; i < faculty_count; i++)
     {
         getline(file5, s);
@@ -349,6 +367,7 @@ void retrieve_info()
         getline(ss, branch, ',');
         getline(ss, officeNo, ',');
         getline(ss, s, ',');
+        password = encrypt_decrypt(password);
         if (s == "1")
         {
             is_FA = true;
@@ -367,7 +386,6 @@ void retrieve_info()
                 subjects.push_back(subject);
             }
         }
-
         faculties[i] = new Faculty(faculty_id, password, faculty_name, faculty_id, gender, email, branch, officeNo, is_FA);
         for (const auto &sub : subjects)
         {
@@ -407,7 +425,6 @@ void retrieve_info()
     }
 
     fa.resize(faculty_count_fa);
-    // fa = new FA[faculty_count_fa];
     int fa_index = 0;
     for (int j = 0; j < faculty_count; j++)
     {
@@ -430,7 +447,6 @@ void retrieve_info()
             }
         }
     }
-    // Problem: Either student should have a vector of marks or we should have a vector of courses in student class.
 
     ifstream file6("leave_applications.txt");
     if (!file6.is_open())
@@ -514,15 +530,11 @@ void createheader()
 
     fprintf(file, "Name,Password,Branch,Roll Number,Sem Number,FA ID,Gender,DOB,Email,Year,CGPA\n");
     fclose(file);
-
-    // vector<pair<string, pair<int, bool>>> subject_name_sem1;
-    // vector<pair<string, pair<int, bool>>> subject_name_sem2;
-
     system("cls");
     cout << "Enter the number of subjects for Semester 1: ";
     int no_subjects_sem1;
     cin >> no_subjects_sem1;
-    getchar(); // to consume the newline character after entering number of subjects
+    getchar();
     cout << "Enter Subject ID, Credits and whether it is a compulsory subject (1 for Yes, 0 for No):" << endl;
 
     for (int i = 0; i < no_subjects_sem1; i++)
@@ -536,8 +548,7 @@ void createheader()
         cin >> credits;
         cout << "Is it a compulsory subject? (1 for Yes, 0 for No): ";
         cin >> is_compulsory;
-        getchar(); // to consume the newline character after entering is_compulsory
-        // subject_name_sem1.push_back(make_pair(subject_name, make_pair(credits, is_compulsory)));
+        getchar(); 
         courses_sem1.push_back(new Course(subject_name, subject_name.substr(0, 2), credits, is_compulsory));
     }
 
@@ -564,7 +575,7 @@ void createheader()
     int no_subjects_sem2;
     cin >> no_subjects_sem2;
 
-    getchar(); // to consume the newline character after entering number of subjects
+    getchar();
 
     cout << "Enter Subject ID, Credits and whether it is a compulsory subject (1 for Yes, 0 for No):" << endl;
 
@@ -579,7 +590,7 @@ void createheader()
         cin >> credits;
         cout << "Is it a compulsory subject? (1 for Yes, 0 for No): ";
         cin >> is_compulsory;
-        getchar(); // to consume the newline character after entering is_compulsory
+        getchar(); 
         courses_sem2.push_back(new Course(subject_name, subject_name.substr(0, 2), credits, is_compulsory));
     }
 
@@ -600,8 +611,6 @@ void createheader()
     fclose(inFile2);
     fclose(inFile4);
 
-    // created the header files for student information, attendance and marks for semester 1 and 2.
-
     inFile1 = fopen("faculty_information.csv", "w");
     fprintf(inFile1, "Faculty ID,Password,Faculty Name,Gender,Email,Branch,Office_No,is_FA,Subject_1,Subject_2,Subject_3,Subject_4,Subject_5\n");
     fclose(inFile1);
@@ -615,7 +624,6 @@ void createheader()
     system("cls");
 }
 
-// function to check whether the file has an appropriate heading.
 bool headercheck(bool retrieve)
 {
     ifstream file1("student_information.csv");
@@ -651,7 +659,7 @@ void write_all_files()
     for (int i = 0; i < students.size(); i++)
     {
         file << students[i]->getName() << ","
-             << students[i]->getPassword() << ","
+             << encrypt_decrypt(students[i]->getPassword()) << ","
              << students[i]->getBranch() << ","
              << students[i]->getRollNo() << ","
              << students[i]->getSemNum() << ","
@@ -812,7 +820,7 @@ void write_all_files()
     for (int i = 0; i < faculties.size(); i++)
     {
         inFile5 << faculties[i]->getFacultyID() << ","
-                << faculties[i]->getPassword() << ","
+                << encrypt_decrypt(faculties[i]->getPassword()) << ","
                 << faculties[i]->getFacultyName() << ","
                 << faculties[i]->getGender() << ","
                 << faculties[i]->getEmail() << ","
@@ -822,7 +830,7 @@ void write_all_files()
         const vector<Course *> &subjects = faculties[i]->getSubjects();
         for (int j = 0; j < subjects.size(); j++)
         {
-            if (subjects[j]) // ✅ null check
+            if (subjects[j])
                 inFile5 << subjects[j]->getID() << ",";
             else
                 inFile5 << "NULL,";
@@ -858,7 +866,7 @@ void addstudents()
     cout << "Enter the number of students to add: ";
     int n;
     cin >> n;
-    cin.ignore(); // to ignore the newline character after entering n
+    cin.ignore();
     for (int i = 0; i < n; i++)
     {
         string name, rollNo, branch, FA_ID, gender, dob, email;
@@ -946,11 +954,11 @@ void addstudents()
             }
         }
         students_map[students.back()->getRollNo()] = students.back();
-        if(sem_num == 1)
+        if (sem_num == 1)
         {
-            for(int j = 0; j < courses_sem1.size(); j++)
+            for (int j = 0; j < courses_sem1.size(); j++)
             {
-                if(courses_sem1[j]->isCompulsoryCourse())
+                if (courses_sem1[j]->isCompulsoryCourse())
                 {
                     courses_sem1[j]->enrollStudent(rollNo);
                     students.back()->addSubject(courses_sem1[j]);
@@ -961,11 +969,11 @@ void addstudents()
                 }
             }
         }
-        else if(sem_num == 2)
+        else if (sem_num == 2)
         {
-            for(int j = 0; j < courses_sem2.size(); j++)
+            for (int j = 0; j < courses_sem2.size(); j++)
             {
-                if(courses_sem2[j]->isCompulsoryCourse())
+                if (courses_sem2[j]->isCompulsoryCourse())
                 {
                     courses_sem2[j]->enrollStudent(rollNo);
                     students.back()->addSubject(courses_sem2[j]);
@@ -1091,7 +1099,6 @@ void addfaculty()
         {
             fa.push_back(new FA(id, id + "@iitbbs", name, id, gender, id + "@iitbbs.ac.in", branch, officeNo, is_FA));
             fa_map[id] = fa.back();
-            // cout << "FA " << name << " added successfully!" << endl;
         }
         Sleep(1000);
         system("cls");
@@ -1282,11 +1289,6 @@ void deletecourse()
     cout << "Course with ID " << id << " not found." << endl;
 }
 
-/*
-
-*/
-
-// User
 bool User::login(string uname, string pass)
 {
     if (uname == username && pass == password)
@@ -1308,8 +1310,6 @@ bool User::changePassword(string newPass)
     cout << "Password changed successfully!" << endl;
     return true;
 }
-
-// Functions of Date class
 
 int Date ::Calculate_days(Date Start_date, Date End_date)
 {
@@ -1375,12 +1375,7 @@ string Date::showDate()
     date += to_string(year);
     return date;
 }
-/*
 
-
-*/
-
-// LeaveApplication
 string LeaveApplication::getReason()
 {
     return reason;
@@ -1409,12 +1404,6 @@ string LeaveApplication ::getRollNo()
 {
     return rollNo;
 }
-/*
-
-
-*/
-
-// course
 void Course::addfaculty(string facultyId)
 {
     facultyIDs.push_back(facultyId);
@@ -1422,7 +1411,6 @@ void Course::addfaculty(string facultyId)
 
 void Course::removefaculty()
 {
-    // show all faculties and then remove the faculty
     for (auto &&faculty : facultyIDs)
     {
         cout << "Faculty ID: " << faculty << ", Name: " << faculties_map[faculty]->getFacultyName() << endl;
@@ -1500,14 +1488,6 @@ vector<string> Course ::getFaculties()
     return facultyIDs;
 }
 
-/*
-
-
-
-
-*/
-
-// faculty
 
 bool Faculty::login(string uname, string pass)
 {
@@ -1639,22 +1619,15 @@ void Faculty::editProfile()
     cout << "Profile updated successfully!" << endl;
 }
 
-void Faculty :: setName(string name1)
+void Faculty ::setName(string name1)
 {
     name = name1;
 }
 
-void Faculty :: setOffice(string office_num)
+void Faculty ::setOffice(string office_num)
 {
     officeNo = office_num;
 }
-/*
-
-
-
-*/
-
-// Student
 
 bool Student::login(string uname, string pass)
 {
@@ -1691,7 +1664,7 @@ int Student ::getSem()
 }
 void Student ::applyForLeave(string reason, Date startDate, Date endDate)
 {
-    LeaveApplication* leave = new LeaveApplication(reason, startDate, endDate, "Pending", FA_ID, rollNo);
+    LeaveApplication *leave = new LeaveApplication(reason, startDate, endDate, "Pending", FA_ID, rollNo);
     leaveHistory.push_back(leave);
     leaveApplications.push_back(leave);
     fa_map[FA_ID]->submitApplication(leave);
@@ -1721,14 +1694,6 @@ void Student ::viewNotifications()
     New_Notification = false;
 }
 
-void Student ::giveFeedback(string courseID, string Feedback)
-{
-    // to be implimented
-}
-
-void Student ::registerCourse(int sem_num)
-{
-}
 
 void Student ::viewLeaveRecords()
 {
@@ -1840,16 +1805,10 @@ vector<Course *> Student ::getRegisteredCourses()
 {
     return registeredCourses;
 }
-vector<LeaveApplication*> Student ::getLeaveHistory()
+vector<LeaveApplication *> Student ::getLeaveHistory()
 {
     return leaveHistory;
 }
-/*
-
-
-
-
-*/
 
 string FA ::getID()
 {
@@ -1900,9 +1859,9 @@ void FA::reviewLeaveApplication()
             leaveRequests.push_back(request);
             cout << "Leave request approved for " << rollNo << endl;
             request->setStatus("Approved");
-            for(auto &leaveApplication : leaveApplications)
+            for (auto &leaveApplication : leaveApplications)
             {
-                if(leaveApplication->getRollNo() == request->getRollNo() && leaveApplication->getStartDate().showDate() == startDate.showDate() && leaveApplication->getEndDate().showDate() == endDate.showDate())
+                if (leaveApplication->getRollNo() == request->getRollNo() && leaveApplication->getStartDate().showDate() == startDate.showDate() && leaveApplication->getEndDate().showDate() == endDate.showDate())
                 {
                     leaveApplication->setStatus("Approved");
                     break;
@@ -1914,9 +1873,9 @@ void FA::reviewLeaveApplication()
             leaveRequests.push_back(request);
             cout << "Leave request rejected for " << rollNo << endl;
             request->setStatus("Rejected");
-            for(auto &leaveApplication : leaveApplications)
+            for (auto &leaveApplication : leaveApplications)
             {
-                if(leaveApplication->getRollNo() == request->getRollNo() && leaveApplication->getStartDate().showDate() == startDate.showDate() && leaveApplication->getEndDate().showDate() == endDate.showDate())
+                if (leaveApplication->getRollNo() == request->getRollNo() && leaveApplication->getStartDate().showDate() == startDate.showDate() && leaveApplication->getEndDate().showDate() == endDate.showDate())
                 {
                     leaveApplication->setStatus("Rejected");
                     break;
