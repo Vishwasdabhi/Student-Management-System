@@ -29,12 +29,7 @@ map<char, char> randomMappingOfCharacters;
 
 void generateSymmetricMapping()
 {
-    vector<char> chars;
-    for (int i = 32; i <= 126; i++)
-    {
-        chars.push_back((char)i);
-    }
-
+    string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*+";
     unsigned seed = 37;
     default_random_engine rng(seed);
     shuffle(chars.begin(), chars.end(), rng);
@@ -45,12 +40,6 @@ void generateSymmetricMapping()
         char b = chars[i + 1];
         randomMappingOfCharacters[a] = b;
         randomMappingOfCharacters[b] = a;
-    }
-
-    if (chars.size() % 2 != 0)
-    {
-        char last = chars.back();
-        randomMappingOfCharacters[last] = last;
     }
 }
 
@@ -110,8 +99,8 @@ void retrieve_info()
         file.close();
         return;
     }
-    file.clear();            
-    file.seekg(0, ios::beg); 
+    file.clear();
+    file.seekg(0, ios::beg);
 
     string header;
     getline(file, header);
@@ -548,7 +537,7 @@ void createheader()
         cin >> credits;
         cout << "Is it a compulsory subject? (1 for Yes, 0 for No): ";
         cin >> is_compulsory;
-        getchar(); 
+        getchar();
         courses_sem1.push_back(new Course(subject_name, subject_name.substr(0, 2), credits, is_compulsory));
     }
 
@@ -590,7 +579,7 @@ void createheader()
         cin >> credits;
         cout << "Is it a compulsory subject? (1 for Yes, 0 for No): ";
         cin >> is_compulsory;
-        getchar(); 
+        getchar();
         courses_sem2.push_back(new Course(subject_name, subject_name.substr(0, 2), credits, is_compulsory));
     }
 
@@ -1301,10 +1290,20 @@ bool User::login(string uname, string pass)
 
 bool User::changePassword(string newPass)
 {
+
     if (newPass.empty())
     {
         cout << "Password cannot be empty." << endl;
         return false;
+    }
+    string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*+";
+    for (auto &&it : newPass)
+    {
+        if (chars.find(it) == string::npos)
+        {
+            cout << "Password can only contain alphanumeric characters and !@#$%&*+." << endl;
+            return false;
+        }
     }
     password = newPass;
     cout << "Password changed successfully!" << endl;
@@ -1487,7 +1486,6 @@ vector<string> Course ::getFaculties()
 {
     return facultyIDs;
 }
-
 
 bool Faculty::login(string uname, string pass)
 {
@@ -1693,7 +1691,6 @@ void Student ::viewNotifications()
     }
     New_Notification = false;
 }
-
 
 void Student ::viewLeaveRecords()
 {
